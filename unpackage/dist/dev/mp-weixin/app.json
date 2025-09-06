@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/EOI-ranking/ranking",
+    "pages/EOI-resources/resources",
+    "pages/index/EOI-calculator/calculator",
+    "pages/index/EOI-guide/guide",
+    "pages/index/EOI-trends/trends"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationStyle": "default",
+    "backgroundColor": "#F8F8F8"
+  },
+  "usingComponents": {}
+}
