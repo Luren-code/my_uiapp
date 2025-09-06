@@ -1,0 +1,227 @@
+
+.container.data-v-697c6f5b {
+  height: 100vh;
+  background: #F8F8F8;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-transform: translateX(100%);
+          transform: translateX(100%);
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: -10rpx 0 30rpx rgba(0, 0, 0, 0.3);
+  will-change: transform;
+}
+.container.entered.data-v-697c6f5b {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+  transition: -webkit-transform 0.35s ease-out;
+  transition: transform 0.35s ease-out;
+  transition: transform 0.35s ease-out, -webkit-transform 0.35s ease-out;
+}
+.header.data-v-697c6f5b {
+  background: #4A90E2;
+  padding: 38rpx 0 10rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.header-left.data-v-697c6f5b {
+  width: 65rpx;
+  padding-left: 20rpx;
+}
+.back-icon.data-v-697c6f5b {
+  color: white;
+  font-size: 48rpx;
+  font-weight: bold;
+}
+.header-title.data-v-697c6f5b {
+  color: white;
+  font-size: 30rpx;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.header-right.data-v-697c6f5b {
+  width: 120rpx;
+  display: flex;
+  gap: 20rpx;
+  justify-content: flex-end;
+}
+
+/* 微信小程序胶囊按钮样式 */
+.capsule.data-v-697c6f5b { height: 45rpx; background: rgba(0,0,0,0.25); border-radius: 999rpx; display: flex; align-items: center; padding: 0 10rpx; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.capsule-item.data-v-697c6f5b { height: 64rpx; padding: 0 16rpx; display: flex; align-items: center; justify-content: center;
+}
+.capsule-divider.data-v-697c6f5b { width: 2rpx; height: 36rpx; background: rgba(255,255,255,0.2);
+}
+.dot.data-v-697c6f5b { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%; margin: 0 4rpx;
+}
+.minus.data-v-697c6f5b { width: 20rpx; height: 4rpx; background: #fff; border-radius: 4rpx;
+}
+.ring.data-v-697c6f5b { width: 28rpx; height: 28rpx; border-radius: 50%; border: 4rpx solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.ring-inner.data-v-697c6f5b { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%;
+}
+.content.data-v-697c6f5b {
+  flex: 1;
+  padding: 30rpx 20rpx 30rpx 30rpx; /* 与 calculator 一致的左右留白 */
+  box-sizing: border-box;
+}
+.content-wrapper.data-v-697c6f5b { padding: 0; box-sizing: border-box;
+}
+.section.data-v-697c6f5b {
+  background: white;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.1);
+}
+.section-title.data-v-697c6f5b {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+.section-content.data-v-697c6f5b {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30rpx;
+  display: block;
+}
+.trend-chart.data-v-697c6f5b {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 200rpx;
+  margin-top: 40rpx;
+}
+.chart-item.data-v-697c6f5b {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.chart-bar.data-v-697c6f5b {
+  width: 40rpx;
+  background: linear-gradient(to top, #4A90E2, #7BB3F0);
+  border-radius: 20rpx 20rpx 0 0;
+  margin-bottom: 20rpx;
+  transition: all 0.3s ease;
+}
+.chart-label.data-v-697c6f5b {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+.chart-value.data-v-697c6f5b {
+  font-size: 20rpx;
+  color: #999;
+}
+.job-ranking.data-v-697c6f5b {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.ranking-item.data-v-697c6f5b {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+.ranking-item.data-v-697c6f5b:last-child {
+  border-bottom: none;
+}
+.ranking-number.data-v-697c6f5b {
+  width: 60rpx;
+  height: 60rpx;
+  background: #4A90E2;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-right: 30rpx;
+}
+.job-info.data-v-697c6f5b {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.job-name.data-v-697c6f5b {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+.job-code.data-v-697c6f5b {
+  font-size: 24rpx;
+  color: #999;
+}
+.job-count.data-v-697c6f5b {
+  font-size: 28rpx;
+  color: #4A90E2;
+  font-weight: 500;
+}
+.region-stats.data-v-697c6f5b {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.region-item.data-v-697c6f5b {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+.region-item.data-v-697c6f5b:last-child {
+  border-bottom: none;
+}
+.region-name.data-v-697c6f5b {
+  font-size: 28rpx;
+  color: #333;
+}
+.region-percentage.data-v-697c6f5b {
+  font-size: 28rpx;
+  color: #4A90E2;
+  font-weight: 500;
+}
+
+/* 新增动画样式 */
+.slide-in.data-v-697c6f5b {
+  -webkit-animation: slideIn-data-v-697c6f5b 0.5s ease-out forwards;
+          animation: slideIn-data-v-697c6f5b 0.5s ease-out forwards;
+}
+@-webkit-keyframes slideIn-data-v-697c6f5b {
+from {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+    opacity: 0;
+}
+to {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+    opacity: 1;
+}
+}
+@keyframes slideIn-data-v-697c6f5b {
+from {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+    opacity: 0;
+}
+to {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+    opacity: 1;
+}
+}
+

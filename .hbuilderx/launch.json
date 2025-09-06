@@ -1,0 +1,13 @@
+{
+  "version": "0.0",
+  "configurations": [
+    {
+      "type": "uniCloud",
+      "default": true
+    },
+    {
+      "type": "uniCloud",
+      "default": false
+    }
+  ]
+}

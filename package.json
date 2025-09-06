@@ -1,0 +1,31 @@
+{
+  "name": "my-eoi-app",
+  "version": "1.0.0",
+  "description": "EOI职业查询应用",
+  "main": "main.js",
+  "scripts": {
+    "dev": "uni",
+    "build": "uni build",
+    "build:h5": "uni build -p h5",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "build:app": "uni build -p app"
+  },
+  "dependencies": {
+    "@dcloudio/uni-app": "^3.0.0-3080420230802001",
+    "@dcloudio/uni-h5": "^3.0.0-3080420230802001",
+    "@dcloudio/uni-mp-weixin": "^3.0.0-3080420230802001"
+  },
+  "devDependencies": {
+    "@dcloudio/uni-cli-shared": "^3.0.0-3080420230802001",
+    "@dcloudio/vue-cli-plugin-uni": "^3.0.0-3080420230802001"
+  },
+  "uni-app": {
+    "scripts": {}
+  },
+  "browserslist": [
+    "Android >= 4.4",
+    "ios >= 9"
+  ],
+  "author": "",
+  "license": "ISC"
+}

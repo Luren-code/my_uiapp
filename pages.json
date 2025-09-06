@@ -1,0 +1,50 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "EOI职业查询"
+      }
+    },
+    {
+      "path": "pages/EOI-ranking/ranking",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "EOI排名"
+      }
+    },
+    {
+      "path": "pages/EOI-resources/resources",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "EOI资源"
+      }
+    },
+    {
+      "path": "pages/index/EOI-calculator/calculator",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "EOI分数计算"
+      }
+    },
+    {
+      "path": "pages/index/EOI-guide/guide",
+      "style": {
+        "navigationStyle": "custom", 
+        "navigationBarTitleText": "新手入门"
+      }
+    },
+    {
+      "path": "pages/index/EOI-trends/trends",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "递交趋势"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationStyle": "default",
+    "backgroundColor": "#F8F8F8"
+  }
+}
