@@ -3,28 +3,9 @@
     <!-- 顶部导航 -->
     <view class="header">
       <view class="header-left" @click="goBack">
-        <text class="back-icon">‹</text>
+        <text class="back-icon">﹤</text>
       </view>
       <text class="header-title">新手入门</text>
-      <view class="header-right">
-        <view class="capsule" @click="onCapsuleTap">
-          <view class="capsule-item">
-            <view class="dot"></view>
-            <view class="dot"></view>
-            <view class="dot"></view>
-          </view>
-          <view class="capsule-divider"></view>
-          <view class="capsule-item">
-            <view class="minus"></view>
-          </view>
-          <view class="capsule-divider"></view>
-          <view class="capsule-item">
-            <view class="ring">
-              <view class="ring-inner"></view>
-            </view>
-          </view>
-        </view>
-      </view>
     </view>
 
     <!-- 内容区域 -->
@@ -184,17 +165,6 @@ export default {
     goBack() {
       uni.navigateBack();
     },
-    onCapsuleTap() {
-      uni.showActionSheet({
-        itemList: ['分享', '收藏', '反馈'],
-        success: (res) => {
-          const index = res.tapIndex
-          if (index === 0) uni.showToast({ title: '点击了分享', icon: 'none' })
-          if (index === 1) uni.showToast({ title: '已收藏', icon: 'success' })
-          if (index === 2) uni.showToast({ title: '感谢反馈', icon: 'none' })
-        }
-      })
-    }
   },
   onReady() {
     // 触发从右侧滑入的进入动画（H5/小程序通用CSS动画实现）
@@ -228,41 +198,33 @@ export default {
   background: #4A90E2;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 38rpx 0 10rpx 0;
+  justify-content: center;
+  padding: 80rpx 0 30rpx 0;
   color: white;
+  position: relative;
 }
 
 .header-left {
-  width: 65rpx;
-  padding-left: 20rpx;
+  position: absolute;
+  left: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
 }
 
 .back-icon {
-  font-size: 48rpx;
-  font-weight: bold;
+  font-size: 40rpx;
+  color: white;
 }
 
 .header-title {
   font-size: 30rpx;
   font-family: Arial, Helvetica, sans-serif;
 }
-
-.header-right {
-  display: flex;
-  gap: 20rpx;
-  width: 120rpx;
-  justify-content: flex-end;
-}
-
-/* 微信小程序胶囊按钮样式 */
-.capsule { height: 45rpx; background: rgba(0,0,0,0.25); border-radius: 999rpx; display: flex; align-items: center; padding: 0 10rpx; backdrop-filter: blur(4px); }
-.capsule-item { height: 64rpx; padding: 0 16rpx; display: flex; align-items: center; justify-content: center; }
-.capsule-divider { width: 2rpx; height: 36rpx; background: rgba(255,255,255,0.2); }
-.dot { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%; margin: 0 4rpx; }
-.minus { width: 20rpx; height: 4rpx; background: #fff; border-radius: 4rpx; }
-.ring { width: 28rpx; height: 28rpx; border-radius: 50%; border: 4rpx solid #fff; display: flex; align-items: center; justify-content: center; }
-.ring-inner { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%; }
 
 .content {
   height: auto;
@@ -272,7 +234,7 @@ export default {
 
 /* 内容包装器：不再额外添加 padding，避免双重留白 */
 .content-wrapper {
-  padding: 30rpx 20rpx 30rpx 30rpx; 
+  padding: 30rpx; 
   box-sizing: border-box;
   width: 100%;
 }

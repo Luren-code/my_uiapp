@@ -6,25 +6,6 @@
         <text class="back-icon">‹</text>
       </view>
       <text class="header-title">递交趋势</text>
-      <view class="header-right">
-        <view class="capsule" @click="onCapsuleTap">
-          <view class="capsule-item">
-            <view class="dot"></view>
-            <view class="dot"></view>
-            <view class="dot"></view>
-          </view>
-          <view class="capsule-divider"></view>
-          <view class="capsule-item">
-            <view class="minus"></view>
-          </view>
-          <view class="capsule-divider"></view>
-          <view class="capsule-item">
-            <view class="ring">
-              <view class="ring-inner"></view>
-            </view>
-          </view>
-        </view>
-      </view>
     </view>
 
     <!-- 内容区域：取消滚动条，统一留白 -->
@@ -125,17 +106,6 @@ export default {
       uni.navigateBack();
     },
     
-    onCapsuleTap() {
-      uni.showActionSheet({
-        itemList: ['分享', '收藏', '反馈'],
-        success: (res) => {
-          const index = res.tapIndex
-          if (index === 0) uni.showToast({ title: '点击了分享', icon: 'none' })
-          if (index === 1) uni.showToast({ title: '已收藏', icon: 'success' })
-          if (index === 2) uni.showToast({ title: '感谢反馈', icon: 'none' })
-        }
-      })
-    },
     
 
   }
@@ -167,21 +137,29 @@ export default {
 
 .header {
   background: #4A90E2;
-  padding: 38rpx 0 10rpx 0;
+  padding: 80rpx 0 30rpx 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   flex-shrink: 0;
+  position: relative;
 }
 
 .header-left {
-  width: 65rpx;
-  padding-left: 20rpx;
+  position: absolute;
+  left: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
 }
 
 .back-icon {
   color: white;
-  font-size: 48rpx;
+  font-size: 40rpx;
   font-weight: bold;
 }
 
@@ -198,14 +176,6 @@ export default {
   justify-content: flex-end;
 }
 
-/* 微信小程序胶囊按钮样式 */
-.capsule { height: 45rpx; background: rgba(0,0,0,0.25); border-radius: 999rpx; display: flex; align-items: center; padding: 0 10rpx; backdrop-filter: blur(4px); }
-.capsule-item { height: 64rpx; padding: 0 16rpx; display: flex; align-items: center; justify-content: center; }
-.capsule-divider { width: 2rpx; height: 36rpx; background: rgba(255,255,255,0.2); }
-.dot { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%; margin: 0 4rpx; }
-.minus { width: 20rpx; height: 4rpx; background: #fff; border-radius: 4rpx; }
-.ring { width: 28rpx; height: 28rpx; border-radius: 50%; border: 4rpx solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.ring-inner { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%; }
 
 .content {
   flex: 1;
