@@ -3,23 +3,6 @@
     <!-- 顶部导航 -->
     <view class="header">
       <text class="header-title">EOI资源</text>
-      <view class="header-right">
-        <view class="capsule" @click="onCapsuleTap">
-          <view class="capsule-item">
-            <view class="dot"></view>
-            <view class="dot"></view>
-            <view class="dot"></view>
-          </view>
-          <view class="capsule-divider"></view>
-          <view class="capsule-item">
-            <view class="minus"></view>
-          </view>
-          <view class="capsule-divider"></view>
-          <view class="capsule-item">
-            <view class="ring"><view class="ring-inner"></view></view>
-          </view>
-        </view>
-      </view>
     </view>
 
     <!-- 内容 -->
@@ -80,15 +63,6 @@
 <script>
 export default {
   methods: {
-    onCapsuleTap() {
-      uni.showActionSheet({
-        itemList: ['反馈', '分享'],
-        success: (res) => {
-          if (res.tapIndex === 0) uni.showToast({ title: '感谢反馈', icon: 'none' })
-          if (res.tapIndex === 1) uni.showToast({ title: '已分享', icon: 'success' })
-        }
-      })
-    },
     goCalculator() {
       uni.navigateTo({ url: '/pages/index/EOI-calculator/calculator' })
     },
@@ -114,16 +88,8 @@ export default {
 <style scoped>
 .container { height: 100vh; overflow: hidden; background: #F8F8F8; }
 
-.header { background: #4A90E2; padding: 38rpx 20rpx 10rpx 20rpx; position: relative; text-align: center; }
+.header { background: #4A90E2; padding: 80rpx 0 30rpx 0; position: relative; text-align: center; }
 .header-title { color: #fff; font-size: 36rpx; font-weight: 600; }
-.header-right { position: absolute; right: 20rpx; top: 32rpx; }
-.capsule { height: 45rpx; background: rgba(255,255,255,0.25); border-radius: 999rpx; display: flex; align-items: center; padding: 0 10rpx; backdrop-filter: blur(4px); }
-.capsule-item { height: 64rpx; padding: 0 16rpx; display: flex; align-items: center; justify-content: center; }
-.capsule-divider { width: 2rpx; height: 36rpx; background: rgba(255,255,255,0.35); }
-.dot { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%; margin: 0 4rpx; }
-.minus { width: 20rpx; height: 4rpx; background: #fff; border-radius: 4rpx; }
-.ring { width: 28rpx; height: 28rpx; border: 4rpx solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.ring-inner { width: 8rpx; height: 8rpx; background: #fff; border-radius: 50%; }
 
 .grid { padding: 80rpx 40rpx 160rpx 40rpx; display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 44rpx 40rpx; }
 .card { border-radius: 24rpx; padding: 50rpx 20rpx; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08); }

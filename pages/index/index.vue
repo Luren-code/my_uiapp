@@ -116,7 +116,7 @@ export default {
             this.showCursor = false;
           }, 2000);
         }
-      }, 80);
+      }, 100);
     },
     
     // 快速入口跳转
@@ -190,7 +190,7 @@ export default {
 
 .header {
   background: #4A90E2;
-  padding: 38rpx 0 10rpx 0;
+  padding: 80rpx 0 30rpx 0;
   text-align: center;
   flex-shrink: 0;
 }
