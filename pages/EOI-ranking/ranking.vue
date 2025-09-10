@@ -129,7 +129,9 @@ export default {
 .icon.aus::after { content: '🇦🇺'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
 .icon.states::after { content: '🗺️'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
 .icon.trend::after { content: '📈'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
-.icon.quota::after { content: '🧾'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
+.icon.quota::after { 
+  content: '🧾'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; 
+}
 .card-text { font-size: 30rpx; color: #2f4b73; font-weight: 600; margin-top: 6rpx; }
 
 .explain { width: 300rpx; max-width: calc(100% - 80rpx); margin: 10rpx auto 140rpx; background: #e3f0ff; border-radius: 24rpx; padding: 30rpx 24rpx; display: flex; align-items: center; justify-content: center; gap: 14rpx; color: #2f4b73; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08); }
