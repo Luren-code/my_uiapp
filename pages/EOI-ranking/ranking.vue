@@ -115,7 +115,7 @@ export default {
 <style scoped>
 .container { height: 100vh; overflow: hidden; background: #F8F8F8; }
 
-.header { background: #4A90E2; padding: 80rpx 0 30rpx 0; position: relative; text-align: center; }
+.header { background: #4A90E2; padding: 95rpx 0 30rpx 0; position: sticky; top: 0; z-index: 1001; text-align: center; }
 .header-title { color: #fff; font-size: 36rpx; font-weight: 500; }
 
 .countdown { display: flex; flex-direction: column; align-items: center; padding: 40rpx 0 20rpx 0; }

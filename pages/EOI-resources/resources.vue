@@ -89,7 +89,7 @@ export default {
 <style scoped>
 .container { height: 100vh; overflow: hidden; background: #F8F8F8; }
 
-.header { background: #4A90E2; padding: 80rpx 0 30rpx 0; position: relative; text-align: center; }
+.header { background: #4A90E2; padding: 95rpx 0 30rpx 0; position: sticky; top: 0; z-index: 1001; text-align: center; }
 .header-title { color: #fff; font-size: 36rpx; font-weight: 600; }
 
 .grid { padding: 80rpx 40rpx 160rpx 40rpx; display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 44rpx 40rpx; }
