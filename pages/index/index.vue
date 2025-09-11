@@ -190,9 +190,11 @@ export default {
 
 .header {
   background: #4A90E2;
-  padding: 80rpx 0 30rpx 0;
+  padding: 95rpx 0 30rpx 0;
   text-align: center;
-  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
 }
 
 .header-title {

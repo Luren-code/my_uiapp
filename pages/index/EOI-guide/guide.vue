@@ -199,21 +199,22 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 80rpx 0 30rpx 0;
+  padding: 95rpx 0 30rpx 0;
   color: white;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
 }
 
 .header-left {
   position: absolute;
   left: 30rpx;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 100rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 60rpx;
-  height: 60rpx;
+  height: 30rpx;
 }
 
 .back-icon {

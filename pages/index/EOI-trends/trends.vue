@@ -3,7 +3,7 @@
     <!-- 顶部导航 -->
     <view class="header">
       <view class="header-left" @click="goBack">
-        <text class="back-icon">‹</text>
+        <text class="back-icon">﹤</text>
       </view>
       <text class="header-title">递交趋势</text>
     </view>
@@ -137,42 +137,41 @@ export default {
 
 .header {
   background: #4A90E2;
-  padding: 80rpx 0 30rpx 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  position: relative;
+  padding: 95rpx 0 30rpx 0;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
 }
 
 .header-left {
   position: absolute;
   left: 30rpx;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 100rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 60rpx;
-  height: 60rpx;
+  height: 30rpx;
 }
 
 .back-icon {
-  color: white;
   font-size: 40rpx;
-  font-weight: bold;
+  color: white;
 }
 
 .header-title {
-  color: white;
   font-size: 30rpx;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 .header-right {
-  width: 120rpx;
   display: flex;
   gap: 20rpx;
+  width: 120rpx;
   justify-content: flex-end;
 }
 
