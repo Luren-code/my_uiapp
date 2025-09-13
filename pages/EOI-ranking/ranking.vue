@@ -115,7 +115,7 @@ export default {
 <style scoped>
 .container { height: 100vh; overflow: hidden; background: #F8F8F8; }
 
-.header { background: #4A90E2; padding: 80rpx 0 30rpx 0; position: relative; text-align: center; }
+.header { background: #4A90E2; padding: 95rpx 0 30rpx 0; position: sticky; top: 0; z-index: 1001; text-align: center; }
 .header-title { color: #fff; font-size: 36rpx; font-weight: 500; }
 
 .countdown { display: flex; flex-direction: column; align-items: center; padding: 40rpx 0 20rpx 0; }
@@ -129,7 +129,9 @@ export default {
 .icon.aus::after { content: '🇦🇺'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
 .icon.states::after { content: '🗺️'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
 .icon.trend::after { content: '📈'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
-.icon.quota::after { content: '🧾'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; }
+.icon.quota::after { 
+  content: '🧾'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 44rpx; 
+}
 .card-text { font-size: 30rpx; color: #2f4b73; font-weight: 600; margin-top: 6rpx; }
 
 .explain { width: 300rpx; max-width: calc(100% - 80rpx); margin: 10rpx auto 140rpx; background: #e3f0ff; border-radius: 24rpx; padding: 30rpx 24rpx; display: flex; align-items: center; justify-content: center; gap: 14rpx; color: #2f4b73; box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08); }
