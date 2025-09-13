@@ -41,6 +41,20 @@
         "navigationStyle": "custom",
         "navigationBarTitleText": "递交趋势"
       }
+    },
+    {
+      "path": "pages/landing-center/landing-center",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "上岸中心"
+      }
+    },
+    {
+      "path": "pages/occupation-detail/detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "职业详情"
+      }
     }
   ],
   "globalStyle": {
