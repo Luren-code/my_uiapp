@@ -2,7 +2,7 @@
   <view class="container">
     <!-- 顶部标题栏 -->
     <view class="header">
-      <text class="header-title">EOI职业2</text>
+      <text class="header-title">EOI职业</text>
     </view>
 
     <!-- 内容区域 -->
@@ -37,21 +37,10 @@
         />
       </view>
 
-      <!-- 数据状态显示 -->
-      <view class="data-status" v-if="showDataStatus">
-        <view class="status-header">
-          <text class="status-title">Data Status</text>
-          <text class="refresh-btn" @click="refreshOfficialData">🔄</text>
-        </view>
-        <view class="status-info">
-          <text class="status-text">{{ dataStatusText }}</text>
-          <text class="status-detail">{{ dataStatusDetail }}</text>
-        </view>
-      </view>
 
       <!-- 快速入口 - 添加动画类 -->
       <view class="quick-access" :class="{ 'slide-in': showQuickAccess }">
-        <text class="quick-title">- Quick Access -</text>
+        <text class="quick-title">- 快速入口 -</text>
         <view class="quick-buttons">
 		  <!-- 注意：每个按钮都需要完整的标签闭合 -->
 		  <text class="quick-btn" @click="navigateToGuide">新手入门</text>
@@ -92,7 +81,6 @@
 
 <script>
 import SearchResults from '../../components/SearchResults.vue';
-import dataInitializer from '../../utils/data-initializer.js';
 
 export default {
   components: {
@@ -110,21 +98,16 @@ export default {
       hasPlayedAnimation: false, // 记录是否已播放过动画
       searchKeyword: '',        // 搜索关键词
       showSearchResults: false, // 控制搜索结果显示
-      searchTimeout: null,      // 搜索防抖定时器
-      showDataStatus: false,    // 控制数据状态显示
-      dataStatusText: '',       // 数据状态文本
-      dataStatusDetail: ''      // 数据状态详情
+      searchTimeout: null       // 搜索防抖定时器
     }
   },
   
   onLoad() {
     this.checkAndPlayAnimation();
-    this.checkDataStatus();
   },
 
   onShow() {
-    // 每次显示页面时检查数据状态
-    this.checkDataStatus();
+    // 页面显示时的处理
   },
   
   onUnload() {
@@ -259,7 +242,6 @@ export default {
     // 搜索相关方法
     onSearchInput(e) {
       this.searchKeyword = e.detail.value;
-      console.log('搜索输入:', this.searchKeyword);
       
       // 防抖处理
       if (this.searchTimeout) {
@@ -270,10 +252,8 @@ export default {
         // 实时搜索逻辑 - 当有搜索内容时自动显示结果
         if (this.searchKeyword && this.searchKeyword.trim()) {
           this.showSearchResults = true;
-          console.log('显示搜索结果:', this.showSearchResults);
         } else {
           this.showSearchResults = false;
-          console.log('隐藏搜索结果');
         }
       }, 300);
     },
@@ -309,7 +289,7 @@ export default {
         fail: (err) => {
           console.error('跳转失败:', err);
           uni.showToast({
-            title: 'Navigation failed',
+            title: '页面跳转失败',
             icon: 'none'
           });
         }
@@ -320,64 +300,7 @@ export default {
       this.searchKeyword = keyword;
     },
 
-    // 数据状态相关方法
-    checkDataStatus() {
-      try {
-        const status = dataInitializer.getDataStatus();
-        
-        if (status.isInitialized && status.hasCachedData) {
-          this.dataStatusText = `✅ Official Data (${status.recordCount} occupations)`;
-          this.dataStatusDetail = `Last updated: ${new Date(status.lastUpdated).toLocaleDateString()}`;
-          this.showDataStatus = true;
-        } else if (status.hasCachedData) {
-          this.dataStatusText = `📦 Cached Data (${status.recordCount} occupations)`;
-          this.dataStatusDetail = `Source: ${status.source}`;
-          this.showDataStatus = true;
-        } else {
-          this.dataStatusText = '⚠️ Using Local Backup Data';
-          this.dataStatusDetail = 'Tap refresh to load official data';
-          this.showDataStatus = true;
-        }
-        
-        // 3秒后自动隐藏状态
-        setTimeout(() => {
-          this.showDataStatus = false;
-        }, 3000);
-      } catch (error) {
-        console.error('检查数据状态失败:', error);
-      }
-    },
 
-    async refreshOfficialData() {
-      try {
-        uni.showLoading({
-          title: 'Refreshing data...'
-        });
-
-        const success = await dataInitializer.refreshData();
-        
-        if (success) {
-          this.checkDataStatus();
-          uni.showToast({
-            title: 'Data updated successfully',
-            icon: 'success'
-          });
-        } else {
-          uni.showToast({
-            title: 'Update failed, using cached data',
-            icon: 'none'
-          });
-        }
-      } catch (error) {
-        console.error('刷新数据失败:', error);
-        uni.showToast({
-          title: 'Refresh failed',
-          icon: 'none'
-        });
-      } finally {
-        uni.hideLoading();
-      }
-    }
   }
 }
 </script>
@@ -488,68 +411,6 @@ export default {
   line-height: 1;
 }
 
-/* 数据状态样式 */
-.data-status {
-  background: rgba(74, 144, 226, 0.1);
-  border: 1rpx solid #4A90E2;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  margin-bottom: 30rpx;
-  animation: slideDown 0.5s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20rpx);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.status-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12rpx;
-}
-
-.status-title {
-  font-size: 26rpx;
-  font-weight: bold;
-  color: #4A90E2;
-}
-
-.refresh-btn {
-  font-size: 32rpx;
-  padding: 8rpx;
-  color: #4A90E2;
-  animation: rotate 2s linear infinite;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.status-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4rpx;
-}
-
-.status-text {
-  font-size: 24rpx;
-  color: #333;
-  font-weight: 500;
-}
-
-.status-detail {
-  font-size: 20rpx;
-  color: #666;
-}
 
 /* 快速入口动画样式 */
 .quick-access {

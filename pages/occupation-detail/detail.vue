@@ -5,7 +5,7 @@
       <view class="header-left" @click="goBack">
         <text class="back-icon">﹤</text>
       </view>
-      <text class="header-title">Occupation Details</text>
+      <text class="header-title">职业详情</text>
     </view>
 
     <!-- 主要内容区域 -->
@@ -19,7 +19,7 @@
         <text class="occupation-english">{{ occupation.englishName }}</text>
         <text class="occupation-chinese">{{ occupation.chineseName }}</text>
         <view class="popularity-badge" v-if="occupation.isPopular">
-          <text class="badge-text">热门职业</text>
+          <text class="badge-text">热门</text>
         </view>
       </view>
 
@@ -82,14 +82,14 @@
 
         <!-- 相关链接 -->
         <view class="info-section">
-          <text class="section-title">Useful Links</text>
+          <text class="section-title">相关链接</text>
           <view class="link-list">
             <view class="link-item" @click="openExternalLink('skillselect')">
-              <text class="link-text">SkillSelect Official Website</text>
+              <text class="link-text">SkillSelect官方网站</text>
               <text class="link-arrow">›</text>
             </view>
             <view class="link-item" @click="openExternalLink('assessment')">
-              <text class="link-text">Skills Assessment Information</text>
+              <text class="link-text">技能评估信息</text>
               <text class="link-arrow">›</text>
             </view>
           </view>
@@ -99,10 +99,10 @@
       <!-- 操作按钮 -->
       <view class="action-buttons">
         <button class="action-btn primary" @click="addToFavorites">
-          Add to Favorites
+          添加收藏
         </button>
         <button class="action-btn secondary" @click="shareOccupation">
-          Share
+          分享
         </button>
       </view>
     </view>
@@ -166,7 +166,7 @@ export default {
     addToFavorites() {
       // 添加到收藏夹逻辑
       uni.showToast({
-        title: 'Added to favorites',
+        title: '已添加到收藏',
         icon: 'success'
       });
     },
@@ -180,13 +180,13 @@ export default {
         summary: this.occupation.chineseName,
         success: function () {
           uni.showToast({
-            title: 'Shared successfully',
+            title: '分享成功',
             icon: 'success'
           });
         },
         fail: function () {
           uni.showToast({
-            title: 'Share failed',
+            title: '分享失败',
             icon: 'none'
           });
         }
@@ -211,8 +211,8 @@ export default {
 
         // #ifndef H5
         uni.showModal({
-          title: 'External Link',
-          content: `Open ${url} in browser?`,
+          title: '外部链接',
+          content: `在浏览器中打开 ${url}？`,
           success: function (res) {
             if (res.confirm) {
               plus.runtime.openURL(url);

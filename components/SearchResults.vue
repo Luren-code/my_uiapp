@@ -3,8 +3,8 @@
   <view class="search-results-container" v-if="showResults">
     <!-- 搜索结果标题 -->
     <view class="results-header" v-if="searchResults.length > 0">
-      <text class="results-title">Search Results</text>
-      <text class="results-count">{{ searchResults.length }} occupations found</text>
+      <text class="results-title">搜索结果</text>
+      <text class="results-count">找到 {{ searchResults.length }} 个职业</text>
     </view>
     
     <!-- 搜索结果列表 -->
@@ -25,15 +25,15 @@
     
     <!-- 无搜索结果 -->
     <view class="no-results" v-else-if="hasSearched">
-      <text class="no-results-text">No matching occupations found</text>
-      <text class="no-results-tip">Try searching with occupation code or keywords</text>
+      <text class="no-results-text">未找到匹配的职业</text>
+      <text class="no-results-tip">请尝试使用职业代码或关键词搜索</text>
     </view>
     
     <!-- 搜索历史 -->
     <view class="search-history" v-if="showHistory && searchHistory.length > 0">
       <view class="history-header">
-        <text class="history-title">Recent Searches</text>
-        <text class="clear-history" @click="clearHistory">Clear</text>
+        <text class="history-title">最近搜索</text>
+        <text class="clear-history" @click="clearHistory">清除</text>
       </view>
       <view class="history-list">
         <view 
@@ -112,7 +112,6 @@ export default {
       try {
         // 调用搜索函数
         this.searchResults = searchOccupations(keyword);
-        console.log(`搜索"${keyword}"找到${this.searchResults.length}个结果:`, this.searchResults);
       } catch (error) {
         console.error('搜索失败:', error);
         this.searchResults = [];
@@ -128,7 +127,7 @@ export default {
       
       // 显示选择提示
       uni.showToast({
-        title: `Selected: ${occupation.code}`,
+        title: `已选择: ${occupation.code}`,
         icon: 'success',
         duration: 2000
       });
@@ -149,14 +148,14 @@ export default {
     
     clearHistory() {
       uni.showModal({
-        title: 'Clear Search History',
-        content: 'Are you sure you want to clear all search history?',
+        title: '清除搜索历史',
+        content: '确定要清除所有搜索历史记录吗？',
         success: (res) => {
           if (res.confirm) {
             searchHistoryUtil.clearSearchHistory();
             this.loadSearchHistory();
             uni.showToast({
-              title: 'History cleared',
+              title: '历史记录已清除',
               icon: 'success'
             });
           }
