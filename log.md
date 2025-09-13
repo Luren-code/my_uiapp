@@ -102,6 +102,22 @@
     - 调整属性顺序与 calculator.vue 保持一致
 - **效果**：所有带返回按钮的页面现在具有统一的导航栏样式
 
+### 2025年9月11日 - 导航栏固定定位和样式优化
+- **主要功能**：导航栏固定定位和样式统一优化
+- **技术实现**：
+  - 将所有页面的顶部导航栏设置为 `sticky` 定位，页面滚动时保持在顶部
+  - 统一调整返回图标与标题的垂直对齐
+  - 统一所有页面的导航栏样式，确保视觉一致性
+  - 修复页面空白问题，优化用户体验
+- **涉及页面**：
+  - `pages/index/EOI-calculator/calculator.vue` - 导航栏定位优化
+  - `pages/index/index.vue` - 首页导航栏优化
+  - `pages/EOI-ranking/ranking.vue` - 排名页面导航栏优化
+  - `pages/EOI-resources/resources.vue` - 资源页面导航栏优化
+  - `pages/index/EOI-guide/guide.vue` - 指南页面导航栏优化
+  - `pages/index/EOI-trends/trends.vue` - 趋势页面导航栏优化
+- **效果**：所有页面现在都有统一的固定导航栏，提升用户体验
+
 ---
 
 ## 提交记录
