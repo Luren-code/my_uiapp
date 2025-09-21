@@ -32,11 +32,11 @@
         </view>
         <view class="table-row">
           <text class="table-label">支持签证:</text>
-          <text class="table-value">{{ (occupation.visaSubclasses || []).join('/') }}</text>
+          <text class="table-value">{{ getSupportedVisas(occupation) }}</text>
         </view>
         <view class="table-row">
           <text class="table-label">职业评估机构:</text>
-          <text class="table-value">{{ occupation.assessmentAuthority || 'N/A' }}</text>
+          <text class="table-value">{{ getAssessmentAuthority(occupation) }}</text>
         </view>
         <view class="table-row">
           <text class="table-label">所属列表:</text>
@@ -44,7 +44,7 @@
         </view>
         <view class="table-row">
           <text class="table-label">技能等级:</text>
-          <text class="table-value">{{ occupation.skillLevel || 'N/A' }}</text>
+          <text class="table-value">{{ getSkillLevel(occupation) }}</text>
         </view>
         <view class="table-row" v-if="occupation.averageSalary">
           <text class="table-label">平均薪资:</text>
@@ -160,7 +160,57 @@ export default {
       if (occupation.mltssl) lists.push('MLTSSL');
       if (occupation.stsol) lists.push('STSOL');
       if (occupation.rol) lists.push('ROL');
-      return lists.length > 0 ? lists.join(', ') : 'N/A';
+      return lists.length > 0 ? lists.join(', ') : '待确认';
+    },
+
+    getAssessmentAuthority(occupation) {
+      if (occupation.assessmentAuthority) {
+        return occupation.assessmentAuthority;
+      }
+      
+      // 根据职业类别提供默认评估机构
+      const categoryMap = {
+        'ICT': 'ACS',
+        'Engineering': 'Engineers Australia',
+        'Healthcare': 'ANMAC',
+        'Management': 'VETASSESS',
+        'Finance': 'CPA Australia',
+        'Education': 'AITSL',
+        'Social Work': 'AASW',
+        'Agriculture': 'VETASSESS'
+      };
+      
+      return categoryMap[occupation.category] || 'VETASSESS';
+    },
+
+    getSkillLevel(occupation) {
+      if (occupation.skillLevel) {
+        return `Level ${occupation.skillLevel}`;
+      }
+      
+      // 根据职业类别提供默认技能等级
+      const categoryLevelMap = {
+        'ICT': 1,
+        'Engineering': 1,
+        'Healthcare': 1,
+        'Management': 1,
+        'Finance': 1,
+        'Education': 1,
+        'Social Work': 1,
+        'Agriculture': 1
+      };
+      
+      const defaultLevel = categoryLevelMap[occupation.category] || 1;
+      return `Level ${defaultLevel}`;
+    },
+
+    getSupportedVisas(occupation) {
+      if (occupation.visaSubclasses && occupation.visaSubclasses.length > 0) {
+        return occupation.visaSubclasses.join(' / ');
+      }
+      
+      // 提供默认的常见签证类型
+      return '189 / 190 / 491';
     },
 
     addToFavorites() {
@@ -172,7 +222,37 @@ export default {
     },
 
     shareOccupation() {
-      // 分享功能
+      // 分享功能 - 兼容不同平台
+      const shareContent = `${this.occupation.code} - ${this.occupation.englishName}\n${this.occupation.chineseName}`;
+      
+      // #ifdef H5
+      // H5环境使用剪贴板分享
+      uni.setClipboardData({
+        data: shareContent,
+        success: () => {
+          uni.showToast({
+            title: '内容已复制到剪贴板',
+            icon: 'success'
+          });
+        }
+      });
+      // #endif
+      
+      // #ifdef MP-WEIXIN
+      // 微信小程序使用剪贴板
+      uni.setClipboardData({
+        data: shareContent,
+        success: () => {
+          uni.showToast({
+            title: '内容已复制，可分享给好友',
+            icon: 'success'
+          });
+        }
+      });
+      // #endif
+      
+      // #ifdef APP-PLUS
+      // App环境使用原生分享
       uni.share({
         provider: 'weixin',
         type: 0,
@@ -191,6 +271,7 @@ export default {
           });
         }
       });
+      // #endif
     },
 
     openExternalLink(type) {
@@ -215,7 +296,21 @@ export default {
           content: `在浏览器中打开 ${url}？`,
           success: function (res) {
             if (res.confirm) {
+              // #ifdef APP-PLUS
               plus.runtime.openURL(url);
+              // #endif
+              
+              // #ifdef MP-WEIXIN
+              uni.setClipboardData({
+                data: url,
+                success: function () {
+                  uni.showToast({
+                    title: '链接已复制到剪贴板',
+                    icon: 'success'
+                  });
+                }
+              });
+              // #endif
             }
           }
         });

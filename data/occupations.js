@@ -40,7 +40,30 @@ export const occupationsData = [
     englishName: 'Developer Programmer',
     chineseName: '开发程序员',
     category: 'ICT',
-    isPopular: true
+    isPopular: true,
+    anzscoCode: '261312',
+    skillLevel: 1,
+    visaSubclasses: ['189', '190', '491'],
+    assessmentAuthority: 'ACS',
+    mltssl: true,
+    stsol: false,
+    rol: false,
+    description: '开发、编写、测试和维护计算机程序。分析用户需求，编写程序规格，设计程序逻辑。',
+    tasks: [
+      '分析用户需求并编写程序规格',
+      '设计程序逻辑和结构',
+      '编写、测试和调试程序代码',
+      '修改现有程序以纠正错误',
+      '编写和维护程序文档',
+      '参与程序设计审查'
+    ],
+    requirements: [
+      '通常需要信息技术、计算机科学或相关领域的学士学位',
+      '可能需要相关工作经验',
+      '可能需要供应商认证'
+    ],
+    relatedOccupations: ['261313', '261311', '261314'],
+    averageSalary: 'AU$70,000 - AU$115,000'
   },
   {
     code: '263111',
@@ -78,7 +101,30 @@ export const occupationsData = [
     englishName: 'Analyst Programmer',
     chineseName: '分析程序员',
     category: 'ICT',
-    isPopular: true
+    isPopular: true,
+    anzscoCode: '261311',
+    skillLevel: 1,
+    visaSubclasses: ['189', '190', '491'],
+    assessmentAuthority: 'ACS',
+    mltssl: true,
+    stsol: false,
+    rol: false,
+    description: '分析用户需求，设计和开发应用程序，编写和测试程序代码，维护现有系统。',
+    tasks: [
+      '分析用户需求并制定系统规格',
+      '设计程序结构和用户界面',
+      '编写、测试和调试程序代码',
+      '集成程序组件和第三方软件',
+      '维护和升级现有应用程序',
+      '编写技术文档和用户手册'
+    ],
+    requirements: [
+      '通常需要信息技术、计算机科学或相关领域的学士学位',
+      '可能需要相关工作经验',
+      '可能需要供应商认证'
+    ],
+    relatedOccupations: ['261312', '261313', '261314'],
+    averageSalary: 'AU$70,000 - AU$110,000'
   },
   {
     code: '262112',
@@ -205,7 +251,31 @@ export const occupationsData = [
     englishName: 'Accountant (General)',
     chineseName: '会计师(一般)',
     category: 'Finance',
-    isPopular: true
+    isPopular: true,
+    anzscoCode: '221111',
+    skillLevel: 1,
+    visaSubclasses: ['189', '190', '491'],
+    assessmentAuthority: 'CPA Australia',
+    mltssl: true,
+    stsol: false,
+    rol: false,
+    description: '编制和维护财务记录，编制财务报表，提供财务建议和税务服务。',
+    tasks: [
+      '编制和维护准确的财务记录',
+      '编制财务报表和预算',
+      '分析财务数据并提供建议',
+      '确保遵守税务法规和会计准则',
+      '协助审计和财务检查',
+      '提供税务筹划和咨询服务'
+    ],
+    requirements: [
+      '通常需要会计、商务或相关领域的学士学位',
+      '需要完成CPA或CA认证',
+      '可能需要相关工作经验',
+      '需要持续专业发展'
+    ],
+    relatedOccupations: ['221112', '221113', '221214'],
+    averageSalary: 'AU$60,000 - AU$90,000'
   },
   {
     code: '221112',
@@ -249,7 +319,31 @@ export const occupationsData = [
     englishName: 'Secondary School Teacher',
     chineseName: '中学教师',
     category: 'Education',
-    isPopular: true
+    isPopular: true,
+    anzscoCode: '241411',
+    skillLevel: 1,
+    visaSubclasses: ['189', '190', '491'],
+    assessmentAuthority: 'AITSL',
+    mltssl: true,
+    stsol: false,
+    rol: false,
+    description: '在中学教授一门或多门学科。规划、准备和实施教学计划，评估学生进步并维护纪律。',
+    tasks: [
+      '制定和实施适合学生需求的教学计划',
+      '准备和提供教学材料和演示',
+      '评估和记录学生的进步和行为',
+      '维护课堂纪律和学生安全',
+      '与家长、学校管理层和其他教师沟通',
+      '参与学校活动和专业发展'
+    ],
+    requirements: [
+      '通常需要教育学学士学位，专业领域的学士学位',
+      '需要完成教师培训课程',
+      '需要获得教师注册',
+      '可能需要相关工作经验'
+    ],
+    relatedOccupations: ['241213', '241111', '249111'],
+    averageSalary: 'AU$65,000 - AU$95,000'
   },
 
   // 社工类职业
@@ -266,6 +360,99 @@ export const occupationsData = [
     chineseName: '福利工作者',
     category: 'Social Work',
     isPopular: false
+  },
+
+  // 农业和林业类职业 - 官方ANZSCO数据
+  {
+    code: '234113',
+    englishName: 'Forester / Forest Scientist',
+    chineseName: '林业员/森林科学家',
+    category: 'Agriculture',
+    isPopular: true,
+    anzscoCode: '234113',
+    skillLevel: 1,
+    visaSubclasses: ['189', '190', '491'],
+    assessmentAuthority: 'VETASSESS',
+    mltssl: true,
+    stsol: false,
+    rol: false,
+    description: '研究、开发和管理森林资源，以维持商业和环境用途，保护植物和动物栖息地，并防范火灾、病虫害。',
+    tasks: [
+      '收集和分析森林、土壤、土地和其他影响森林生产的因素的数据',
+      '为各种目的制定森林管理提供操作和管理方案的技术建议，以及森林生态系统的技术建议',
+      '准备森林管理计划，营销计划和报告，土地改良、动物四种和栖息地管理制订计划',
+      '研究各种植物业的疾病和害虫方法，土地恢复、动物栖息地和栖息地管理的建议',
+      '研究森林的生长、产量、收获和管理，并就种植、栽培、收获和营销给出建议',
+      '研究森林作为天然资源对生态环境的影响，并研究和实施环境保护的方法',
+      '研究森林防火技术，土壤、林业和植物的疾病和害虫防治方法',
+      '为林业技术人员提供指导，并可能指导技术人员和其他工作人员的工作'
+    ],
+    requirements: [
+      '通常需要林业、森林科学或相关领域的学士学位',
+      '可能需要相关工作经验',
+      '可能需要相关专业注册或许可',
+      '可能需要完成VETASSESS技能评估'
+    ],
+    relatedOccupations: ['234111', '234112', '234114'],
+    averageSalary: 'AU$65,000 - AU$95,000',
+    unitGroup: 'Agricultural and Forestry Scientists',
+    employmentOutlook: 'Stable'
+  },
+  {
+    code: '234111',
+    englishName: 'Agricultural Consultant',
+    chineseName: '农业顾问',
+    category: 'Agriculture',
+    isPopular: false,
+    anzscoCode: '234111',
+    skillLevel: 1,
+    visaSubclasses: ['189', '190', '491'],
+    assessmentAuthority: 'VETASSESS',
+    mltssl: false,
+    stsol: true,
+    rol: false,
+    description: '向农民、农业企业和政府提供农业生产、管理和营销方面的建议和技术支持。',
+    tasks: [
+      '收集和分析农作物、牲畜和土地管理数据',
+      '提供农业生产技术建议和指导',
+      '协助制定农场管理和营销计划',
+      '研究和推广新的农业技术和方法'
+    ],
+    requirements: [
+      '通常需要农业科学或相关领域的学士学位',
+      '可能需要相关工作经验',
+      '需要通过VETASSESS技能评估'
+    ],
+    relatedOccupations: ['234112', '234113', '234114'],
+    averageSalary: 'AU$60,000 - AU$85,000'
+  },
+  {
+    code: '234112',
+    englishName: 'Agricultural Scientist',
+    chineseName: '农业科学家',
+    category: 'Agriculture',
+    isPopular: false,
+    anzscoCode: '234112',
+    skillLevel: 1,
+    visaSubclasses: ['189', '190', '491'],
+    assessmentAuthority: 'VETASSESS',
+    mltssl: false,
+    stsol: true,
+    rol: false,
+    description: '研究商业植物、动物和栽培技术，以提高农业生产的效率和可持续性。',
+    tasks: [
+      '研究农作物和牲畜的改良方法',
+      '开发新的农业生产技术',
+      '分析土壤和气候条件对农业的影响',
+      '研究病虫害防治方法'
+    ],
+    requirements: [
+      '通常需要农业科学或相关领域的学士学位',
+      '可能需要研究生学历',
+      '需要通过VETASSESS技能评估'
+    ],
+    relatedOccupations: ['234111', '234113', '234114'],
+    averageSalary: 'AU$70,000 - AU$100,000'
   }
 ];
 

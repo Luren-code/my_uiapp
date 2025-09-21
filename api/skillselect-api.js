@@ -6,6 +6,7 @@ const API_CONFIG = {
   SKILLSELECT_EOI: 'https://api.dynamic.reports.employment.gov.au/anonap/extensions/hSKLS02_SkillSelect_EOI_Data/hSKLS02_SkillSelect_EOI_Data.html',
   // 澳洲政府开放数据平台
   DATA_GOV_AU: 'https://data.gov.au/api/3/action/',
+  
   // 澳洲统计局ANZSCO数据
   ABS_ANZSCO: 'https://www.abs.gov.au/statistics/classifications/anzsco-australian-and-new-zealand-standard-classification-occupations',
   // 移民局职业列表
