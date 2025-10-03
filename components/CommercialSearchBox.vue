@@ -41,265 +41,95 @@
           >
             <text>✕</text>
           </view>
-          
-          <!-- 语音搜索按钮 -->
-          <view class="voice-btn" @click="startVoiceSearch">
-            <text>🎤</text>
-          </view>
-          
-          <!-- 高级搜索按钮 -->
-          <view class="advanced-btn" @click="toggleAdvancedSearch">
-            <text>⚙️</text>
-          </view>
         </view>
-      </view>
-
-      <!-- 高级搜索选项 -->
-      <view v-if="showAdvancedSearch" class="advanced-search-panel">
-        <view class="advanced-option">
-          <text class="option-label">Category:</text>
-          <picker 
-            :value="selectedCategoryIndex"
-            :range="categoryOptions"
-            @change="onCategoryChange"
-          >
-            <view class="picker-text">{{ selectedCategory || 'All Categories' }}</view>
-          </picker>
-        </view>
-        
-        <view class="advanced-option">
-          <text class="option-label">Visa Type:</text>
-          <picker 
-            :value="selectedVisaIndex"
-            :range="visaOptions"
-            @change="onVisaChange"
-          >
-            <view class="picker-text">{{ selectedVisa || 'All Visas' }}</view>
-          </picker>
-        </view>
-        
-        <view class="advanced-option">
-          <text class="option-label">Skill Level:</text>
-          <picker 
-            :value="selectedSkillLevelIndex"
-            :range="skillLevelOptions"
-            @change="onSkillLevelChange"
-          >
-            <view class="picker-text">{{ selectedSkillLevel || 'All Levels' }}</view>
-          </picker>
-        </view>
-      </view>
-    </view>
-
-    <!-- 搜索建议 -->
-    <view v-if="showSuggestions && (suggestions.length > 0 || searchHistory.length > 0)" class="suggestions-panel">
-      <!-- 实时建议 -->
-      <view v-if="suggestions.length > 0" class="suggestions-section">
-        <view class="section-title">
-          <text>💡 Suggestions</text>
-        </view>
-        <scroll-view scroll-y class="suggestions-list">
-          <view 
-            v-for="(suggestion, index) in suggestions" 
-            :key="index"
-            class="suggestion-item"
-            @click="selectSuggestion(suggestion)"
-          >
-            <view class="suggestion-icon">
-              <text>{{ getSuggestionIcon(suggestion.type) }}</text>
-            </view>
-            <view class="suggestion-content">
-              <text class="suggestion-title">{{ suggestion.title }}</text>
-              <text class="suggestion-subtitle">{{ suggestion.subtitle }}</text>
-            </view>
-            <view class="suggestion-meta">
-              <text class="suggestion-type">{{ suggestion.type }}</text>
-            </view>
-          </view>
-        </scroll-view>
-      </view>
-
-      <!-- 搜索历史 -->
-      <view v-if="searchHistory.length > 0 && !searchKeyword" class="history-section">
-        <view class="section-title">
-          <text>🕒 Recent Searches</text>
-          <text class="clear-history-btn" @click="clearSearchHistory">Clear</text>
-        </view>
-        <view class="history-list">
-          <view 
-            v-for="(historyItem, index) in searchHistory" 
-            :key="index"
-            class="history-item"
-            @click="selectHistory(historyItem)"
-          >
-            <text class="history-text">{{ historyItem }}</text>
-            <view class="remove-history-btn" @click.stop="removeHistory(historyItem)">
-              <text>✕</text>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <!-- 热门搜索 -->
-      <view v-if="!searchKeyword" class="popular-section">
-        <view class="section-title">
-          <text>🔥 Popular Searches</text>
-        </view>
-        <view class="popular-tags">
-          <view 
-            v-for="(tag, index) in popularSearches" 
-            :key="index"
-            class="popular-tag"
-            @click="selectPopularSearch(tag)"
-          >
-            <text>{{ tag }}</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 搜索结果统计 -->
-    <view v-if="searchResults.length > 0 || isSearching" class="search-stats">
-      <view v-if="isSearching" class="loading-stats">
-        <text>🔍 Searching...</text>
-      </view>
-      <view v-else class="results-stats">
-        <text>Found {{ searchResults.length }} results</text>
-        <text class="search-time">({{ searchTime }}ms)</text>
-        <text class="data-quality">Quality: {{ dataQuality }}%</text>
       </view>
     </view>
 
     <!-- 搜索结果 -->
-    <view v-if="searchResults.length > 0" class="search-results">
-      <CommercialSearchResults 
-        :results="searchResults"
-        :keyword="searchKeyword"
-        :filters="searchFilters"
-        @item-click="onResultClick"
-        @load-more="loadMoreResults"
-      />
-    </view>
+    <view class="search-results-container" v-if="showResults">
+      <!-- 搜索历史 -->
+      <view class="search-history" v-if="showHistory && searchHistory.length > 0">
+        <view class="history-header">
+          <text class="history-title">Recent Searches</text>
+          <text class="clear-history" @click="clearHistory">Clear</text>
+        </view>
+        <view class="history-list">
+          <view 
+            class="history-item" 
+            v-for="(item, index) in searchHistory" 
+            :key="index"
+            @click="selectHistoryItem(item)"
+          >
+            <text class="history-text">{{ item }}</text>
+          </view>
+        </view>
+      </view>
 
-    <!-- 无结果提示 -->
-    <view v-if="showNoResults" class="no-results">
-      <view class="no-results-icon">
-        <text>😔</text>
+      <!-- 搜索结果列表 -->
+      <view class="results-section" v-if="searchResults.length > 0">
+        <view class="results-header">
+          <text class="results-title">Search Results</text>
+          <text class="results-count">{{ searchResults.length }} occupations found</text>
+        </view>
+        <view class="results-list">
+          <view 
+            class="result-item" 
+            v-for="occupation in searchResults" 
+            :key="occupation.code"
+            @click="selectOccupation(occupation)"
+          >
+            <view class="occupation-code">{{ occupation.code }}</view>
+            <view class="occupation-info">
+              <text class="occupation-english">{{ occupation.englishName }}</text>
+              <text class="occupation-chinese" v-if="occupation.chineseName">{{ occupation.chineseName }}</text>
+            </view>
+          </view>
+        </view>
       </view>
-      <text class="no-results-title">No Results Found</text>
-      <text class="no-results-subtitle">Try adjusting your search terms or filters</text>
-      <view class="no-results-suggestions">
-        <text class="suggestion-title">Suggestions:</text>
-        <text>• Check spelling</text>
-        <text>• Use broader terms</text>
-        <text>• Try different categories</text>
-      </view>
-    </view>
 
-    <!-- 错误提示 -->
-    <view v-if="searchError" class="search-error">
-      <view class="error-icon">
-        <text>⚠️</text>
-      </view>
-      <text class="error-title">Search Error</text>
-      <text class="error-message">{{ searchError }}</text>
-      <view class="error-actions">
-        <button class="retry-btn" @click="retrySearch">Retry</button>
-        <button class="fallback-btn" @click="useFallbackSearch">Use Offline Data</button>
+      <!-- 无搜索结果 -->
+      <view class="no-results" v-else-if="hasSearched && searchKeyword">
+        <text class="no-results-text">No matching occupations found</text>
+        <text class="no-results-tip">Try using occupation code or keywords</text>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-import enhancedAPIService from '../api/enhanced-api-service.js';
+import { searchOccupations, occupationsData } from '../data/occupations.js';
 import searchHistoryManager from '../utils/searchHistory.js';
+import searchResultProcessor from '../utils/searchResultProcessor.js';
 
 export default {
   name: 'CommercialSearchBox',
   
   props: {
-    // 搜索配置
     placeholder: {
       type: String,
-      default: 'Search occupations, codes, or keywords...'
-    },
-    
-    // 是否启用高级搜索
-    enableAdvancedSearch: {
-      type: Boolean,
-      default: true
-    },
-    
-    // 是否启用语音搜索
-    enableVoiceSearch: {
-      type: Boolean,
-      default: true
-    },
-    
-    // 搜索防抖延迟
-    debounceDelay: {
-      type: Number,
-      default: 300
-    },
-    
-    // 最大搜索结果数
-    maxResults: {
-      type: Number,
-      default: 50
+      default: 'Search occupations...'
     }
   },
   
   data() {
     return {
-      // 搜索状态
+      // 搜索相关
       searchKeyword: '',
-      isSearching: false,
       searchResults: [],
-      searchError: null,
-      searchTime: 0,
-      dataQuality: 0,
-      
-      // UI状态
-      showSuggestions: false,
-      showAdvancedSearch: false,
-      showNoResults: false,
-      
-      // 搜索建议
-      suggestions: [],
       searchHistory: [],
-      popularSearches: [
-        'Software Engineer',
-        'Registered Nurse', 
-        'Civil Engineer',
-        'Accountant',
-        'ICT',
-        '261313'
-      ],
-      
-      // 高级搜索选项
-      selectedCategory: '',
-      selectedCategoryIndex: 0,
-      selectedVisa: '',
-      selectedVisaIndex: 0,
-      selectedSkillLevel: '',
-      selectedSkillLevelIndex: 0,
-      
-      categoryOptions: ['All Categories', 'ICT', 'Engineering', 'Healthcare', 'Management', 'Finance', 'Education', 'Social Work'],
-      visaOptions: ['All Visas', '189', '190', '491', '482', '485'],
-      skillLevelOptions: ['All Levels', 'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5'],
+      hasSearched: false,
+      showResults: false,
+      isSearching: false,
       
       // 数据状态
-      dataStatus: 'loading',
-      dataSource: 'unknown',
-      lastUpdated: null,
+      dataStatus: 'healthy',
+      dataSource: 'Static Data',
+      lastUpdated: new Date().toISOString(),
       isRefreshing: false,
+      totalRecords: 0,
       
       // 搜索防抖
-      searchDebounceTimer: null,
-      
-      // 搜索索引
-      searchIndex: null
+      searchDebounceTimer: null
     };
   },
   
@@ -319,8 +149,6 @@ export default {
       const icons = {
         'loading': '⏳',
         'healthy': '✅',
-        'cached': '📦',
-        'fallback': '⚠️',
         'error': '❌'
       };
       return icons[this.dataStatus] || '❓';
@@ -329,62 +157,38 @@ export default {
     dataStatusText() {
       const texts = {
         'loading': 'Loading Data',
-        'healthy': 'Live Data',
-        'cached': 'Cached Data',
-        'fallback': 'Offline Data',
+        'healthy': 'Static Data',
         'error': 'Data Error'
       };
       return texts[this.dataStatus] || 'Unknown';
     },
     
     dataStatusDetail() {
-      if (this.lastUpdated) {
-        const time = new Date(this.lastUpdated);
-        const now = new Date();
-        const diff = now - time;
-        
-        if (diff < 60000) {
-          return 'Just updated';
-        } else if (diff < 3600000) {
-          return `${Math.floor(diff / 60000)}m ago`;
-        } else if (diff < 86400000) {
-          return `${Math.floor(diff / 3600000)}h ago`;
-        } else {
-          return `${Math.floor(diff / 86400000)}d ago`;
-        }
-      }
-      return '';
+      return `${this.totalRecords} occupations available`;
     },
     
-    searchFilters() {
-      return {
-        category: this.selectedCategory,
-        visa: this.selectedVisa,
-        skillLevel: this.selectedSkillLevel
-      };
+    showHistory() {
+      return !this.hasSearched && (!this.searchKeyword || this.searchKeyword.trim() === '');
     }
   },
   
-  async mounted() {
-    await this.initializeSearch();
+  mounted() {
+    this.initializeSearch();
   },
   
   methods: {
     /**
      * 初始化搜索功能
      */
-    async initializeSearch() {
-      console.log('🔍 初始化商业级搜索功能...');
+    initializeSearch() {
+      console.log('🔍 初始化搜索功能...');
       
       try {
+        // 加载静态数据
+        this.loadStaticData();
+        
         // 加载搜索历史
-        this.searchHistory = searchHistoryManager.getSearchHistory();
-        
-        // 初始化数据
-        await this.loadInitialData();
-        
-        // 启动实时监控
-        enhancedAPIService.startRealTimeMonitoring();
+        this.loadSearchHistory();
         
         console.log('✅ 搜索功能初始化完成');
       } catch (error) {
@@ -394,134 +198,90 @@ export default {
     },
     
     /**
-     * 加载初始数据
+     * 加载静态数据
      */
-    async loadInitialData() {
-      this.dataStatus = 'loading';
-      
+    loadStaticData() {
       try {
-        const result = await enhancedAPIService.fetchCommercialData();
-        
-        if (result && result.data) {
-          this.dataStatus = result.metadata?.fallbackMode ? 'fallback' : 'healthy';
-          this.dataSource = result.metadata?.dataSources?.join(', ') || 'unknown';
-          this.lastUpdated = result.metadata?.lastUpdated;
-          this.dataQuality = result.quality?.score || 0;
+        if (occupationsData && occupationsData.length > 0) {
+          this.dataStatus = 'healthy';
+          this.dataSource = 'Static Data';
+          this.lastUpdated = new Date().toISOString();
+          this.totalRecords = occupationsData.length;
           
-          // 构建搜索索引
-          await this.buildSearchIndex(result.data);
-          
-          console.log(`✅ 加载了 ${result.data.length} 条数据，质量评分: ${this.dataQuality}%`);
+          console.log(`✅ 静态数据加载成功: ${this.totalRecords} 条记录`);
         } else {
-          throw new Error('无法获取数据');
+          throw new Error('静态数据不可用');
         }
       } catch (error) {
-        console.error('❌ 数据加载失败:', error);
+        console.error('❌ 静态数据加载失败:', error);
         this.dataStatus = 'error';
-        this.searchError = error.message;
-      }
-    },
-    
-    /**
-     * 构建搜索索引
-     */
-    async buildSearchIndex(data) {
-      try {
-        // 尝试获取缓存的搜索索引
-        let searchIndex = enhancedAPIService.getCachedData('search_index');
-        
-        if (!searchIndex) {
-          // 重建搜索索引
-          searchIndex = await enhancedAPIService.rebuildSearchIndex();
-        }
-        
-        this.searchIndex = searchIndex;
-        console.log('✅ 搜索索引构建完成');
-      } catch (error) {
-        console.error('❌ 搜索索引构建失败:', error);
-        // 降级到简单搜索
-        this.searchIndex = { fullText: data.map(item => ({ item, searchableText: '', keywords: [] })) };
       }
     },
     
     /**
      * 搜索输入处理
      */
-    onSearchInput(event) {
-      const keyword = event.detail.value;
-      this.searchKeyword = keyword;
+    onSearchInput(e) {
+      this.searchKeyword = e.detail.value;
       
-      // 清除之前的防抖定时器
+      // 防抖处理
       if (this.searchDebounceTimer) {
         clearTimeout(this.searchDebounceTimer);
       }
       
-      // 设置新的防抖定时器
       this.searchDebounceTimer = setTimeout(() => {
-        this.performSearch(keyword);
-      }, this.debounceDelay);
-      
-      // 实时更新建议
-      this.updateSuggestions(keyword);
+        this.performSearch();
+      }, 300);
     },
     
     /**
-     * 搜索焦点处理
+     * 搜索框聚焦
      */
     onSearchFocus() {
-      this.showSuggestions = true;
-      this.updateSuggestions(this.searchKeyword);
+      this.showResults = true;
+      if (!this.searchKeyword) {
+        this.loadSearchHistory();
+      }
     },
     
     /**
-     * 搜索失焦处理
+     * 搜索框失焦
      */
     onSearchBlur() {
-      // 延迟隐藏建议，允许用户点击建议项
+      // 延迟隐藏，允许点击搜索结果
       setTimeout(() => {
-        this.showSuggestions = false;
+        this.showResults = false;
       }, 200);
     },
     
     /**
      * 执行搜索
      */
-    async performSearch(keyword) {
-      if (!keyword || keyword.trim() === '') {
+    performSearch() {
+      if (!this.searchKeyword.trim()) {
         this.searchResults = [];
-        this.showNoResults = false;
-        this.searchError = null;
+        this.hasSearched = false;
         return;
       }
-      
-      const trimmedKeyword = keyword.trim();
-      const startTime = Date.now();
-      
+
       this.isSearching = true;
-      this.searchError = null;
-      this.showNoResults = false;
+      this.hasSearched = true;
       
       try {
-        console.log(`🔍 开始搜索: "${trimmedKeyword}"`);
+        // 使用静态数据搜索
+        const results = searchOccupations(this.searchKeyword);
         
-        // 执行智能搜索
-        const results = await this.intelligentSearch(trimmedKeyword);
+        // 处理搜索结果
+        this.searchResults = searchResultProcessor.processResults(results, {
+          keyword: this.searchKeyword,
+          highlightMatches: true,
+          sortBy: 'relevance'
+        });
         
-        this.searchTime = Date.now() - startTime;
-        this.searchResults = results.slice(0, this.maxResults);
-        this.showNoResults = results.length === 0;
-        
-        // 保存搜索历史
-        if (results.length > 0) {
-          searchHistoryManager.saveSearchHistory(trimmedKeyword);
-          this.searchHistory = searchHistoryManager.getSearchHistory();
-        }
-        
-        console.log(`✅ 搜索完成: 找到 ${results.length} 个结果，耗时 ${this.searchTime}ms`);
+        console.log(`🔍 搜索完成: "${this.searchKeyword}" 找到 ${this.searchResults.length} 个结果`);
         
       } catch (error) {
         console.error('❌ 搜索失败:', error);
-        this.searchError = error.message;
         this.searchResults = [];
       } finally {
         this.isSearching = false;
@@ -529,209 +289,30 @@ export default {
     },
     
     /**
-     * 智能搜索算法
+     * 选择职业
      */
-    async intelligentSearch(keyword) {
-      if (!this.searchIndex) {
-        throw new Error('搜索索引未初始化');
+    selectOccupation(occupation) {
+      console.log('选择职业:', occupation);
+      
+      // 保存搜索历史
+      if (this.searchKeyword.trim()) {
+        searchHistoryManager.saveSearchHistory(this.searchKeyword.trim());
+        this.loadSearchHistory();
       }
       
-      const results = new Map();
-      const searchTerm = keyword.toLowerCase();
+      // 隐藏搜索结果
+      this.showResults = false;
       
-      // 1. 精确匹配（最高优先级）
-      if (this.searchIndex.byCode) {
-        const exactMatch = this.searchIndex.byCode.get(searchTerm);
-        if (exactMatch) {
-          results.set(exactMatch.code, { ...exactMatch, score: 100, matchType: 'exact_code' });
-        }
-      }
-      
-      // 2. 名称匹配
-      if (this.searchIndex.byName) {
-        for (const [name, items] of this.searchIndex.byName) {
-          if (name.includes(searchTerm)) {
-            const score = name === searchTerm ? 95 : 85;
-            items.forEach(item => {
-              if (!results.has(item.code) || results.get(item.code).score < score) {
-                results.set(item.code, { ...item, score, matchType: 'name' });
-              }
-            });
-          }
-        }
-      }
-      
-      // 3. 类别匹配
-      if (this.searchIndex.byCategory) {
-        for (const [category, items] of this.searchIndex.byCategory) {
-          if (category.includes(searchTerm)) {
-            items.forEach(item => {
-              if (!results.has(item.code) || results.get(item.code).score < 70) {
-                results.set(item.code, { ...item, score: 70, matchType: 'category' });
-              }
-            });
-          }
-        }
-      }
-      
-      // 4. 全文搜索
-      if (this.searchIndex.fullText) {
-        this.searchIndex.fullText.forEach(({ item, searchableText, keywords }) => {
-          let score = 0;
-          
-          // 关键词匹配
-          const matchingKeywords = keywords.filter(kw => kw.includes(searchTerm));
-          if (matchingKeywords.length > 0) {
-            score = Math.min(60, 20 + matchingKeywords.length * 10);
-          }
-          
-          // 全文匹配
-          if (searchableText.includes(searchTerm)) {
-            score = Math.max(score, 50);
-          }
-          
-          if (score > 0 && (!results.has(item.code) || results.get(item.code).score < score)) {
-            results.set(item.code, { ...item, score, matchType: 'fulltext' });
-          }
-        });
-      }
-      
-      // 应用高级搜索过滤器
-      let filteredResults = Array.from(results.values());
-      filteredResults = this.applyAdvancedFilters(filteredResults);
-      
-      // 按分数排序
-      filteredResults.sort((a, b) => b.score - a.score);
-      
-      return filteredResults;
+      // 触发选择事件
+      this.$emit('select', occupation);
     },
     
     /**
-     * 应用高级搜索过滤器
+     * 选择历史记录
      */
-    applyAdvancedFilters(results) {
-      let filtered = results;
-      
-      // 类别过滤
-      if (this.selectedCategory && this.selectedCategory !== 'All Categories') {
-        filtered = filtered.filter(item => item.category === this.selectedCategory);
-      }
-      
-      // 签证类型过滤
-      if (this.selectedVisa && this.selectedVisa !== 'All Visas') {
-        filtered = filtered.filter(item => 
-          item.visaSubclasses && item.visaSubclasses.includes(this.selectedVisa)
-        );
-      }
-      
-      // 技能等级过滤
-      if (this.selectedSkillLevel && this.selectedSkillLevel !== 'All Levels') {
-        const level = parseInt(this.selectedSkillLevel.replace('Level ', ''));
-        filtered = filtered.filter(item => item.skillLevel === level);
-      }
-      
-      return filtered;
-    },
-    
-    /**
-     * 更新搜索建议
-     */
-    updateSuggestions(keyword) {
-      if (!keyword || keyword.length < 2) {
-        this.suggestions = [];
-        return;
-      }
-      
-      const suggestions = [];
-      const searchTerm = keyword.toLowerCase();
-      
-      // 基于搜索索引生成建议
-      if (this.searchIndex) {
-        // 代码建议
-        if (this.searchIndex.byCode) {
-          for (const [code, item] of this.searchIndex.byCode) {
-            if (code.includes(searchTerm) && suggestions.length < 5) {
-              suggestions.push({
-                title: item.englishName,
-                subtitle: `Code: ${item.code}`,
-                type: 'code',
-                value: item.code
-              });
-            }
-          }
-        }
-        
-        // 名称建议
-        if (this.searchIndex.byName) {
-          for (const [name, items] of this.searchIndex.byName) {
-            if (name.includes(searchTerm) && suggestions.length < 8) {
-              const item = items[0];
-              suggestions.push({
-                title: item.englishName,
-                subtitle: item.chineseName || item.category,
-                type: 'occupation',
-                value: item.englishName
-              });
-            }
-          }
-        }
-        
-        // 类别建议
-        if (this.searchIndex.byCategory) {
-          for (const [category, items] of this.searchIndex.byCategory) {
-            if (category.includes(searchTerm) && suggestions.length < 10) {
-              suggestions.push({
-                title: category,
-                subtitle: `${items.length} occupations`,
-                type: 'category',
-                value: category
-              });
-            }
-          }
-        }
-      }
-      
-      this.suggestions = suggestions;
-    },
-    
-    /**
-     * 选择搜索建议
-     */
-    selectSuggestion(suggestion) {
-      this.searchKeyword = suggestion.value;
-      this.showSuggestions = false;
-      this.performSearch(suggestion.value);
-    },
-    
-    /**
-     * 选择搜索历史
-     */
-    selectHistory(historyItem) {
-      this.searchKeyword = historyItem;
-      this.showSuggestions = false;
-      this.performSearch(historyItem);
-    },
-    
-    /**
-     * 选择热门搜索
-     */
-    selectPopularSearch(tag) {
-      this.searchKeyword = tag;
-      this.showSuggestions = false;
-      this.performSearch(tag);
-    },
-    
-    /**
-     * 获取建议图标
-     */
-    getSuggestionIcon(type) {
-      const icons = {
-        'code': '🔢',
-        'occupation': '💼',
-        'category': '📁',
-        'keyword': '🔍'
-      };
-      return icons[type] || '💡';
+    selectHistoryItem(item) {
+      this.searchKeyword = item;
+      this.performSearch();
     },
     
     /**
@@ -740,198 +321,68 @@ export default {
     clearSearch() {
       this.searchKeyword = '';
       this.searchResults = [];
-      this.showNoResults = false;
-      this.searchError = null;
-      this.suggestions = [];
+      this.hasSearched = false;
+      this.loadSearchHistory();
+    },
+    
+    /**
+     * 加载搜索历史
+     */
+    loadSearchHistory() {
+      this.searchHistory = searchHistoryManager.getSearchHistory();
     },
     
     /**
      * 清除搜索历史
      */
-    clearSearchHistory() {
-      searchHistoryManager.clearSearchHistory();
-      this.searchHistory = [];
-      uni.showToast({
-        title: 'Search history cleared',
-        icon: 'success'
+    clearHistory() {
+      uni.showModal({
+        title: 'Clear Search History',
+        content: 'Are you sure you want to clear all search history?',
+        success: (res) => {
+          if (res.confirm) {
+            searchHistoryManager.clearSearchHistory();
+            this.searchHistory = [];
+            uni.showToast({
+              title: 'History cleared',
+              icon: 'success',
+              duration: 1500
+            });
+          }
+        }
       });
-    },
-    
-    /**
-     * 删除单个历史记录
-     */
-    removeHistory(historyItem) {
-      searchHistoryManager.removeSearchItem(historyItem);
-      this.searchHistory = searchHistoryManager.getSearchHistory();
-    },
-    
-    /**
-     * 启动语音搜索
-     */
-    startVoiceSearch() {
-      if (!this.enableVoiceSearch) return;
-      
-      // 这里可以集成语音识别API
-      uni.showToast({
-        title: 'Voice search coming soon',
-        icon: 'none'
-      });
-    },
-    
-    /**
-     * 切换高级搜索
-     */
-    toggleAdvancedSearch() {
-      this.showAdvancedSearch = !this.showAdvancedSearch;
-    },
-    
-    /**
-     * 高级搜索选项变更
-     */
-    onCategoryChange(event) {
-      this.selectedCategoryIndex = event.detail.value;
-      this.selectedCategory = this.categoryOptions[event.detail.value];
-      if (this.selectedCategory === 'All Categories') {
-        this.selectedCategory = '';
-      }
-      
-      // 重新执行搜索
-      if (this.searchKeyword) {
-        this.performSearch(this.searchKeyword);
-      }
-    },
-    
-    onVisaChange(event) {
-      this.selectedVisaIndex = event.detail.value;
-      this.selectedVisa = this.visaOptions[event.detail.value];
-      if (this.selectedVisa === 'All Visas') {
-        this.selectedVisa = '';
-      }
-      
-      if (this.searchKeyword) {
-        this.performSearch(this.searchKeyword);
-      }
-    },
-    
-    onSkillLevelChange(event) {
-      this.selectedSkillLevelIndex = event.detail.value;
-      this.selectedSkillLevel = this.skillLevelOptions[event.detail.value];
-      if (this.selectedSkillLevel === 'All Levels') {
-        this.selectedSkillLevel = '';
-      }
-      
-      if (this.searchKeyword) {
-        this.performSearch(this.searchKeyword);
-      }
     },
     
     /**
      * 刷新数据
      */
-    async refreshData() {
+    refreshData() {
       if (this.isRefreshing) return;
       
       this.isRefreshing = true;
       
       try {
-        console.log('🔄 手动刷新数据...');
+        console.log('🔄 刷新静态数据...');
         
-        const result = await enhancedAPIService.smartRefresh('all');
+        // 重新加载静态数据
+        this.loadStaticData();
         
-        if (result.commercial_data?.success) {
-          await this.loadInitialData();
-          
-          uni.showToast({
-            title: 'Data refreshed successfully',
-            icon: 'success'
-          });
-          
-          // 如果有搜索关键词，重新搜索
-          if (this.searchKeyword) {
-            this.performSearch(this.searchKeyword);
-          }
-        } else {
-          throw new Error('数据刷新失败');
-        }
+        uni.showToast({
+          title: '数据刷新成功',
+          icon: 'success',
+          duration: 2000
+        });
         
       } catch (error) {
         console.error('❌ 数据刷新失败:', error);
         uni.showToast({
-          title: 'Refresh failed',
-          icon: 'none'
+          title: '刷新失败',
+          icon: 'none',
+          duration: 2000
         });
       } finally {
         this.isRefreshing = false;
       }
-    },
-    
-    /**
-     * 重试搜索
-     */
-    async retrySearch() {
-      this.searchError = null;
-      
-      if (this.searchKeyword) {
-        await this.performSearch(this.searchKeyword);
-      }
-    },
-    
-    /**
-     * 使用降级搜索
-     */
-    async useFallbackSearch() {
-      try {
-        // 强制使用本地数据
-        const { occupationsData } = await import('../data/occupations.js');
-        
-        // 构建简单搜索索引
-        this.searchIndex = {
-          fullText: occupationsData.map(item => ({
-            item,
-            searchableText: [
-              item.code,
-              item.englishName,
-              item.chineseName,
-              item.category
-            ].filter(Boolean).join(' ').toLowerCase(),
-            keywords: []
-          }))
-        };
-        
-        this.dataStatus = 'fallback';
-        this.searchError = null;
-        
-        if (this.searchKeyword) {
-          await this.performSearch(this.searchKeyword);
-        }
-        
-        uni.showToast({
-          title: 'Using offline data',
-          icon: 'success'
-        });
-        
-      } catch (error) {
-        console.error('❌ 降级搜索失败:', error);
-        uni.showToast({
-          title: 'Fallback search failed',
-          icon: 'none'
-        });
-      }
-    },
-    
-    /**
-     * 搜索结果点击
-     */
-    onResultClick(item) {
-      this.$emit('result-click', item);
-    },
-    
-    /**
-     * 加载更多结果
-     */
-    loadMoreResults() {
-      // 实现分页加载逻辑
-      this.$emit('load-more');
     }
   }
 };
@@ -940,45 +391,37 @@ export default {
 <style scoped>
 .commercial-search-container {
   width: 100%;
-  background: #fff;
+  position: relative;
 }
 
-/* 数据状态指示器 */
+/* 数据状态栏 */
 .data-status-bar {
   display: flex;
   align-items: center;
-  padding: 8px 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 16rpx 24rpx;
+  margin-bottom: 20rpx;
+  border-radius: 12rpx;
   transition: all 0.3s ease;
-}
-
-.status-loading {
-  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
 }
 
 .status-healthy {
   background: linear-gradient(135deg, #00b894, #00cec9);
+  color: #fff;
 }
 
-.status-cached {
-  background: linear-gradient(135deg, #74b9ff, #0984e3);
-}
-
-.status-fallback {
-  background: linear-gradient(135deg, #fdcb6e, #e17055);
+.status-loading {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+  color: #333;
 }
 
 .status-error {
   background: linear-gradient(135deg, #fd79a8, #e84393);
+  color: #fff;
 }
 
 .status-icon {
-  margin-right: 10px;
-}
-
-.status-emoji {
-  font-size: 16px;
+  margin-right: 16rpx;
+  font-size: 28rpx;
 }
 
 .status-info {
@@ -988,31 +431,25 @@ export default {
 }
 
 .status-text {
-  font-size: 14px;
+  font-size: 26rpx;
   font-weight: 600;
-  color: #fff;
-  margin-bottom: 2px;
+  margin-bottom: 4rpx;
 }
 
 .status-detail {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 22rpx;
+  opacity: 0.8;
 }
 
 .refresh-btn {
-  padding: 8px;
-  border-radius: 6px;
+  padding: 12rpx;
+  border-radius: 8rpx;
   background: rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
 }
 
 .refresh-btn.refreshing {
   animation: spin 1s linear infinite;
-}
-
-.refresh-icon {
-  font-size: 16px;
-  color: #fff;
 }
 
 @keyframes spin {
@@ -1022,31 +459,31 @@ export default {
 
 /* 搜索框样式 */
 .search-box-wrapper {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  margin-bottom: 20rpx;
 }
 
 .search-input-container {
   display: flex;
   align-items: center;
-  padding: 12px 15px;
-  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+  border: 2rpx solid #4A90E2;
+  border-radius: 50rpx;
+  padding: 24rpx 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(74, 144, 226, 0.1);
 }
 
 .search-icon {
-  margin-right: 10px;
-  font-size: 18px;
+  margin-right: 20rpx;
+  font-size: 32rpx;
   color: #666;
 }
 
 .search-input {
   flex: 1;
-  font-size: 16px;
-  border: none;
-  outline: none;
+  font-size: 28rpx;
+  color: #333;
   background: transparent;
+  border: none;
 }
 
 .search-placeholder {
@@ -1056,336 +493,167 @@ export default {
 .search-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16rpx;
 }
 
-.clear-btn,
-.voice-btn,
-.advanced-btn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  background: #f5f5f5;
-  font-size: 14px;
-  color: #666;
-  transition: all 0.3s ease;
-}
-
-.clear-btn:hover,
-.voice-btn:hover,
-.advanced-btn:hover {
-  background: #e0e0e0;
-  color: #333;
-}
-
-/* 高级搜索面板 */
-.advanced-search-panel {
-  padding: 15px;
-  background: #fafafa;
-  border-top: 1px solid #f0f0f0;
-}
-
-.advanced-option {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.option-label {
-  width: 80px;
-  font-size: 14px;
-  color: #666;
-  margin-right: 10px;
-}
-
-.picker-text {
-  padding: 8px 12px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #333;
-  min-width: 120px;
-}
-
-/* 搜索建议面板 */
-.suggestions-panel {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin-top: 8px;
-  overflow: hidden;
-  max-height: 400px;
-}
-
-.section-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 15px;
-  background: #f8f9fa;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.clear-history-btn {
-  font-size: 12px;
-  color: #007AFF;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: rgba(0, 122, 255, 0.1);
-}
-
-/* 建议列表 */
-.suggestions-list {
-  max-height: 200px;
-}
-
-.suggestion-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.3s ease;
-}
-
-.suggestion-item:hover {
-  background: #f8f9fa;
-}
-
-.suggestion-item:last-child {
-  border-bottom: none;
-}
-
-.suggestion-icon {
-  margin-right: 12px;
-  font-size: 16px;
-}
-
-.suggestion-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.suggestion-title {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 2px;
-}
-
-.suggestion-subtitle {
-  font-size: 12px;
-  color: #666;
-}
-
-.suggestion-meta {
-  margin-left: 8px;
-}
-
-.suggestion-type {
-  font-size: 10px;
-  color: #999;
-  background: #f0f0f0;
-  padding: 2px 6px;
-  border-radius: 10px;
-}
-
-/* 搜索历史 */
-.history-list {
-  padding: 8px 0;
-}
-
-.history-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 15px;
-  transition: background-color 0.3s ease;
-}
-
-.history-item:hover {
-  background: #f8f9fa;
-}
-
-.history-text {
-  flex: 1;
-  font-size: 14px;
-  color: #333;
-}
-
-.remove-history-btn {
-  width: 24px;
-  height: 24px;
+.clear-btn {
+  width: 40rpx;
+  height: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   background: #f0f0f0;
-  font-size: 12px;
   color: #666;
+  font-size: 28rpx;
 }
 
-/* 热门搜索 */
-.popular-tags {
-  padding: 12px 15px;
+/* 搜索结果样式 */
+.search-results-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  margin-top: 20rpx;
+  max-height: 600rpx;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* 搜索历史 */
+.search-history {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.history-header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.popular-tag {
-  padding: 6px 12px;
-  background: #007AFF;
-  color: #fff;
-  border-radius: 16px;
-  font-size: 12px;
-  transition: all 0.3s ease;
-}
-
-.popular-tag:hover {
-  background: #0056b3;
-  transform: translateY(-1px);
-}
-
-/* 搜索统计 */
-.search-stats {
-  padding: 10px 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin: 10px 0;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  margin-bottom: 20rpx;
 }
 
-.loading-stats {
-  font-size: 14px;
-  color: #666;
-}
-
-.results-stats {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
+.history-title {
+  font-size: 26rpx;
+  font-weight: 600;
   color: #333;
 }
 
-.search-time {
-  color: #666;
-  font-size: 12px;
+.clear-history {
+  font-size: 24rpx;
+  color: #4A90E2;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  background: rgba(74, 144, 226, 0.1);
 }
 
-.data-quality {
-  color: #007AFF;
-  font-size: 12px;
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.history-item {
+  padding: 12rpx 20rpx;
+  background: #f8f9fa;
+  border-radius: 24rpx;
+  border: 1rpx solid #e9ecef;
+}
+
+.history-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 搜索结果 */
+.results-section {
+  max-height: 500rpx;
+  overflow-y: auto;
+}
+
+.results-header {
+  padding: 20rpx 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  background: #fafafa;
+}
+
+.results-title {
+  font-size: 28rpx;
   font-weight: 600;
+  color: #333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.results-count {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.results-list {
+  padding: 0;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 30rpx;
+  border-bottom: 1rpx solid #f8f8f8;
+  transition: background-color 0.3s ease;
+}
+
+.result-item:hover {
+  background-color: #f8f9fa;
+}
+
+.occupation-code {
+  background: #4A90E2;
+  color: #fff;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-right: 24rpx;
+  min-width: 120rpx;
+  text-align: center;
+}
+
+.occupation-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.occupation-english {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.occupation-chinese {
+  font-size: 24rpx;
+  color: #666;
 }
 
 /* 无结果提示 */
 .no-results {
+  padding: 60rpx 30rpx;
   text-align: center;
-  padding: 40px 20px;
 }
 
-.no-results-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.no-results-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.no-results-subtitle {
-  font-size: 14px;
+.no-results-text {
+  font-size: 28rpx;
   color: #666;
-  margin-bottom: 20px;
+  display: block;
+  margin-bottom: 12rpx;
 }
 
-.no-results-suggestions {
-  text-align: left;
-  background: #f8f9fa;
-  padding: 16px;
-  border-radius: 8px;
-  display: inline-block;
-}
-
-.suggestion-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-/* 错误提示 */
-.search-error {
-  text-align: center;
-  padding: 30px 20px;
-  background: #fff5f5;
-  border: 1px solid #fed7d7;
-  border-radius: 8px;
-  margin: 10px 0;
-}
-
-.error-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
-}
-
-.error-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #e53e3e;
-  margin-bottom: 8px;
-}
-
-.error-message {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 16px;
-}
-
-.error-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.retry-btn,
-.fallback-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.retry-btn {
-  background: #007AFF;
-  color: #fff;
-}
-
-.retry-btn:hover {
-  background: #0056b3;
-}
-
-.fallback-btn {
-  background: #6c757d;
-  color: #fff;
-}
-
-.fallback-btn:hover {
-  background: #545b62;
+.no-results-tip {
+  font-size: 24rpx;
+  color: #999;
 }
 </style>

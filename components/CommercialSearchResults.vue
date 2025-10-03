@@ -49,32 +49,36 @@
           :class="{ 'even': index % 2 === 0 }"
           @click="onItemClick(item)"
         >
-          <!-- 职业基本信息 -->
-          <view class="item-header">
-            <view class="occupation-info">
-              <view class="occupation-title">
-                <text class="english-name">{{ item.englishName }}</text>
-                <view class="match-indicator" :class="getMatchClass(item.matchType)">
-                  <text class="match-text">{{ getMatchText(item.matchType) }}</text>
-                  <text class="match-score">{{ item.score }}%</text>
+            <!-- 职业基本信息 -->
+            <view class="item-header">
+              <view class="occupation-info">
+                <view class="occupation-title">
+                  <text class="english-name">{{ item.englishName }}</text>
+                  <view class="match-indicator" :class="getMatchClass(item.matchType)">
+                    <text class="match-text">{{ getMatchText(item.matchType) }}</text>
+                    <text class="match-score" v-if="item.score">{{ item.score }}%</text>
+                  </view>
+                </view>
+                
+                <view class="occupation-subtitle">
+                  <text class="chinese-name" v-if="item.chineseName">{{ item.chineseName }}</text>
+                  <text class="occupation-code">Code: {{ item.anzscoCode || item.code }}</text>
+                  <view class="data-freshness" :class="getFreshnessClass(item.lastUpdated)">
+                    <text class="freshness-icon">{{ getFreshnessIcon(item.lastUpdated) }}</text>
+                    <text class="freshness-text">{{ getFreshnessText(item.lastUpdated) }}</text>
+                  </view>
                 </view>
               </view>
               
-              <view class="occupation-subtitle">
-                <text class="chinese-name">{{ item.chineseName }}</text>
-                <text class="occupation-code">Code: {{ item.anzscoCode }}</text>
+              <view class="item-actions">
+                <view class="favorite-btn" @click.stop="toggleFavorite(item)">
+                  <text>{{ item.isFavorite ? '❤️' : '🤍' }}</text>
+                </view>
+                <view class="share-btn" @click.stop="shareItem(item)">
+                  <text>📤</text>
+                </view>
               </view>
             </view>
-            
-            <view class="item-actions">
-              <view class="favorite-btn" @click.stop="toggleFavorite(item)">
-                <text>{{ item.isFavorite ? '❤️' : '🤍' }}</text>
-              </view>
-              <view class="share-btn" @click.stop="shareItem(item)">
-                <text>📤</text>
-              </view>
-            </view>
-          </view>
 
           <!-- 职业详细信息 -->
           <view class="item-content">
@@ -98,7 +102,7 @@
             </view>
 
             <!-- 签证信息 -->
-            <view class="visa-info">
+            <view class="visa-info" v-if="item.visaSubclasses && item.visaSubclasses.length > 0">
               <text class="info-label">Eligible Visas:</text>
               <view class="visa-tags">
                 <view 
@@ -126,8 +130,8 @@
             </view>
 
             <!-- 评估机构和薪资 -->
-            <view class="additional-info">
-              <view class="assessment-info">
+            <view class="additional-info" v-if="item.assessmentAuthority || item.averageSalary">
+              <view class="assessment-info" v-if="item.assessmentAuthority">
                 <text class="info-label">Assessment:</text>
                 <text class="assessment-authority">{{ item.assessmentAuthority }}</text>
               </view>
@@ -721,6 +725,56 @@ export default {
       
       return sources.map(source => sourceNames[source] || source).join(', ');
     },
+
+    /**
+     * 获取数据新鲜度样式类
+     */
+    getFreshnessClass(lastUpdated) {
+      const age = this.getDataAge(lastUpdated);
+      
+      if (age <= 24 * 60 * 60 * 1000) return 'freshness-excellent'; // 24小时内
+      if (age <= 7 * 24 * 60 * 60 * 1000) return 'freshness-good';  // 7天内
+      if (age <= 30 * 24 * 60 * 60 * 1000) return 'freshness-fair'; // 30天内
+      return 'freshness-stale'; // 超过30天
+    },
+
+    /**
+     * 获取数据新鲜度图标
+     */
+    getFreshnessIcon(lastUpdated) {
+      const age = this.getDataAge(lastUpdated);
+      
+      if (age <= 24 * 60 * 60 * 1000) return '🟢'; // 24小时内
+      if (age <= 7 * 24 * 60 * 60 * 1000) return '🟡';  // 7天内
+      if (age <= 30 * 24 * 60 * 60 * 1000) return '🟠'; // 30天内
+      return '🔴'; // 超过30天
+    },
+
+    /**
+     * 获取数据新鲜度文本
+     */
+    getFreshnessText(lastUpdated) {
+      const age = this.getDataAge(lastUpdated);
+      
+      if (age <= 60 * 60 * 1000) return 'Just updated'; // 1小时内
+      if (age <= 24 * 60 * 60 * 1000) return 'Today'; // 24小时内
+      if (age <= 7 * 24 * 60 * 60 * 1000) return 'This week'; // 7天内
+      if (age <= 30 * 24 * 60 * 60 * 1000) return 'This month'; // 30天内
+      
+      const days = Math.floor(age / (24 * 60 * 60 * 1000));
+      return `${days} days ago`;
+    },
+
+    /**
+     * 获取数据年龄（毫秒）
+     */
+    getDataAge(lastUpdated) {
+      if (!lastUpdated) return Date.now(); // 如果没有更新时间，认为很旧
+      
+      const updateTime = new Date(lastUpdated).getTime();
+      const now = Date.now();
+      return now - updateTime;
+    },
     
     /**
      * 截断文本
@@ -941,6 +995,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .chinese-name {
@@ -954,6 +1009,46 @@ export default {
   background: #f0f0f0;
   padding: 2px 6px;
   border-radius: 4px;
+}
+
+/* 数据新鲜度指示器 */
+.data-freshness {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.freshness-excellent {
+  background: rgba(34, 197, 94, 0.1);
+  color: #059669;
+}
+
+.freshness-good {
+  background: rgba(234, 179, 8, 0.1);
+  color: #ca8a04;
+}
+
+.freshness-fair {
+  background: rgba(249, 115, 22, 0.1);
+  color: #ea580c;
+}
+
+.freshness-stale {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.freshness-icon {
+  font-size: 8px;
+}
+
+.freshness-text {
+  font-size: 9px;
+  font-weight: 500;
 }
 
 .item-actions {

@@ -136,16 +136,54 @@ export default {
   },
 
   onLoad(options) {
+    console.log('详情页面接收到的参数:', options);
+    
     // 从页面参数中获取职业信息
     if (options.occupation) {
+      // 旧版本：完整JSON参数
       try {
         this.occupation = JSON.parse(decodeURIComponent(options.occupation));
+        console.log('✅ 使用完整参数加载职业信息:', this.occupation);
       } catch (error) {
         console.error('解析职业信息失败:', error);
         this.goBack();
       }
+    } else if (options.code && options.name) {
+      // 新版本：简化参数
+      try {
+        this.occupation = {
+          code: options.code,
+          anzscoCode: options.code,
+          englishName: decodeURIComponent(options.name),
+          chineseName: options.chineseName ? decodeURIComponent(options.chineseName) : '',
+          category: 'Unknown',
+          isPopular: false,
+          skillLevel: 1,
+          visaSubclasses: ['189', '190', '491'],
+          assessmentAuthority: 'VETASSESS',
+          mltssl: false,
+          stsol: false,
+          rol: false,
+          description: '职业详细信息正在加载中...',
+          tasks: [],
+          requirements: []
+        };
+        
+        console.log('✅ 使用简化参数加载职业信息:', this.occupation);
+        
+        // 尝试从本地数据中补充完整信息
+        this.loadCompleteOccupationData(options.code);
+        
+      } catch (error) {
+        console.error('处理简化参数失败:', error);
+        this.goBack();
+      }
     } else {
-      // 如果没有传递职业信息，返回上一页
+      console.error('❌ 没有传递职业信息参数');
+      uni.showToast({
+        title: '职业信息缺失',
+        icon: 'none'
+      });
       this.goBack();
     }
   },
@@ -153,6 +191,36 @@ export default {
   methods: {
     goBack() {
       uni.navigateBack();
+    },
+
+    /**
+     * 从本地数据中加载完整的职业信息
+     */
+    async loadCompleteOccupationData(code) {
+      try {
+        // 导入本地职业数据
+        const { occupationsData } = await import('../../data/occupations.js');
+        
+        // 查找匹配的职业
+        const completeOccupation = occupationsData.find(item => 
+          item.code === code || item.anzscoCode === code
+        );
+        
+        if (completeOccupation) {
+          // 合并完整信息
+          this.occupation = {
+            ...this.occupation,
+            ...completeOccupation
+          };
+          
+          console.log('✅ 成功加载完整职业信息:', this.occupation);
+        } else {
+          console.log('⚠️ 未找到职业代码对应的完整信息:', code);
+        }
+        
+      } catch (error) {
+        console.error('❌ 加载完整职业信息失败:', error);
+      }
     },
 
     getOccupationList(occupation) {

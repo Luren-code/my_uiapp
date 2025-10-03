@@ -13,28 +13,34 @@
         <text class="cursor" v-if="showCursor">|</text>
       </view>
 
-      <!-- 搜索框 - 添加动画类 -->
-      <view class="search-container" :class="{ 'slide-in': showSearchBox }">
-        <view class="search-box">
-          <text class="search-icon">🔍</text>
-          <input 
-            class="search-input" 
-            placeholder="输入职业名称或代码搜索"
-            v-model="searchKeyword"
-            @input="onSearchInput"
-            @focus="onSearchFocus"
-            @blur="onSearchBlur"
-          />
-          <text class="clear-btn" v-if="searchKeyword" @click="clearSearch">×</text>
+      <!-- 数据状态指示器 -->
+      <view class="data-status" :class="dataStatusClass">
+        <view class="status-icon">{{ dataStatusIcon }}</view>
+        <view class="status-info">
+          <text class="status-text">{{ dataStatusText }}</text>
+          <text class="status-detail">{{ dataStatusDetail }}</text>
         </view>
-        
-        <!-- 搜索结果组件 -->
-        <SearchResults 
-          :searchKeyword="searchKeyword"
-          :showResults="showSearchResults"
+        <view class="refresh-btn" @click="refreshOfficialData" v-if="!isLoadingData">
+          <text>🔄</text>
+        </view>
+      </view>
+
+      <!-- 简洁搜索框 - 仅在有官方数据时显示 -->
+      <view class="search-container" :class="{ 'slide-in': showSearchBox }" v-if="hasOfficialData">
+        <SimpleSearchBox 
+          :placeholder="'输入职业名称或代码搜索'"
           @select="onOccupationSelect"
-          @search="onHistorySearch"
         />
+      </view>
+
+      <!-- 无官方数据时的提示 -->
+      <view class="no-data-notice" v-if="!hasOfficialData && !isLoadingData">
+        <view class="notice-icon">⚠️</view>
+        <text class="notice-title">仅提供官方真实数据</text>
+        <text class="notice-message">
+          本应用仅显示来自澳洲移民局SkillSelect的官方职业数据，
+          不提供任何虚假或模拟数据。请确保网络连接正常，或稍后重试。
+        </text>
       </view>
 
 
@@ -80,11 +86,12 @@
 </template>
 
 <script>
-import SearchResults from '../../components/SearchResults.vue';
+import SimpleSearchBox from '../../components/SimpleSearchBox.vue';
+import { searchOccupations, occupationsData } from '../../data/occupations.js';
 
 export default {
   components: {
-    SearchResults
+    SimpleSearchBox
   },
   
   data() {
@@ -96,14 +103,45 @@ export default {
       showSearchBox: false,    // 控制搜索框显示
       showQuickAccess: false,   // 控制快速入口显示
       hasPlayedAnimation: false, // 记录是否已播放过动画
-      searchKeyword: '',        // 搜索关键词
-      showSearchResults: false, // 控制搜索结果显示
-      searchTimeout: null       // 搜索防抖定时器
+      
+      // 数据相关
+      hasOfficialData: true,    // 使用静态数据
+      isLoadingData: false,     // 无需加载等待
+      officialOccupationData: [], // 职业数据
+      dataSource: 'Static Data', // 数据来源
+      dataQuality: 'Good'       // 数据质量
+    }
+  },
+  
+  computed: {
+    dataStatusClass() {
+      if (this.isLoadingData) return 'status-loading';
+      if (this.hasOfficialData) return 'status-success';
+      return 'status-error';
+    },
+    
+    dataStatusIcon() {
+      if (this.isLoadingData) return '⏳';
+      if (this.hasOfficialData) return '✅';
+      return '❌';
+    },
+    
+    dataStatusText() {
+      if (this.isLoadingData) return 'Loading official data...';
+      if (this.hasOfficialData) return 'Official data loaded';
+      return 'Official data unavailable';
+    },
+    
+    dataStatusDetail() {
+      if (this.isLoadingData) return 'Connecting to government APIs...';
+      if (this.hasOfficialData) return `${this.officialOccupationData.length} occupations from ${this.dataSource}`;
+      return 'Please check network connection';
     }
   },
   
   onLoad() {
     this.checkAndPlayAnimation();
+    this.loadStaticData();
   },
 
   onShow() {
@@ -113,9 +151,6 @@ export default {
   onUnload() {
     if (this.typeTimer) {
       clearInterval(this.typeTimer);
-    }
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
     }
   },
   
@@ -239,67 +274,113 @@ export default {
       uni.reLaunch({ url: '/pages/landing-center/landing-center' });
     },
     
-    // 搜索相关方法
-    onSearchInput(e) {
-      this.searchKeyword = e.detail.value;
+
+
+    /**
+     * 加载静态数据
+     */
+    loadStaticData() {
+      console.log('📋 加载静态数据...');
       
-      // 防抖处理
-      if (this.searchTimeout) {
-        clearTimeout(this.searchTimeout);
-      }
-      
-      this.searchTimeout = setTimeout(() => {
-        // 实时搜索逻辑 - 当有搜索内容时自动显示结果
-        if (this.searchKeyword && this.searchKeyword.trim()) {
-          this.showSearchResults = true;
-        } else {
-          this.showSearchResults = false;
-        }
-      }, 300);
-    },
-    
-    onSearchFocus() {
-      this.showSearchResults = true;
-    },
-    
-    onSearchBlur() {
-      // 延迟隐藏，允许点击搜索结果
-      setTimeout(() => {
-        this.showSearchResults = false;
-      }, 200);
-    },
-    
-    clearSearch() {
-      this.searchKeyword = '';
-      this.showSearchResults = false;
-    },
-    
-    onOccupationSelect(occupation) {
-      console.log('Selected occupation:', occupation);
-      this.searchKeyword = `${occupation.code} - ${occupation.englishName}`;
-      this.showSearchResults = false;
-      
-      // 跳转到职业详情页面
-      const occupationParam = encodeURIComponent(JSON.stringify(occupation));
-      uni.navigateTo({
-        url: `/pages/occupation-detail/detail?occupation=${occupationParam}`,
-        success: () => {
-          console.log('跳转到职业详情页面成功');
-        },
-        fail: (err) => {
-          console.error('跳转失败:', err);
+      try {
+        if (occupationsData && occupationsData.length > 0) {
+          this.officialOccupationData = occupationsData;
+          this.hasOfficialData = true;
+          this.isLoadingData = false;
+          this.dataSource = 'Static Data';
+          this.dataQuality = 'Good';
+          
+          console.log(`✅ 静态数据加载成功: ${occupationsData.length} 个职业`);
+          
+          // 显示搜索框
+          if (!this.hasPlayedAnimation) {
+            setTimeout(() => {
+              this.showSearchBox = true;
+            }, 300);
+          } else {
+            this.showSearchBox = true;
+          }
+          
           uni.showToast({
-            title: '页面跳转失败',
-            icon: 'none'
+            title: `已加载${occupationsData.length}个职业`,
+            icon: 'success',
+            duration: 2000
           });
+          
+        } else {
+          this.onDataError(new Error('静态数据无法加载'));
         }
-      });
-    },
-    
-    onHistorySearch(keyword) {
-      this.searchKeyword = keyword;
+      } catch (error) {
+        this.onDataError(error);
+      }
     },
 
+    /**
+     * 刷新数据
+     */
+    refreshOfficialData() {
+      console.log('🔄 刷新数据...');
+      this.loadStaticData();
+    },
+
+    /**
+     * 职业选择处理
+     */
+    onOccupationSelect(occupation) {
+      console.log('选择了职业:', occupation);
+      
+      try {
+        // 先简化参数，只传递必要信息
+        const params = {
+          code: occupation.code || occupation.anzscoCode,
+          name: occupation.englishName,
+          chineseName: occupation.chineseName
+        };
+        
+        console.log('准备跳转，参数:', params);
+        
+        // 跳转到职业详情页面
+        uni.navigateTo({
+          url: `/pages/occupation-detail/detail?code=${params.code}&name=${encodeURIComponent(params.name)}&chineseName=${encodeURIComponent(params.chineseName || '')}`,
+          success: () => {
+            console.log('✅ 跳转到职业详情页面成功');
+          },
+          fail: (err) => {
+            console.error('❌ 跳转失败:', err);
+            
+            // 显示详细错误信息
+            uni.showModal({
+              title: '跳转失败',
+              content: `错误信息: ${JSON.stringify(err)}`,
+              showCancel: false
+            });
+          }
+        });
+        
+      } catch (error) {
+        console.error('❌ 跳转过程中发生错误:', error);
+        uni.showToast({
+          title: '跳转失败',
+          icon: 'none'
+        });
+      }
+    },
+
+    /**
+     * 数据加载失败处理
+     */
+    onDataError(error) {
+      console.error('数据加载失败:', error);
+      
+      this.hasOfficialData = false;
+      this.isLoadingData = false;
+      this.officialOccupationData = [];
+      
+      uni.showToast({
+        title: '数据加载失败',
+        icon: 'none'
+      });
+    }
 
   }
 }
@@ -411,6 +492,117 @@ export default {
   line-height: 1;
 }
 
+/* 数据状态指示器样式 */
+.data-status {
+  display: flex;
+  align-items: center;
+  padding: 15rpx 30rpx;
+  margin: 20rpx 0;
+  border-radius: 12rpx;
+  transition: all 0.3s ease;
+}
+
+.status-loading {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+}
+
+.status-success {
+  background: linear-gradient(135deg, #00b894, #00cec9);
+}
+
+.status-error {
+  background: linear-gradient(135deg, #fd79a8, #e84393);
+}
+
+.status-icon {
+  font-size: 32rpx;
+  margin-right: 20rpx;
+}
+
+.status-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4rpx;
+}
+
+.status-detail {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.refresh-btn {
+  padding: 12rpx;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 28rpx;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* 无数据提示样式 */
+.no-data-notice {
+  text-align: center;
+  padding: 60rpx 40rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 40rpx 0;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.notice-icon {
+  font-size: 80rpx;
+  margin-bottom: 30rpx;
+}
+
+.notice-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.notice-content {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30rpx;
+}
+
+.notice-actions {
+  display: flex;
+  gap: 20rpx;
+  justify-content: center;
+}
+
+.notice-btn {
+  padding: 20rpx 40rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  border: none;
+}
+
+.notice-btn.primary {
+  background: #4A90E2;
+  color: #fff;
+}
+
+.notice-btn.secondary {
+  background: #f8f9fa;
+  color: #666;
+  border: 1rpx solid #ddd;
+}
 
 /* 快速入口动画样式 */
 .quick-access {
@@ -505,4 +697,36 @@ export default {
 .nav-item.active .nav-icon { color: #4A90E2; }
 .nav-item.active .nav-icon-custom { background: #4A90E2; }
 .nav-item.active .grid-item { background: #4A90E2; }
+
+/* 无数据提示样式 */
+.no-data-notice {
+  background: white;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  margin: 40rpx 0;
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+  border-left: 6rpx solid #FF9500;
+}
+
+.notice-icon {
+  font-size: 64rpx;
+  margin-bottom: 20rpx;
+}
+
+.notice-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.notice-message {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  text-align: left;
+}
 </style>
