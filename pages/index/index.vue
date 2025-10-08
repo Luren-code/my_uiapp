@@ -13,17 +13,13 @@
         <text class="cursor" v-if="showCursor">|</text>
       </view>
 
-      <!-- 数据状态指示器 -->
-      <view class="data-status" :class="dataStatusClass">
-        <view class="status-icon">{{ dataStatusIcon }}</view>
-        <view class="status-info">
-          <text class="status-text">{{ dataStatusText }}</text>
-          <text class="status-detail">{{ dataStatusDetail }}</text>
-        </view>
-        <view class="refresh-btn" @click="refreshOfficialData" v-if="!isLoadingData">
-          <text>🔄</text>
-        </view>
-      </view>
+      <!-- API状态指示器 -->
+      <ApiStatusIndicator 
+        :dataSource="dataSource"
+        :dataCount="officialOccupationData.length"
+        :isLoading="isLoadingData"
+        :lastUpdated="lastUpdated"
+      />
 
       <!-- 简洁搜索框 - 仅在有官方数据时显示 -->
       <view class="search-container" :class="{ 'slide-in': showSearchBox }" v-if="hasOfficialData">
@@ -87,11 +83,14 @@
 
 <script>
 import SimpleSearchBox from '../../components/SimpleSearchBox.vue';
+import ApiStatusIndicator from '../../components/ApiStatusIndicator.vue';
 import { searchOccupations, occupationsData } from '../../data/occupations.js';
+import minimalRealAPI from '../../api/minimal-real-api.js';
 
 export default {
   components: {
-    SimpleSearchBox
+    SimpleSearchBox,
+    ApiStatusIndicator
   },
   
   data() {
@@ -105,11 +104,12 @@ export default {
       hasPlayedAnimation: false, // 记录是否已播放过动画
       
       // 数据相关
-      hasOfficialData: true,    // 使用静态数据
-      isLoadingData: false,     // 无需加载等待
+      hasOfficialData: false,   // 初始状态
+      isLoadingData: true,      // 初始加载状态
       officialOccupationData: [], // 职业数据
-      dataSource: 'Static Data', // 数据来源
-      dataQuality: 'Good'       // 数据质量
+      dataSource: 'Loading',    // 数据来源
+      dataQuality: 'Good',      // 数据质量
+      lastUpdated: null         // 最后更新时间
     }
   },
   
@@ -141,7 +141,7 @@ export default {
   
   onLoad() {
     this.checkAndPlayAnimation();
-    this.loadStaticData();
+    this.loadRealData();
   },
 
   onShow() {
@@ -277,18 +277,83 @@ export default {
 
 
     /**
-     * 加载静态数据
+     * 加载真实数据
+     */
+    async loadRealData() {
+      console.log('🔍 开始加载真实数据...');
+      
+      this.isLoadingData = true;
+      this.hasOfficialData = false;
+      
+      try {
+        // 使用最小API获取真实数据
+        const result = await minimalRealAPI.getOccupations();
+        
+        console.log('📊 API结果:', result);
+        
+        if (result.success && result.data && result.data.length > 0) {
+          this.officialOccupationData = result.data;
+          this.hasOfficialData = true;
+          this.isLoadingData = false;
+          this.dataSource = result.source;
+          this.dataQuality = 'Good';
+          this.lastUpdated = result.lastUpdated;
+          
+          console.log(`✅ 真实数据加载成功: ${result.count} 个职业，来源: ${result.source}`);
+          
+          // 显示搜索框
+          if (!this.hasPlayedAnimation) {
+            setTimeout(() => {
+              this.showSearchBox = true;
+            }, 300);
+          } else {
+            this.showSearchBox = true;
+          }
+          
+          // 显示加载结果
+          const sourceText = result.source === 'Official API' ? '官方API' : 
+                           result.source === 'Cache' ? '缓存数据' : '备用数据';
+          
+          uni.showToast({
+            title: `${sourceText}: ${result.count}个职业`,
+            icon: 'success',
+            duration: 2000
+          });
+          
+          // 如果有提示消息，显示给用户
+          if (result.message) {
+            setTimeout(() => {
+              uni.showToast({
+                title: result.message,
+                icon: 'none',
+                duration: 3000
+              });
+            }, 2500);
+          }
+          
+        } else {
+          // 如果API失败，使用静态数据
+          this.loadStaticData();
+        }
+      } catch (error) {
+        console.error('❌ 真实API调用失败:', error);
+        this.loadStaticData();
+      }
+    },
+
+    /**
+     * 加载静态数据作为备用
      */
     loadStaticData() {
-      console.log('📋 加载静态数据...');
+      console.log('📋 降级到静态数据...');
       
       try {
         if (occupationsData && occupationsData.length > 0) {
           this.officialOccupationData = occupationsData;
           this.hasOfficialData = true;
           this.isLoadingData = false;
-          this.dataSource = 'Static Data';
-          this.dataQuality = 'Good';
+          this.dataSource = 'Static Fallback';
+          this.dataQuality = 'Basic';
           
           console.log(`✅ 静态数据加载成功: ${occupationsData.length} 个职业`);
           
@@ -302,7 +367,7 @@ export default {
           }
           
           uni.showToast({
-            title: `已加载${occupationsData.length}个职业`,
+            title: `备用数据: ${occupationsData.length}个职业`,
             icon: 'success',
             duration: 2000
           });
@@ -315,13 +380,6 @@ export default {
       }
     },
 
-    /**
-     * 刷新数据
-     */
-    refreshOfficialData() {
-      console.log('🔄 刷新数据...');
-      this.loadStaticData();
-    },
 
     /**
      * 职业选择处理

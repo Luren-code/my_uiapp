@@ -33,37 +33,6 @@ class DataInitializer {
     }
   }
 
-  /**
-   * 刷新数据（重新加载静态数据）
-   */
-  refreshData() {
-    try {
-      console.log('刷新静态数据...');
-      this.isInitialized = false;
-      
-      const success = this.initialize();
-      if (success) {
-        uni.showToast({
-          title: 'Data refreshed successfully',
-          icon: 'success'
-        });
-      } else {
-        uni.showToast({
-          title: 'Data refresh failed',
-          icon: 'none'
-        });
-      }
-      
-      return success;
-    } catch (error) {
-      console.error('刷新失败:', error);
-      uni.showToast({
-        title: 'Refresh failed',
-        icon: 'none'
-      });
-      return false;
-    }
-  }
 
   /**
    * 获取数据状态
@@ -172,7 +141,6 @@ export default dataInitializer;
 // 导出便捷方法
 export const {
   initialize,
-  refreshData,
   getDataStatus,
   clearCache,
   exportData,

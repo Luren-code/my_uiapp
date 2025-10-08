@@ -353,37 +353,6 @@ export default {
       });
     },
     
-    /**
-     * 刷新数据
-     */
-    refreshData() {
-      if (this.isRefreshing) return;
-      
-      this.isRefreshing = true;
-      
-      try {
-        console.log('🔄 刷新静态数据...');
-        
-        // 重新加载静态数据
-        this.loadStaticData();
-        
-        uni.showToast({
-          title: '数据刷新成功',
-          icon: 'success',
-          duration: 2000
-        });
-        
-      } catch (error) {
-        console.error('❌ 数据刷新失败:', error);
-        uni.showToast({
-          title: '刷新失败',
-          icon: 'none',
-          duration: 2000
-        });
-      } finally {
-        this.isRefreshing = false;
-      }
-    }
   }
 };
 </script>
