@@ -140,7 +140,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 95rpx 0 30rpx 0;
+  padding: 100rpx 0 24rpx 0;
   color: white;
   position: sticky;
   top: 0;

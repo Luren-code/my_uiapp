@@ -98,12 +98,16 @@ export default {
   
   computed: {
     showHistory() {
-      return !this.hasSearched && (!this.searchKeyword || this.searchKeyword.trim() === '');
+      return this.showResults && (!this.searchKeyword || this.searchKeyword.trim() === '') && this.searchHistory.length > 0;
     }
   },
   
   mounted() {
     this.loadSearchHistory();
+    // 如果没有搜索历史，添加一些示例数据
+    if (this.searchHistory.length === 0) {
+      this.addDefaultSearchHistory();
+    }
   },
   
   methods: {
@@ -213,6 +217,15 @@ export default {
           }
         }
       });
+    },
+    
+    addDefaultSearchHistory() {
+      // 添加一些示例搜索历史
+      const defaultHistory = ['计算机', '2', '新手入门'];
+      defaultHistory.forEach(item => {
+        searchHistoryUtil.saveSearchHistory(item);
+      });
+      this.loadSearchHistory();
     }
   }
 };
@@ -224,16 +237,17 @@ export default {
   width: 100%;
 }
 
-/* 搜索框样式 */
+/* 搜索框样式 - 优化小程序显示 */
 .search-box {
   display: flex;
   align-items: center;
   background: #fff;
   border: 2rpx solid #4A90E2;
   border-radius: 50rpx;
-  padding: 24rpx 30rpx;
-  box-shadow: 0 4rpx 20rpx rgba(74, 144, 226, 0.1);
+  padding: 20rpx 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(74, 144, 226, 0.15);
   transition: all 0.3s ease;
+  margin: 0 8rpx;
 }
 
 .search-box:focus-within {
@@ -242,18 +256,21 @@ export default {
 }
 
 .search-icon {
-  margin-right: 20rpx;
-  font-size: 32rpx;
+  margin-right: 16rpx;
+  font-size: 28rpx;
   color: #666;
+  display: flex;
+  align-items: center;
 }
 
 .search-input {
   flex: 1;
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: #333;
   background: transparent;
   border: none;
   outline: none;
+  line-height: 1.4;
 }
 
 .search-placeholder {
@@ -296,7 +313,7 @@ export default {
 
 /* 搜索历史 */
 .search-history {
-  padding: 30rpx;
+  padding: 24rpx 30rpx;
   border-bottom: 1rpx solid #f0f0f0;
 }
 
@@ -324,15 +341,17 @@ export default {
 .history-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
+  gap: 8rpx;
+  margin-top: 8rpx;
 }
 
 .history-item {
-  padding: 12rpx 20rpx;
-  background: #f8f9fa;
-  border-radius: 24rpx;
-  border: 1rpx solid #e9ecef;
+  padding: 8rpx 16rpx;
+  background: #f5f5f5;
+  border-radius: 20rpx;
+  border: 1rpx solid #e0e0e0;
   transition: all 0.3s ease;
+  margin: 4rpx;
 }
 
 .history-item:hover {

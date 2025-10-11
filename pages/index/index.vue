@@ -13,29 +13,22 @@
         <text class="cursor" v-if="showCursor">|</text>
       </view>
 
-      <!-- API状态指示器 -->
-      <ApiStatusIndicator 
-        :dataSource="dataSource"
-        :dataCount="officialOccupationData.length"
-        :isLoading="isLoadingData"
-        :lastUpdated="lastUpdated"
-      />
 
-      <!-- 简洁搜索框 - 仅在有官方数据时显示 -->
-      <view class="search-container" :class="{ 'slide-in': showSearchBox }" v-if="hasOfficialData">
+      <!-- 简洁搜索框 -->
+      <view class="search-container" :class="{ 'slide-in': showSearchBox }">
         <SimpleSearchBox 
           :placeholder="'输入职业名称或代码搜索'"
           @select="onOccupationSelect"
         />
       </view>
 
-      <!-- 无官方数据时的提示 -->
-      <view class="no-data-notice" v-if="!hasOfficialData && !isLoadingData">
-        <view class="notice-icon">⚠️</view>
-        <text class="notice-title">仅提供官方真实数据</text>
+      <!-- 职业数据说明 -->
+      <view class="data-notice">
+        <view class="notice-icon">📋</view>
+        <text class="notice-title">Official Occupation Data</text>
         <text class="notice-message">
-          本应用仅显示来自澳洲移民局SkillSelect的官方职业数据，
-          不提供任何虚假或模拟数据。请确保网络连接正常，或稍后重试。
+          Based on Australian SkillSelect official occupation data.
+          Search by occupation code or name to find detailed information.
         </text>
       </view>
 
@@ -83,14 +76,11 @@
 
 <script>
 import SimpleSearchBox from '../../components/SimpleSearchBox.vue';
-import ApiStatusIndicator from '../../components/ApiStatusIndicator.vue';
 import { searchOccupations, occupationsData } from '../../data/occupations.js';
-import minimalRealAPI from '../../api/minimal-real-api.js';
 
 export default {
   components: {
-    SimpleSearchBox,
-    ApiStatusIndicator
+    SimpleSearchBox
   },
   
   data() {
@@ -101,47 +91,16 @@ export default {
       typeTimer: null,
       showSearchBox: false,    // 控制搜索框显示
       showQuickAccess: false,   // 控制快速入口显示
-      hasPlayedAnimation: false, // 记录是否已播放过动画
-      
-      // 数据相关
-      hasOfficialData: false,   // 初始状态
-      isLoadingData: true,      // 初始加载状态
-      officialOccupationData: [], // 职业数据
-      dataSource: 'Loading',    // 数据来源
-      dataQuality: 'Good',      // 数据质量
-      lastUpdated: null         // 最后更新时间
-    }
-  },
-  
-  computed: {
-    dataStatusClass() {
-      if (this.isLoadingData) return 'status-loading';
-      if (this.hasOfficialData) return 'status-success';
-      return 'status-error';
-    },
-    
-    dataStatusIcon() {
-      if (this.isLoadingData) return '⏳';
-      if (this.hasOfficialData) return '✅';
-      return '❌';
-    },
-    
-    dataStatusText() {
-      if (this.isLoadingData) return 'Loading official data...';
-      if (this.hasOfficialData) return 'Official data loaded';
-      return 'Official data unavailable';
-    },
-    
-    dataStatusDetail() {
-      if (this.isLoadingData) return 'Connecting to government APIs...';
-      if (this.hasOfficialData) return `${this.officialOccupationData.length} occupations from ${this.dataSource}`;
-      return 'Please check network connection';
+      hasPlayedAnimation: false // 记录是否已播放过动画
     }
   },
   
   onLoad() {
-    this.checkAndPlayAnimation();
-    this.loadRealData();
+    // 直接显示所有内容，简化加载流程
+    this.displayTitle = this.fullTitle;
+    this.showSearchBox = true;
+    this.showQuickAccess = true;
+    this.showCursor = false;
   },
 
   onShow() {
@@ -276,110 +235,6 @@ export default {
     
 
 
-    /**
-     * 加载真实数据
-     */
-    async loadRealData() {
-      console.log('🔍 开始加载真实数据...');
-      
-      this.isLoadingData = true;
-      this.hasOfficialData = false;
-      
-      try {
-        // 使用最小API获取真实数据
-        const result = await minimalRealAPI.getOccupations();
-        
-        console.log('📊 API结果:', result);
-        
-        if (result.success && result.data && result.data.length > 0) {
-          this.officialOccupationData = result.data;
-          this.hasOfficialData = true;
-          this.isLoadingData = false;
-          this.dataSource = result.source;
-          this.dataQuality = 'Good';
-          this.lastUpdated = result.lastUpdated;
-          
-          console.log(`✅ 真实数据加载成功: ${result.count} 个职业，来源: ${result.source}`);
-          
-          // 显示搜索框
-          if (!this.hasPlayedAnimation) {
-            setTimeout(() => {
-              this.showSearchBox = true;
-            }, 300);
-          } else {
-            this.showSearchBox = true;
-          }
-          
-          // 显示加载结果
-          const sourceText = result.source === 'Official API' ? '官方API' : 
-                           result.source === 'Cache' ? '缓存数据' : '备用数据';
-          
-          uni.showToast({
-            title: `${sourceText}: ${result.count}个职业`,
-            icon: 'success',
-            duration: 2000
-          });
-          
-          // 如果有提示消息，显示给用户
-          if (result.message) {
-            setTimeout(() => {
-              uni.showToast({
-                title: result.message,
-                icon: 'none',
-                duration: 3000
-              });
-            }, 2500);
-          }
-          
-        } else {
-          // 如果API失败，使用静态数据
-          this.loadStaticData();
-        }
-      } catch (error) {
-        console.error('❌ 真实API调用失败:', error);
-        this.loadStaticData();
-      }
-    },
-
-    /**
-     * 加载静态数据作为备用
-     */
-    loadStaticData() {
-      console.log('📋 降级到静态数据...');
-      
-      try {
-        if (occupationsData && occupationsData.length > 0) {
-          this.officialOccupationData = occupationsData;
-          this.hasOfficialData = true;
-          this.isLoadingData = false;
-          this.dataSource = 'Static Fallback';
-          this.dataQuality = 'Basic';
-          
-          console.log(`✅ 静态数据加载成功: ${occupationsData.length} 个职业`);
-          
-          // 显示搜索框
-          if (!this.hasPlayedAnimation) {
-            setTimeout(() => {
-              this.showSearchBox = true;
-            }, 300);
-          } else {
-            this.showSearchBox = true;
-          }
-          
-          uni.showToast({
-            title: `备用数据: ${occupationsData.length}个职业`,
-            icon: 'success',
-            duration: 2000
-          });
-          
-        } else {
-          this.onDataError(new Error('静态数据无法加载'));
-        }
-      } catch (error) {
-        this.onDataError(error);
-      }
-    },
-
 
     /**
      * 职业选择处理
@@ -424,21 +279,6 @@ export default {
       }
     },
 
-    /**
-     * 数据加载失败处理
-     */
-    onDataError(error) {
-      console.error('数据加载失败:', error);
-      
-      this.hasOfficialData = false;
-      this.isLoadingData = false;
-      this.officialOccupationData = [];
-      
-      uni.showToast({
-        title: '数据加载失败',
-        icon: 'none'
-      });
-    }
 
   }
 }
@@ -454,7 +294,7 @@ export default {
 
 .header {
   background: #4A90E2;
-  padding: 95rpx 0 30rpx 0;
+  padding: 100rpx 0 24rpx 0;
   text-align: center;
   position: sticky;
   top: 0;
@@ -463,16 +303,16 @@ export default {
 
 .header-title {
   color: white;
-  font-size: 36rpx;
-  font-weight: 500;
+  font-size: 32rpx;
+  font-weight: 600;
 }
 
 .content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0 40rpx;
-  padding-bottom: 200rpx;
+  padding: 0 32rpx;
+  padding-bottom: 180rpx;
   overflow-y: auto;
   background-color: #F8F8F8;
 }
@@ -481,20 +321,20 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 80rpx 0 60rpx 0;
+  padding: 40rpx 0 40rpx 0;
   flex-shrink: 0;
 }
 
 .title-text {
-  font-size: 44rpx;
+  font-size: 40rpx;
   font-weight: bold;
   color: #333;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .cursor {
-  font-size: 44rpx;
+  font-size: 40rpx;
   color: #333;
   animation: blink 1s infinite;
   margin-left: 4rpx;
@@ -507,11 +347,11 @@ export default {
 
 /* 搜索框动画样式 */
 .search-container {
-  margin-bottom: 60rpx;
+  margin-bottom: 40rpx;
   flex-shrink: 0;
   /* 初始状态：隐藏在上方 */
-  opacity: 0;
-  transform: translateY(-50rpx);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.6s ease-out;
 }
 
@@ -550,72 +390,14 @@ export default {
   line-height: 1;
 }
 
-/* 数据状态指示器样式 */
-.data-status {
-  display: flex;
-  align-items: center;
-  padding: 15rpx 30rpx;
-  margin: 20rpx 0;
-  border-radius: 12rpx;
-  transition: all 0.3s ease;
-}
 
-.status-loading {
-  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-}
-
-.status-success {
-  background: linear-gradient(135deg, #00b894, #00cec9);
-}
-
-.status-error {
-  background: linear-gradient(135deg, #fd79a8, #e84393);
-}
-
-.status-icon {
-  font-size: 32rpx;
-  margin-right: 20rpx;
-}
-
-.status-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.status-text {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 4rpx;
-}
-
-.status-detail {
-  font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.refresh-btn {
-  padding: 12rpx;
-  border-radius: 8rpx;
-  background: rgba(255, 255, 255, 0.2);
-  font-size: 28rpx;
-  color: #fff;
-  transition: all 0.3s ease;
-}
-
-.refresh-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
-}
-
-/* 无数据提示样式 */
-.no-data-notice {
+/* 数据说明样式 */
+.data-notice {
   text-align: center;
-  padding: 60rpx 40rpx;
+  padding: 40rpx 32rpx;
   background: #fff;
   border-radius: 16rpx;
-  margin: 40rpx 0;
+  margin: 20rpx 0;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
 
@@ -666,10 +448,11 @@ export default {
 .quick-access {
   text-align: center;
   flex-shrink: 0;
-  /* 初始状态：隐藏在上方 */
-  opacity: 0;
-  transform: translateY(-30rpx);
+  /* 初始状态：显示 */
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.6s ease-out;
+  margin-top: 20rpx;
 }
 
 .quick-access.slide-in {
@@ -679,9 +462,9 @@ export default {
 }
 
 .quick-title {
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: #666;
-  margin-bottom: 30rpx;
+  margin-bottom: 24rpx;
   display: block;
 }
 
@@ -694,8 +477,8 @@ export default {
 
 .quick-btn {
   color: #666;
-  font-size: 28rpx;
-  margin: 0 20rpx;
+  font-size: 26rpx;
+  margin: 0 16rpx;
   /* 添加按钮悬停效果 */
   transition: color 0.3s ease;
 }
@@ -706,35 +489,48 @@ export default {
 
 .divider {
   color: #ddd;
-  font-size: 28rpx;
-  margin: 0 20rpx;
+  font-size: 26rpx;
+  margin: 0 16rpx;
 }
 
-/* 底部导航保持原样 */
-.bottom-nav { display: flex; background: #fff; border-top: 1rpx solid #eee; padding: 20rpx 0; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.08); padding-bottom: calc(20rpx + env(safe-area-inset-bottom)); }
+/* 底部导航优化 */
+.bottom-nav { 
+  display: flex; 
+  background: #fff; 
+  border-top: 1rpx solid #eee; 
+  padding: 16rpx 0; 
+  position: fixed; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  z-index: 1000; 
+  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.08); 
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom)); 
+}
 
 .nav-item {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10rpx 0;
+  padding: 8rpx 0;
+  transition: all 0.3s ease;
 }
 
-.nav-icon { font-size: 40rpx; margin-bottom: 8rpx; color: #999; }
+.nav-icon { font-size: 36rpx; margin-bottom: 6rpx; color: #999; }
 
-.nav-icon-custom { width: 48rpx; height: 48rpx; background: #999; color: #fff; border-radius: 8rpx; display: flex; align-items: center; justify-content: center; font-size: 20rpx; font-weight: bold; margin-bottom: 8rpx; }
+.nav-icon-custom { width: 44rpx; height: 44rpx; background: #999; color: #fff; border-radius: 6rpx; display: flex; align-items: center; justify-content: center; font-size: 18rpx; font-weight: bold; margin-bottom: 6rpx; }
 
-.nav-icon-grid { width: 48rpx; height: 48rpx; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 4rpx; margin-bottom: 8rpx; }
+.nav-icon-grid { width: 44rpx; height: 44rpx; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 3rpx; margin-bottom: 6rpx; }
 
-.grid-item { width: 20rpx; height: 20rpx; background: #999; }
+.grid-item { width: 18rpx; height: 18rpx; background: #999; border-radius: 2rpx; }
 
 .nav-icon-user {
-  width: 48rpx;
-  height: 48rpx;
+  width: 44rpx;
+  height: 44rpx;
   border-radius: 50%;
   background: #999;
-  margin-bottom: 8rpx;
+  margin-bottom: 6rpx;
   position: relative;
 }
 
@@ -744,47 +540,16 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 24rpx;
-  height: 24rpx;
+  width: 22rpx;
+  height: 22rpx;
   background: white;
   border-radius: 50%;
 }
 
-.nav-text { font-size: 20rpx; color: #999; }
+.nav-text { font-size: 22rpx; color: #999; }
 .nav-text.active { color: #4A90E2; }
 .nav-item.active .nav-icon { color: #4A90E2; }
 .nav-item.active .nav-icon-custom { background: #4A90E2; }
 .nav-item.active .grid-item { background: #4A90E2; }
 
-/* 无数据提示样式 */
-.no-data-notice {
-  background: white;
-  border-radius: 16rpx;
-  padding: 40rpx;
-  margin: 40rpx 0;
-  text-align: center;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
-  border-left: 6rpx solid #FF9500;
-}
-
-.notice-icon {
-  font-size: 64rpx;
-  margin-bottom: 20rpx;
-}
-
-.notice-title {
-  display: block;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 16rpx;
-}
-
-.notice-message {
-  display: block;
-  font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
-  text-align: left;
-}
 </style>

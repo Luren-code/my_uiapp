@@ -207,15 +207,12 @@ export default {
         );
         
         if (completeOccupation) {
-          // 合并完整信息
-          this.occupation = {
-            ...this.occupation,
-            ...completeOccupation
-          };
-          
+          // 使用完整信息替换当前职业信息
+          this.occupation = completeOccupation;
           console.log('✅ 成功加载完整职业信息:', this.occupation);
         } else {
           console.log('⚠️ 未找到职业代码对应的完整信息:', code);
+          // 如果找不到完整信息，保持基本信息不变
         }
         
       } catch (error) {
@@ -397,7 +394,7 @@ export default {
 
 .header {
   background: #4A90E2;
-  padding: 95rpx 40rpx 30rpx 40rpx;
+  padding: 100rpx 40rpx 24rpx 40rpx;
   display: flex;
   align-items: center;
   position: sticky;
