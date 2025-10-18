@@ -6,104 +6,109 @@
         <text class="back-icon">﹤</text>
       </view>
       <text class="header-title">职业详情</text>
+      <view class="header-right">
+        <text class="more-icon">⋯</text>
+      </view>
     </view>
 
     <!-- 主要内容区域 -->
     <view class="content">
-      <!-- 职业基本信息 -->
-      <view class="occupation-card">
-        <view class="occupation-header">
-          <view class="occupation-code">{{ occupation.code }}</view>
-          <view class="occupation-category">{{ occupation.category }}</view>
-        </view>
-        <text class="occupation-english">{{ occupation.englishName }}</text>
-        <text class="occupation-chinese">{{ occupation.chineseName }}</text>
-        <view class="popularity-badge" v-if="occupation.isPopular">
-          <text class="badge-text">热门</text>
+      <!-- 职业名称区域 -->
+      <view class="occupation-name-section">
+        <text class="section-title">职业名称</text>
+        <view class="name-card">
+          <text class="english-name">{{ occupation.englishName }}</text>
+          <text class="chinese-name">{{ occupation.chineseName }}</text>
         </view>
       </view>
 
-      <!-- 基本信息表格 -->
-      <view class="info-table">
-        <text class="table-title">基本信息</text>
-        <view class="table-row">
-          <text class="table-label">ANZSCO代码:</text>
-          <text class="table-value">{{ occupation.anzscoCode || occupation.code }}</text>
-        </view>
-        <view class="table-row">
-          <text class="table-label">支持签证:</text>
-          <text class="table-value">{{ getSupportedVisas(occupation) }}</text>
-        </view>
-        <view class="table-row">
-          <text class="table-label">职业评估机构:</text>
-          <text class="table-value">{{ getAssessmentAuthority(occupation) }}</text>
-        </view>
-        <view class="table-row">
-          <text class="table-label">所属列表:</text>
-          <text class="table-value">{{ getOccupationList(occupation) }}</text>
-        </view>
-        <view class="table-row">
-          <text class="table-label">技能等级:</text>
-          <text class="table-value">{{ getSkillLevel(occupation) }}</text>
-        </view>
-        <view class="table-row" v-if="occupation.averageSalary">
-          <text class="table-label">平均薪资:</text>
-          <text class="table-value">{{ occupation.averageSalary }}</text>
-        </view>
-      </view>
-
-      <!-- 相关信息 -->
-      <view class="info-sections">
-        <!-- 职业描述 -->
-        <view class="info-section" v-if="occupation.description">
-          <text class="section-title">职业描述</text>
-          <text class="section-content">{{ occupation.description }}</text>
-        </view>
-
-        <!-- 工作职责 -->
-        <view class="info-section" v-if="occupation.tasks && occupation.tasks.length > 0">
-          <text class="section-title">工作职责</text>
-          <view class="task-list">
-            <text class="task-item" v-for="(task, index) in occupation.tasks" :key="index">
-              • {{ task }}
-            </text>
+      <!-- 基本信息区域 -->
+      <view class="basic-info-section">
+        <text class="section-title">基本信息</text>
+        <view class="info-card">
+          <view class="info-row">
+            <text class="info-label">ANZSCO代码:</text>
+            <text class="info-value">{{ occupation.anzscoCode || occupation.code }}</text>
           </view>
-        </view>
-
-        <!-- 申请要求 -->
-        <view class="info-section" v-if="occupation.requirements && occupation.requirements.length > 0">
-          <text class="section-title">申请要求</text>
-          <view class="requirement-list">
-            <text class="requirement-item" v-for="(req, index) in occupation.requirements" :key="index">
-              • {{ req }}
-            </text>
+          <view class="info-row">
+            <text class="info-label">支持签证:</text>
+            <text class="info-value">{{ getSupportedVisas(occupation) }}</text>
           </view>
-        </view>
-
-        <!-- 相关链接 -->
-        <view class="info-section">
-          <text class="section-title">相关链接</text>
-          <view class="link-list">
-            <view class="link-item" @click="openExternalLink('skillselect')">
-              <text class="link-text">SkillSelect官方网站</text>
-              <text class="link-arrow">›</text>
-            </view>
-            <view class="link-item" @click="openExternalLink('assessment')">
-              <text class="link-text">技能评估信息</text>
-              <text class="link-arrow">›</text>
-            </view>
+          <view class="info-row">
+            <text class="info-label">职业评估机构:</text>
+            <text class="info-value">{{ getAssessmentAuthority(occupation) }}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">所属列表:</text>
+            <text class="info-value">{{ getOccupationList(occupation) }}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">技能等级:</text>
+            <text class="info-value">{{ getSkillLevel(occupation) }}</text>
           </view>
         </view>
       </view>
 
-      <!-- 操作按钮 -->
-      <view class="action-buttons">
-        <button class="action-btn primary" @click="addToFavorites">
-          添加收藏
-        </button>
-        <button class="action-btn secondary" @click="shareOccupation">
-          分享
-        </button>
+      <!-- 职业描述区域 -->
+      <view class="description-section" v-if="occupation.description">
+        <text class="section-title">职业描述</text>
+        <view class="description-card">
+          <text class="description-text">{{ occupation.description }}</text>
+        </view>
+      </view>
+
+      <!-- 工作职责区域 -->
+      <view class="tasks-section" v-if="occupation.tasks && occupation.tasks.length > 0">
+        <text class="section-title">工作职责</text>
+        <view class="tasks-card">
+          <view class="task-item" v-for="(task, index) in occupation.tasks" :key="index">
+            <text class="task-bullet">•</text>
+            <text class="task-text">{{ task }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 职业所属组别区域 -->
+      <view class="unit-group-section" v-if="occupation.unitGroup">
+        <text class="section-title">职业所属组别</text>
+        <view class="unit-group-card">
+          <text class="unit-group-text">{{ occupation.unitGroup }}</text>
+        </view>
+      </view>
+
+      <!-- 此组别下所有职业区域 -->
+      <view class="related-occupations-section" v-if="relatedOccupations.length > 0">
+        <text class="section-title">此组别下所有职业</text>
+        <view class="related-card">
+          <view class="related-item" v-for="related in relatedOccupations" :key="related.code" @click="navigateToOccupation(related)">
+            <text class="related-code">{{ related.code }}:</text>
+            <text class="related-name">{{ related.englishName }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 竞争形势区域 -->
+      <view class="competition-section">
+        <text class="section-title">竞争形势</text>
+        <view class="competition-card">
+          <text class="competition-text">{{ occupation.code }}全澳EOI获邀分数：约{{ getInvitationScore() }}分</text>
+          <text class="competition-note">*基于最新邀请数据，仅供参考</text>
+          <text class="competition-note">*实际分数可能因州担保政策而有所不同</text>
+        </view>
+      </view>
+
+      <!-- EOI备名详情区域 -->
+      <view class="eoi-details-section">
+        <text class="section-title">EOI备名详情</text>
+        <view class="eoi-card">
+          <text class="eoi-current">请在【EOI备名】板块查看</text>
+          <view class="eoi-info">
+            <text class="eoi-occupation">各州邀请记录：{{ occupation.code }}（{{ occupation.chineseName }}）</text>
+          </view>
+          <button class="view-details-btn" @click="viewEOIDetails">
+            <text class="btn-text">订阅用户可查看</text>
+          </button>
+        </view>
       </view>
     </view>
   </view>
@@ -113,6 +118,8 @@
 export default {
   data() {
     return {
+      loading: false,
+      error: null,
       occupation: {
         code: '',
         englishName: '',
@@ -130,67 +137,75 @@ export default {
         tasks: [],
         requirements: [],
         relatedOccupations: [],
-        averageSalary: ''
-      }
+        averageSalary: '',
+        unitGroup: ''
+      },
+      relatedOccupations: []
     };
   },
 
   onLoad(options) {
     console.log('详情页面接收到的参数:', options);
-    
-    // 从页面参数中获取职业信息
-    if (options.occupation) {
-      // 旧版本：完整JSON参数
-      try {
-        this.occupation = JSON.parse(decodeURIComponent(options.occupation));
-        console.log('✅ 使用完整参数加载职业信息:', this.occupation);
-      } catch (error) {
-        console.error('解析职业信息失败:', error);
-        this.goBack();
-      }
-    } else if (options.code && options.name) {
-      // 新版本：简化参数
-      try {
-        this.occupation = {
-          code: options.code,
-          anzscoCode: options.code,
-          englishName: decodeURIComponent(options.name),
-          chineseName: options.chineseName ? decodeURIComponent(options.chineseName) : '',
-          category: 'Unknown',
-          isPopular: false,
-          skillLevel: 1,
-          visaSubclasses: ['189', '190', '491'],
-          assessmentAuthority: 'VETASSESS',
-          mltssl: false,
-          stsol: false,
-          rol: false,
-          description: '职业详细信息正在加载中...',
-          tasks: [],
-          requirements: []
-        };
-        
-        console.log('✅ 使用简化参数加载职业信息:', this.occupation);
-        
-        // 尝试从本地数据中补充完整信息
-        this.loadCompleteOccupationData(options.code);
-        
-      } catch (error) {
-        console.error('处理简化参数失败:', error);
-        this.goBack();
-      }
-    } else {
-      console.error('❌ 没有传递职业信息参数');
-      uni.showToast({
-        title: '职业信息缺失',
-        icon: 'none'
-      });
-      this.goBack();
-    }
+    this.loadOccupationData(options);
   },
 
   methods: {
-    goBack() {
-      uni.navigateBack();
+    /**
+     * 加载职业数据
+     */
+    async loadOccupationData(options) {
+      this.loading = true;
+      this.error = null;
+      
+      try {
+        // 从页面参数中获取职业信息
+        if (options.occupation) {
+          // 完整JSON参数
+          this.occupation = JSON.parse(decodeURIComponent(options.occupation));
+          console.log('✅ 使用完整参数加载职业信息:', this.occupation);
+        } else if (options.code && options.name) {
+          // 简化参数 - 先设置基本信息
+          this.occupation = {
+            code: options.code,
+            anzscoCode: options.code,
+            englishName: decodeURIComponent(options.name),
+            chineseName: options.chineseName ? decodeURIComponent(options.chineseName) : '',
+            category: 'Unknown',
+            isPopular: false,
+            skillLevel: 1,
+            visaSubclasses: ['189', '190', '491'],
+            assessmentAuthority: 'VETASSESS',
+            mltssl: false,
+            stsol: false,
+            rol: false,
+            description: '正在加载职业详细信息...',
+            tasks: [],
+            requirements: [],
+            unitGroup: ''
+          };
+          
+          // 尝试从本地数据加载完整信息
+          await this.loadCompleteOccupationData(options.code);
+        } else {
+          throw new Error('缺少职业信息参数');
+        }
+        
+        // 加载相关职业
+        await this.loadRelatedOccupations();
+        
+      } catch (error) {
+        console.error('❌ 加载职业信息失败:', error);
+        this.error = '加载职业详情失败，请重试';
+        
+        if (!this.occupation.code) {
+          // 如果没有基本信息，返回上一页
+          setTimeout(() => {
+            this.goBack();
+          }, 2000);
+        }
+      } finally {
+        this.loading = false;
+      }
     },
 
     /**
@@ -201,18 +216,18 @@ export default {
         // 导入本地职业数据
         const { occupationsData } = await import('../../data/occupations.js');
         
-        // 查找匹配的职业
         const completeOccupation = occupationsData.find(item => 
           item.code === code || item.anzscoCode === code
         );
         
         if (completeOccupation) {
-          // 使用完整信息替换当前职业信息
-          this.occupation = completeOccupation;
+          this.occupation = {
+            ...completeOccupation,
+            unitGroup: this.getUnitGroup(completeOccupation)
+          };
           console.log('✅ 成功加载完整职业信息:', this.occupation);
         } else {
           console.log('⚠️ 未找到职业代码对应的完整信息:', code);
-          // 如果找不到完整信息，保持基本信息不变
         }
         
       } catch (error) {
@@ -220,6 +235,102 @@ export default {
       }
     },
 
+    /**
+     * 加载相关职业信息
+     */
+    async loadRelatedOccupations() {
+      try {
+        if (!this.occupation.relatedOccupations || this.occupation.relatedOccupations.length === 0) {
+          // 如果没有相关职业，根据类别生成一些相关职业
+          await this.generateRelatedOccupations();
+          return;
+        }
+        
+        const { occupationsData } = await import('../../data/occupations.js');
+        
+        this.relatedOccupations = occupationsData.filter(item => 
+          this.occupation.relatedOccupations.includes(item.code)
+        ).slice(0, 3); // 最多显示3个相关职业
+        
+        console.log('✅ 成功加载相关职业:', this.relatedOccupations);
+        
+      } catch (error) {
+        console.error('❌ 加载相关职业失败:', error);
+      }
+    },
+
+    /**
+     * 根据类别生成相关职业
+     */
+    async generateRelatedOccupations() {
+      try {
+        const { occupationsData } = await import('../../data/occupations.js');
+        
+        // 找到同类别的其他职业
+        this.relatedOccupations = occupationsData.filter(item => 
+          item.category === this.occupation.category && item.code !== this.occupation.code
+        ).slice(0, 3);
+        
+      } catch (error) {
+        console.error('❌ 生成相关职业失败:', error);
+      }
+    },
+
+    /**
+     * 获取职业组别信息
+     */
+    getUnitGroup(occupation) {
+      const unitGroupMap = {
+        'ICT': 'Unit Group 2631: Computer Network Professionals',
+        'Engineering': 'Unit Group 2332: Civil Engineering Professionals',
+        'Healthcare': 'Unit Group 2544: Registered Nurses',
+        'Management': 'Unit Group 1332: Engineering Managers',
+        'Finance': 'Unit Group 2211: Accountants',
+        'Education': 'Unit Group 2414: Secondary School Teachers',
+        'Social Work': 'Unit Group 2725: Social Workers',
+        'Agriculture': 'Unit Group 2341: Agricultural and Forestry Scientists'
+      };
+      
+      return unitGroupMap[occupation.category] || 'Unit Group Information Not Available';
+    },
+
+    /**
+     * 获取邀请分数（模拟数据）
+     */
+    getInvitationScore() {
+      const scores = [65, 70, 75, 80, 85, 90, 95];
+      return scores[Math.floor(Math.random() * scores.length)];
+    },
+
+    /**
+     * 返回上一页
+     */
+    goBack() {
+      uni.navigateBack();
+    },
+
+    /**
+     * 导航到相关职业
+     */
+    navigateToOccupation(occupation) {
+      uni.navigateTo({
+        url: `/pages/occupation-detail/detail?code=${occupation.code}&name=${encodeURIComponent(occupation.englishName)}&chineseName=${encodeURIComponent(occupation.chineseName)}`
+      });
+    },
+
+    /**
+     * 查看EOI详情
+     */
+    viewEOIDetails() {
+      uni.showToast({
+        title: '请先订阅服务',
+        icon: 'none'
+      });
+    },
+
+    /**
+     * 获取职业列表
+     */
     getOccupationList(occupation) {
       const lists = [];
       if (occupation.mltssl) lists.push('MLTSSL');
@@ -228,6 +339,9 @@ export default {
       return lists.length > 0 ? lists.join(', ') : '待确认';
     },
 
+    /**
+     * 获取评估机构
+     */
     getAssessmentAuthority(occupation) {
       if (occupation.assessmentAuthority) {
         return occupation.assessmentAuthority;
@@ -248,9 +362,12 @@ export default {
       return categoryMap[occupation.category] || 'VETASSESS';
     },
 
+    /**
+     * 获取技能等级
+     */
     getSkillLevel(occupation) {
       if (occupation.skillLevel) {
-        return `Level ${occupation.skillLevel}`;
+        return occupation.skillLevel.toString();
       }
       
       // 根据职业类别提供默认技能等级
@@ -266,121 +383,19 @@ export default {
       };
       
       const defaultLevel = categoryLevelMap[occupation.category] || 1;
-      return `Level ${defaultLevel}`;
+      return defaultLevel.toString();
     },
 
+    /**
+     * 获取支持签证
+     */
     getSupportedVisas(occupation) {
       if (occupation.visaSubclasses && occupation.visaSubclasses.length > 0) {
-        return occupation.visaSubclasses.join(' / ');
+        return occupation.visaSubclasses.join('/');
       }
       
       // 提供默认的常见签证类型
-      return '189 / 190 / 491';
-    },
-
-    addToFavorites() {
-      // 添加到收藏夹逻辑
-      uni.showToast({
-        title: '已添加到收藏',
-        icon: 'success'
-      });
-    },
-
-    shareOccupation() {
-      // 分享功能 - 兼容不同平台
-      const shareContent = `${this.occupation.code} - ${this.occupation.englishName}\n${this.occupation.chineseName}`;
-      
-      // #ifdef H5
-      // H5环境使用剪贴板分享
-      uni.setClipboardData({
-        data: shareContent,
-        success: () => {
-          uni.showToast({
-            title: '内容已复制到剪贴板',
-            icon: 'success'
-          });
-        }
-      });
-      // #endif
-      
-      // #ifdef MP-WEIXIN
-      // 微信小程序使用剪贴板
-      uni.setClipboardData({
-        data: shareContent,
-        success: () => {
-          uni.showToast({
-            title: '内容已复制，可分享给好友',
-            icon: 'success'
-          });
-        }
-      });
-      // #endif
-      
-      // #ifdef APP-PLUS
-      // App环境使用原生分享
-      uni.share({
-        provider: 'weixin',
-        type: 0,
-        title: `${this.occupation.code} - ${this.occupation.englishName}`,
-        summary: this.occupation.chineseName,
-        success: function () {
-          uni.showToast({
-            title: '分享成功',
-            icon: 'success'
-          });
-        },
-        fail: function () {
-          uni.showToast({
-            title: '分享失败',
-            icon: 'none'
-          });
-        }
-      });
-      // #endif
-    },
-
-    openExternalLink(type) {
-      let url = '';
-      switch (type) {
-        case 'skillselect':
-          url = 'https://www.homeaffairs.gov.au/trav/work/skil';
-          break;
-        case 'assessment':
-          url = 'https://www.homeaffairs.gov.au/trav/work/skil/skil-assi';
-          break;
-      }
-
-      if (url) {
-        // #ifdef H5
-        window.open(url, '_blank');
-        // #endif
-
-        // #ifndef H5
-        uni.showModal({
-          title: '外部链接',
-          content: `在浏览器中打开 ${url}？`,
-          success: function (res) {
-            if (res.confirm) {
-              // #ifdef APP-PLUS
-              plus.runtime.openURL(url);
-              // #endif
-              
-              // #ifdef MP-WEIXIN
-              uni.setClipboardData({
-                data: url,
-                success: function () {
-                  uni.showToast({
-                    title: '链接已复制到剪贴板',
-                    icon: 'success'
-                  });
-                }
-              });
-              // #endif
-            }
-          }
-        });
-        // #endif
-      }
+      return '189/190/491';
     }
   }
 };
@@ -389,26 +404,32 @@ export default {
 <style scoped>
 .container {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #f5f5f5;
 }
 
+/* 顶部导航栏 */
 .header {
   background: #4A90E2;
   padding: 100rpx 40rpx 24rpx 40rpx;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 1001;
 }
 
-.header-left {
-  margin-right: 40rpx;
+.header-left, .header-right {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.back-icon {
+.back-icon, .more-icon {
   color: white;
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: bold;
 }
 
@@ -418,218 +439,272 @@ export default {
   font-weight: 500;
 }
 
+/* 主要内容区域 */
 .content {
-  padding: 40rpx;
+  padding: 0;
 }
 
-.occupation-card {
+/* 通用区域样式 */
+.occupation-name-section,
+.basic-info-section,
+.description-section,
+.tasks-section,
+.unit-group-section,
+.related-occupations-section,
+.competition-section,
+.eoi-details-section {
   background: white;
-  border-radius: 20rpx;
-  padding: 40rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
-  position: relative;
-}
-
-.occupation-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 20rpx;
-}
-
-.occupation-code {
-  background: #4A90E2;
-  color: white;
-  padding: 12rpx 24rpx;
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  font-weight: bold;
-}
-
-.occupation-category {
-  background: #e9f4ff;
-  color: #4A90E2;
-  padding: 8rpx 16rpx;
-  border-radius: 8rpx;
-  font-size: 24rpx;
-}
-
-.occupation-english {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 12rpx;
-  display: block;
-}
-
-.occupation-chinese {
-  font-size: 28rpx;
-  color: #666;
-  display: block;
-}
-
-.popularity-badge {
-  position: absolute;
-  top: 20rpx;
-  right: 20rpx;
-  background: #ff6b6b;
-  border-radius: 20rpx;
-  padding: 8rpx 16rpx;
-}
-
-.badge-text {
-  color: white;
-  font-size: 20rpx;
-  font-weight: bold;
-}
-
-.info-sections {
-  margin-bottom: 40rpx;
-}
-
-.info-section {
-  background: white;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+  padding: 30rpx 40rpx;
 }
 
 .section-title {
-  font-size: 28rpx;
-  font-weight: bold;
+  font-size: 32rpx;
+  font-weight: 600;
   color: #333;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
   display: block;
 }
 
-.section-content {
+/* 职业名称区域 */
+.name-card {
+  background: #f8f9fa;
+  padding: 30rpx;
+  border-radius: 12rpx;
+  border-left: 8rpx solid #4A90E2;
+}
+
+.english-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.chinese-name {
   font-size: 26rpx;
   color: #666;
-  line-height: 1.6;
+  display: block;
 }
 
-.requirement-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12rpx;
+/* 基本信息区域 */
+.info-card {
+  background: #f8f9fa;
+  padding: 30rpx;
+  border-radius: 12rpx;
 }
 
-.requirement-item {
-  font-size: 26rpx;
-  color: #666;
-  line-height: 1.5;
-}
-
-.link-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-}
-
-.link-item {
+.info-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid #e9ecef;
 }
 
-.link-item:last-child {
+.info-row:last-child {
   border-bottom: none;
 }
 
-.link-text {
-  font-size: 26rpx;
-  color: #4A90E2;
-}
-
-.link-arrow {
+.info-label {
   font-size: 28rpx;
-  color: #ccc;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 20rpx;
-}
-
-.action-btn {
-  flex: 1;
-  padding: 24rpx 0;
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  font-weight: 500;
-  border: none;
-}
-
-.action-btn.primary {
-  background: #4A90E2;
-  color: white;
-}
-
-.action-btn.secondary {
-  background: white;
-  color: #4A90E2;
-  border: 2rpx solid #4A90E2;
-}
-
-/* 信息表格样式 */
-.info-table {
-  background: white;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
-}
-
-.table-title {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-  display: block;
-}
-
-.table-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 12rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
-}
-
-.table-row:last-child {
-  border-bottom: none;
-}
-
-.table-label {
-  font-size: 26rpx;
   color: #666;
-  flex: 0 0 160rpx;
-}
-
-.table-value {
-  font-size: 26rpx;
-  color: #333;
-  flex: 1;
-  text-align: right;
   font-weight: 500;
 }
 
-/* 任务列表样式 */
-.task-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12rpx;
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 600;
+}
+
+/* 职业描述区域 */
+.description-card {
+  background: #f8f9fa;
+  padding: 30rpx;
+  border-radius: 12rpx;
+}
+
+.description-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 工作职责区域 */
+.tasks-card {
+  background: #f8f9fa;
+  padding: 30rpx;
+  border-radius: 12rpx;
 }
 
 .task-item {
-  font-size: 26rpx;
-  color: #666;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.task-item:last-child {
+  margin-bottom: 0;
+}
+
+.task-bullet {
+  font-size: 28rpx;
+  color: #4A90E2;
+  font-weight: bold;
+  margin-right: 16rpx;
+  margin-top: 4rpx;
+}
+
+.task-text {
+  font-size: 28rpx;
+  color: #333;
   line-height: 1.6;
-  padding-left: 20rpx;
+  flex: 1;
+}
+
+/* 职业组别区域 */
+.unit-group-card {
+  background: #f8f9fa;
+  padding: 30rpx;
+  border-radius: 12rpx;
+}
+
+.unit-group-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 相关职业区域 */
+.related-card {
+  background: #f8f9fa;
+  padding: 30rpx;
+  border-radius: 12rpx;
+}
+
+.related-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #e9ecef;
+}
+
+.related-item:last-child {
+  border-bottom: none;
+}
+
+.related-code {
+  font-size: 26rpx;
+  color: #4A90E2;
+  font-weight: 600;
+  margin-right: 12rpx;
+}
+
+.related-name {
+  font-size: 26rpx;
+  color: #333;
+  flex: 1;
+}
+
+/* 竞争形势区域 */
+.competition-card {
+  background: #fff3cd;
+  padding: 30rpx;
+  border-radius: 12rpx;
+  border-left: 8rpx solid #ffc107;
+}
+
+.competition-text {
+  font-size: 28rpx;
+  color: #856404;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.competition-note {
+  font-size: 24rpx;
+  color: #856404;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.competition-note:last-child {
+  margin-bottom: 0;
+}
+
+/* EOI详情区域 */
+.eoi-card {
+  background: #e7f3ff;
+  padding: 30rpx;
+  border-radius: 12rpx;
+  border-left: 8rpx solid #4A90E2;
+}
+
+.eoi-current {
+  font-size: 28rpx;
+  color: #0056b3;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.eoi-info {
+  margin-bottom: 24rpx;
+}
+
+.eoi-occupation {
+  font-size: 26rpx;
+  color: #0056b3;
+  display: block;
+}
+
+.view-details-btn {
+  background: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  padding: 16rpx 32rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.btn-text {
+  color: white;
+}
+
+/* 加载和错误状态 */
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  text-align: center;
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  color: #666;
+  font-size: 28rpx;
+}
+
+.error-text {
+  margin: 20rpx 0;
+  color: #ff6b6b;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.retry-btn {
+  margin-top: 20rpx;
+  padding: 16rpx 40rpx;
+  background: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 26rpx;
 }
 </style>
-

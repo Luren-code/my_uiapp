@@ -7,43 +7,33 @@
 
     <!-- 内容区域 -->
     <view class="content">
-      <!-- 主标题 -->
-      <view class="main-title">
-        <text class="title-text">{{ displayTitle }}</text>
-        <text class="cursor" v-if="showCursor">|</text>
-      </view>
+      <view class="main-content">
+        <!-- 主标题 -->
+        <view class="main-title">
+          <text class="title-text">{{ displayTitle }}</text>
+          <text class="cursor" v-if="showCursor">|</text>
+        </view>
 
+        <!-- 简洁搜索框 -->
+        <view class="search-container" :class="{ 'slide-in': showSearchBox }">
+          <SimpleSearchBox 
+            :placeholder="'输入职业名称或代码搜索'"
+            @select="onOccupationSelect"
+          />
+        </view>
 
-      <!-- 简洁搜索框 -->
-      <view class="search-container" :class="{ 'slide-in': showSearchBox }">
-        <SimpleSearchBox 
-          :placeholder="'输入职业名称或代码搜索'"
-          @select="onOccupationSelect"
-        />
-      </view>
-
-      <!-- 职业数据说明 -->
-      <view class="data-notice">
-        <view class="notice-icon">📋</view>
-        <text class="notice-title">Official Occupation Data</text>
-        <text class="notice-message">
-          Based on Australian SkillSelect official occupation data.
-          Search by occupation code or name to find detailed information.
-        </text>
-      </view>
-
-
-      <!-- 快速入口 - 添加动画类 -->
-      <view class="quick-access" :class="{ 'slide-in': showQuickAccess }">
-        <text class="quick-title">- 快速入口 -</text>
-        <view class="quick-buttons">
-		  <!-- 注意：每个按钮都需要完整的标签闭合 -->
-		  <text class="quick-btn" @click="navigateToGuide">新手入门</text>
-		  <text class="divider">|</text>
-		  <text class="quick-btn" @click="navigateToEOICalculator">EOI分数计算</text>
-		  <text class="divider">|</text>
-		  <text class="quick-btn" @click="navigateToTrends">递交趋势</text>
-		</view>
+        <!-- 快速入口 - 添加动画类 -->
+        <view class="quick-access" :class="{ 'slide-in': showQuickAccess }">
+          <text class="quick-title">- 快速入口 -</text>
+          <view class="quick-buttons">
+            <!-- 注意：每个按钮都需要完整的标签闭合 -->
+            <text class="quick-btn" @click="navigateToGuide">新手入门</text>
+            <text class="divider">|</text>
+            <text class="quick-btn" @click="navigateToEOICalculator">EOI分数计算</text>
+            <text class="divider">|</text>
+            <text class="quick-btn" @click="navigateToTrends">递交趋势</text>
+          </view>
+        </view>
       </view>
     </view>
 
@@ -96,11 +86,8 @@ export default {
   },
   
   onLoad() {
-    // 直接显示所有内容，简化加载流程
-    this.displayTitle = this.fullTitle;
-    this.showSearchBox = true;
-    this.showQuickAccess = true;
-    this.showCursor = false;
+    // 检查并播放首次进入动画
+    this.checkAndPlayAnimation();
   },
 
   onShow() {
@@ -136,6 +123,9 @@ export default {
     startTyping() {
       const fullTitle = this.fullTitle;
       let currentIndex = 0;
+      
+      // 显示光标
+      this.showCursor = true;
       
       this.typeTimer = setInterval(() => {
         if (currentIndex <= fullTitle.length) {
@@ -311,18 +301,29 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0 32rpx;
-  padding-bottom: 180rpx;
-  overflow-y: auto;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 200rpx 32rpx 180rpx 32rpx;
   background-color: #F8F8F8;
+  min-height: calc(100vh - 300rpx);
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600rpx;
 }
 
 .main-title {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40rpx 0 40rpx 0;
+  padding: 0 0 60rpx 0;
   flex-shrink: 0;
+  width: 100%;
 }
 
 .title-text {
@@ -347,11 +348,12 @@ export default {
 
 /* 搜索框动画样式 */
 .search-container {
-  margin-bottom: 40rpx;
+  margin-bottom: 50rpx;
   flex-shrink: 0;
+  width: 100%;
   /* 初始状态：隐藏在上方 */
-  opacity: 1;
-  transform: translateY(0);
+  opacity: 0;
+  transform: translateY(-20rpx);
   transition: all 0.6s ease-out;
 }
 
@@ -391,68 +393,17 @@ export default {
 }
 
 
-/* 数据说明样式 */
-.data-notice {
-  text-align: center;
-  padding: 40rpx 32rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  margin: 20rpx 0;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
-}
-
-.notice-icon {
-  font-size: 80rpx;
-  margin-bottom: 30rpx;
-}
-
-.notice-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 20rpx;
-}
-
-.notice-content {
-  font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 30rpx;
-}
-
-.notice-actions {
-  display: flex;
-  gap: 20rpx;
-  justify-content: center;
-}
-
-.notice-btn {
-  padding: 20rpx 40rpx;
-  border-radius: 8rpx;
-  font-size: 26rpx;
-  border: none;
-}
-
-.notice-btn.primary {
-  background: #4A90E2;
-  color: #fff;
-}
-
-.notice-btn.secondary {
-  background: #f8f9fa;
-  color: #666;
-  border: 1rpx solid #ddd;
-}
 
 /* 快速入口动画样式 */
 .quick-access {
   text-align: center;
   flex-shrink: 0;
-  /* 初始状态：显示 */
-  opacity: 1;
-  transform: translateY(0);
+  width: 100%;
+  /* 初始状态：隐藏 */
+  opacity: 0;
+  transform: translateY(20rpx);
   transition: all 0.6s ease-out;
-  margin-top: 20rpx;
+  margin-top: 0;
 }
 
 .quick-access.slide-in {
