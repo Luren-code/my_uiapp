@@ -14,10 +14,10 @@
           <text class="cursor" v-if="showCursor">|</text>
         </view>
 
-        <!-- 简洁搜索框 -->
+        <!-- 搜索框 - 增强版 -->
         <view class="search-container" :class="{ 'slide-in': showSearchBox }">
-          <SimpleSearchBox 
-            :placeholder="'输入职业名称或代码搜索'"
+          <SearchBoxEnhanced 
+            placeholder="输入职业名称或代码搜索"
             @select="onOccupationSelect"
           />
         </view>
@@ -65,12 +65,11 @@
 </template>
 
 <script>
-import SimpleSearchBox from '../../components/SimpleSearchBox.vue';
-import { searchOccupations, occupationsData } from '../../data/occupations.js';
+import SearchBoxEnhanced from '../../components/SearchBox-Enhanced.vue';
 
 export default {
   components: {
-    SimpleSearchBox
+    SearchBoxEnhanced
   },
   
   data() {
@@ -267,8 +266,7 @@ export default {
           icon: 'none'
         });
       }
-    },
-
+    }
 
   }
 }
@@ -346,9 +344,9 @@ export default {
   51%, 100% { opacity: 0; }
 }
 
-/* 搜索框动画样式 */
+/* 搜索框容器动画样式 */
 .search-container {
-  margin-bottom: 50rpx;
+  margin-bottom: 40rpx;
   flex-shrink: 0;
   width: 100%;
   /* 初始状态：隐藏在上方 */
@@ -362,37 +360,6 @@ export default {
   opacity: 1;
   transform: translateY(0);
 }
-
-.search-box {
-  background: white;
-  border-radius: 50rpx;
-  padding: 24rpx 30rpx;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.1);
-  border: 2rpx solid #4A90E2;
-}
-
-.search-icon {
-  margin-right: 20rpx;
-  font-size: 32rpx;
-}
-
-.search-input {
-  flex: 1;
-  font-size: 28rpx;
-  color: #333;
-}
-
-.clear-btn {
-  color: #ccc;
-  font-size: 36rpx;
-  margin-left: 20rpx;
-  padding: 0 10rpx;
-  line-height: 1;
-}
-
-
 
 /* 快速入口动画样式 */
 .quick-access {
