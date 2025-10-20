@@ -176,110 +176,105 @@
   </view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      entered: false,
-      searchKeyword: '',
-      ageIndex: -1,
-      englishIndex: -1,
-      overseasWorkIndex: -1,
-      australiaWorkIndex: -1,
-      educationIndex: -1,
-      australiaStudyIndex: -1,
-      stemIndex: -1,
-      
-      ageOptions: ['18-24岁', '25-32岁', '33-39岁', '40-44岁', '45岁以上'],
-      englishOptions: ['无成绩', '雅思4.5', '雅思5.0', '雅思6.0', '雅思7.0', '雅思8.0'],
-      workOptions: ['无经验', '1年以下', '1-2年', '3-4年', '5-7年', '8年以上'],
-      educationOptions: ['高中', '证书/文凭', '学士学位', '硕士学位', '博士学位'],
-      yesNoOptions: ['否', '是'],
-      
-      scores: {
-        age: 0,
-        english: 0,
-        overseasWork: 0,
-        australiaWork: 0,
-        education: 0,
-        australiaStudy: 0,
-        stem: 0
-      },
-      
-      totalScore: 0
-    }
-  },
-  
+<script setup>
+import { ref, reactive, nextTick } from 'vue'
+import { onReady } from '@dcloudio/uni-app'
 
-  
-  onReady() {
-    // 触发从右侧滑入的进入动画（H5/小程序通用CSS动画实现）
-    this.$nextTick(() => {
-      setTimeout(() => { this.entered = true }, 20)
-    })
-  },
-  
-  methods: {
-    goBack() {
-      uni.navigateBack();
-    },
-    
-    
-    clearSearch() {
-      this.searchKeyword = '';
-    },
-    
-    onAgeChange(e) {
-      this.ageIndex = e.detail.value;
-      const ageScores = [25, 30, 25, 15, 0];
-      this.scores.age = ageScores[this.ageIndex] || 0;
-    },
-    
-    onEnglishChange(e) {
-      this.englishIndex = e.detail.value;
-      const englishScores = [0, 10, 20, 0, 10, 20];
-      this.scores.english = englishScores[this.englishIndex] || 0;
-    },
-    
-    onOverseasWorkChange(e) {
-      this.overseasWorkIndex = e.detail.value;
-      const workScores = [0, 0, 5, 10, 15, 15];
-      this.scores.overseasWork = workScores[this.overseasWorkIndex] || 0;
-    },
-    
-    onAustraliaWorkChange(e) {
-      this.australiaWorkIndex = e.detail.value;
-      const workScores = [0, 0, 5, 10, 15, 20];
-      this.scores.australiaWork = workScores[this.australiaWorkIndex] || 0;
-    },
-    
-    onEducationChange(e) {
-      this.educationIndex = e.detail.value;
-      const eduScores = [0, 10, 15, 15, 20];
-      this.scores.education = eduScores[this.educationIndex] || 0;
-    },
-    
-    onAustraliaStudyChange(e) {
-      this.australiaStudyIndex = e.detail.value;
-      this.scores.australiaStudy = this.australiaStudyIndex === 1 ? 5 : 0;
-    },
-    
-    onStemChange(e) {
-      this.stemIndex = e.detail.value;
-      this.scores.stem = this.stemIndex === 1 ? 10 : 0;
-    },
-    
-    calculateEOI() {
-      this.totalScore = Object.values(this.scores).reduce((sum, score) => sum + score, 0);
-      uni.showToast({
-        title: `您的EOI总分为：${this.totalScore}分`,
-        icon: 'none',
-        duration: 3000
-      });
-    },
-    
+// 响应式数据
+const entered = ref(false)
+const searchKeyword = ref('')
+const ageIndex = ref(-1)
+const englishIndex = ref(-1)
+const overseasWorkIndex = ref(-1)
+const australiaWorkIndex = ref(-1)
+const educationIndex = ref(-1)
+const australiaStudyIndex = ref(-1)
+const stemIndex = ref(-1)
 
-  }
+const ageOptions = ['18-24岁', '25-32岁', '33-39岁', '40-44岁', '45岁以上']
+const englishOptions = ['无成绩', '雅思4.5', '雅思5.0', '雅思6.0', '雅思7.0', '雅思8.0']
+const workOptions = ['无经验', '1年以下', '1-2年', '3-4年', '5-7年', '8年以上']
+const educationOptions = ['高中', '证书/文凭', '学士学位', '硕士学位', '博士学位']
+const yesNoOptions = ['否', '是']
+
+const scores = reactive({
+  age: 0,
+  english: 0,
+  overseasWork: 0,
+  australiaWork: 0,
+  education: 0,
+  australiaStudy: 0,
+  stem: 0
+})
+
+const totalScore = ref(0)
+
+// 生命周期
+onReady(() => {
+  // 触发从右侧滑入的进入动画（H5/小程序通用CSS动画实现）
+  nextTick(() => {
+    setTimeout(() => { 
+      entered.value = true 
+    }, 20)
+  })
+})
+
+// 方法
+const goBack = () => {
+  uni.navigateBack()
+}
+
+const clearSearch = () => {
+  searchKeyword.value = ''
+}
+
+const onAgeChange = (e) => {
+  ageIndex.value = e.detail.value
+  const ageScores = [25, 30, 25, 15, 0]
+  scores.age = ageScores[ageIndex.value] || 0
+}
+
+const onEnglishChange = (e) => {
+  englishIndex.value = e.detail.value
+  const englishScores = [0, 10, 20, 0, 10, 20]
+  scores.english = englishScores[englishIndex.value] || 0
+}
+
+const onOverseasWorkChange = (e) => {
+  overseasWorkIndex.value = e.detail.value
+  const workScores = [0, 0, 5, 10, 15, 15]
+  scores.overseasWork = workScores[overseasWorkIndex.value] || 0
+}
+
+const onAustraliaWorkChange = (e) => {
+  australiaWorkIndex.value = e.detail.value
+  const workScores = [0, 0, 5, 10, 15, 20]
+  scores.australiaWork = workScores[australiaWorkIndex.value] || 0
+}
+
+const onEducationChange = (e) => {
+  educationIndex.value = e.detail.value
+  const eduScores = [0, 10, 15, 15, 20]
+  scores.education = eduScores[educationIndex.value] || 0
+}
+
+const onAustraliaStudyChange = (e) => {
+  australiaStudyIndex.value = e.detail.value
+  scores.australiaStudy = australiaStudyIndex.value === 1 ? 5 : 0
+}
+
+const onStemChange = (e) => {
+  stemIndex.value = e.detail.value
+  scores.stem = stemIndex.value === 1 ? 10 : 0
+}
+
+const calculateEOI = () => {
+  totalScore.value = Object.values(scores).reduce((sum, score) => sum + score, 0)
+  uni.showToast({
+    title: `您的EOI总分为：${totalScore.value}分`,
+    icon: 'none',
+    duration: 3000
+  })
 }
 </script>
 

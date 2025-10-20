@@ -60,34 +60,36 @@
   </view>
 </template>
 
-<script>
-export default {
-  methods: {
-    goCalculator() {
-      uni.navigateTo({ url: '/pages/index/EOI-calculator/calculator' })
-    },
-    goAge() {
-      uni.showToast({ title: '年龄计算器 敬请期待', icon: 'none' })
-    },
-    goGuideQA() {
-      uni.navigateTo({ url: '/pages/index/EOI-guide/guide' })
-    },
-    comingSoon(name) {
-      uni.showToast({ title: `${name} 敬请期待`, icon: 'none' })
-    },
-    goIndex() {
-      uni.reLaunch({ url: '/pages/index/index' })
-    },
-    goRanking() {
-      uni.reLaunch({ url: '/pages/EOI-ranking/ranking' })
-    },
-    goLandingCenter() {
-      uni.reLaunch({ url: '/pages/landing-center/landing-center' })
-    }
-  }
+<script setup>
+// 方法
+const goCalculator = () => {
+  uni.navigateTo({ url: '/pages/index/EOI-calculator/calculator' })
+}
+
+const goAge = () => {
+  uni.showToast({ title: '年龄计算器 敬请期待', icon: 'none' })
+}
+
+const goGuideQA = () => {
+  uni.navigateTo({ url: '/pages/index/EOI-guide/guide' })
+}
+
+const comingSoon = (name) => {
+  uni.showToast({ title: `${name} 敬请期待`, icon: 'none' })
+}
+
+const goIndex = () => {
+  uni.reLaunch({ url: '/pages/index/index' })
+}
+
+const goRanking = () => {
+  uni.reLaunch({ url: '/pages/EOI-ranking/ranking' })
+}
+
+const goLandingCenter = () => {
+  uni.reLaunch({ url: '/pages/landing-center/landing-center' })
 }
 </script>
-
 
 <style scoped>
 .container {
@@ -239,4 +241,3 @@ export default {
   background: #4A90E2;
 }
 </style>
-

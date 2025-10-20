@@ -83,171 +83,169 @@
   </view>
 </template>
 
-<script>
-import { searchOccupations } from '../data/occupations.js';
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { searchOccupations } from '../data/occupations.js'
 
-export default {
-  name: 'SearchBoxEnhanced',
-  
-  props: {
-    placeholder: {
-      type: String,
-      default: '输入职业名称或代码搜索'
-    }
-  },
-  
-  data() {
-    return {
-      searchKeyword: '',
-      searchResults: [],
-      searchHistory: [],
-      showDropdown: false,
-      hasSearched: false,
-      searchTimeout: null
-    };
-  },
-  
-  computed: {
-    showHistory() {
-      return !this.searchKeyword && this.searchHistory.length > 0;
-    },
-    showResults() {
-      return this.searchKeyword && this.searchResults.length > 0;
-    }
-  },
-  
-  mounted() {
-    this.loadSearchHistory();
-  },
-  
-  methods: {
-    onSearchInput(value) {
-      // 防抖处理
-      if (this.searchTimeout) {
-        clearTimeout(this.searchTimeout);
-      }
-      
-      this.searchTimeout = setTimeout(() => {
-        this.performSearch();
-      }, 300);
-    },
-    
-    onSearchFocus() {
-      this.showDropdown = true;
-    },
-    
-    onSearchBlur() {
-      // 延迟隐藏，允许点击结果
-      setTimeout(() => {
-        if (!this.searchKeyword && !this.showResults) {
-          this.showDropdown = false;
-        }
-      }, 200);
-    },
-    
-    performSearch() {
-      const keyword = this.searchKeyword.trim();
-      
-      if (!keyword) {
-        this.searchResults = [];
-        this.hasSearched = false;
-        return;
-      }
-      
-      this.hasSearched = true;
-      
-      try {
-        this.searchResults = searchOccupations(keyword);
-        this.showDropdown = true;
-        console.log(`搜索 "${keyword}" 找到 ${this.searchResults.length} 个结果`);
-      } catch (error) {
-        console.error('搜索失败:', error);
-        this.searchResults = [];
-      }
-    },
-    
-    selectOccupation(occupation) {
-      console.log('选择职业:', occupation);
-      
-      // 保存搜索历史
-      if (this.searchKeyword.trim()) {
-        this.saveSearchHistory(this.searchKeyword.trim());
-      }
-      
-      // 隐藏下拉框
-      this.showDropdown = false;
-      
-      // 显示选择提示
-      uni.showToast({
-        title: `已选择: ${occupation.code}`,
-        icon: 'success',
-        duration: 1000
-      });
-      
-      // 触发父组件事件
-      setTimeout(() => {
-        this.$emit('select', occupation);
-      }, 100);
-    },
-    
-    selectHistory(item) {
-      this.searchKeyword = item;
-      this.performSearch();
-    },
-    
-    clearSearch() {
-      this.searchKeyword = '';
-      this.searchResults = [];
-      this.hasSearched = false;
-    },
-    
-    clearHistory() {
-      uni.showModal({
-        title: '清除搜索历史',
-        content: '确定要清除所有搜索历史吗？',
-        success: (res) => {
-          if (res.confirm) {
-            try {
-              uni.removeStorageSync('eoi_search_history');
-              this.searchHistory = [];
-              uni.showToast({
-                title: '已清除',
-                icon: 'success'
-              });
-            } catch (error) {
-              console.error('清除历史失败:', error);
-            }
-          }
-        }
-      });
-    },
-    
-    loadSearchHistory() {
-      try {
-        const history = uni.getStorageSync('eoi_search_history') || [];
-        this.searchHistory = history.slice(0, 10);
-      } catch (error) {
-        console.error('加载搜索历史失败:', error);
-        this.searchHistory = [];
-      }
-    },
-    
-    saveSearchHistory(keyword) {
-      try {
-        let history = uni.getStorageSync('eoi_search_history') || [];
-        history = history.filter(item => item !== keyword);
-        history.unshift(keyword);
-        if (history.length > 10) {
-          history = history.slice(0, 10);
-        }
-        uni.setStorageSync('eoi_search_history', history);
-        this.loadSearchHistory();
-      } catch (error) {
-        console.error('保存搜索历史失败:', error);
-      }
-    }
+// Props
+const props = defineProps({
+  placeholder: {
+    type: String,
+    default: '输入职业名称或代码搜索'
   }
-};
+})
+
+// Emits
+const emit = defineEmits(['select'])
+
+// 响应式数据
+const searchKeyword = ref('')
+const searchResults = ref([])
+const searchHistory = ref([])
+const showDropdown = ref(false)
+const hasSearched = ref(false)
+let searchTimeout = null
+
+// 计算属性
+const showHistory = computed(() => {
+  return !searchKeyword.value && searchHistory.value.length > 0
+})
+
+const showResults = computed(() => {
+  return searchKeyword.value && searchResults.value.length > 0
+})
+
+// 生命周期
+onMounted(() => {
+  loadSearchHistory()
+})
+
+// 方法
+const onSearchInput = (value) => {
+  // 防抖处理
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+  
+  searchTimeout = setTimeout(() => {
+    performSearch()
+  }, 300)
+}
+
+const onSearchFocus = () => {
+  showDropdown.value = true
+}
+
+const onSearchBlur = () => {
+  // 延迟隐藏，允许点击结果
+  setTimeout(() => {
+    if (!searchKeyword.value && !showResults.value) {
+      showDropdown.value = false
+    }
+  }, 200)
+}
+
+const performSearch = () => {
+  const keyword = searchKeyword.value.trim()
+  
+  if (!keyword) {
+    searchResults.value = []
+    hasSearched.value = false
+    return
+  }
+  
+  hasSearched.value = true
+  
+  try {
+    searchResults.value = searchOccupations(keyword)
+    showDropdown.value = true
+    console.log(`搜索 "${keyword}" 找到 ${searchResults.value.length} 个结果`)
+  } catch (error) {
+    console.error('搜索失败:', error)
+    searchResults.value = []
+  }
+}
+
+const selectOccupation = (occupation) => {
+  console.log('选择职业:', occupation)
+  
+  // 保存搜索历史
+  if (searchKeyword.value.trim()) {
+    saveSearchHistory(searchKeyword.value.trim())
+  }
+  
+  // 隐藏下拉框
+  showDropdown.value = false
+  
+  // 显示选择提示
+  uni.showToast({
+    title: `已选择: ${occupation.code}`,
+    icon: 'success',
+    duration: 1000
+  })
+  
+  // 触发父组件事件
+  setTimeout(() => {
+    emit('select', occupation)
+  }, 100)
+}
+
+const selectHistory = (item) => {
+  searchKeyword.value = item
+  performSearch()
+}
+
+const clearSearch = () => {
+  searchKeyword.value = ''
+  searchResults.value = []
+  hasSearched.value = false
+}
+
+const clearHistory = () => {
+  uni.showModal({
+    title: '清除搜索历史',
+    content: '确定要清除所有搜索历史吗？',
+    success: (res) => {
+      if (res.confirm) {
+        try {
+          uni.removeStorageSync('eoi_search_history')
+          searchHistory.value = []
+          uni.showToast({
+            title: '已清除',
+            icon: 'success'
+          })
+        } catch (error) {
+          console.error('清除历史失败:', error)
+        }
+      }
+    }
+  })
+}
+
+const loadSearchHistory = () => {
+  try {
+    const history = uni.getStorageSync('eoi_search_history') || []
+    searchHistory.value = history.slice(0, 10)
+  } catch (error) {
+    console.error('加载搜索历史失败:', error)
+    searchHistory.value = []
+  }
+}
+
+const saveSearchHistory = (keyword) => {
+  try {
+    let history = uni.getStorageSync('eoi_search_history') || []
+    history = history.filter(item => item !== keyword)
+    history.unshift(keyword)
+    if (history.length > 10) {
+      history = history.slice(0, 10)
+    }
+    uni.setStorageSync('eoi_search_history', history)
+    loadSearchHistory()
+  } catch (error) {
+    console.error('保存搜索历史失败:', error)
+  }
+}
 </script>
 
 <style scoped>
@@ -329,4 +327,3 @@ export default {
   color: #666;
 }
 </style>
-

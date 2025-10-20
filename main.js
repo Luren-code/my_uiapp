@@ -1,13 +1,11 @@
 import App from './App'
 
-// Vue2 配置
-import Vue from 'vue'
-import './uni.promisify.adaptor'
+// Vue3 配置
+import { createSSRApp } from 'vue'
 
-Vue.config.productionTip = false
-App.mpType = 'app'
-
-const app = new Vue({
-  ...App
-})
-app.$mount()
+export function createApp() {
+  const app = createSSRApp(App)
+  return {
+    app
+  }
+}

@@ -114,291 +114,291 @@
   </view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      loading: false,
-      error: null,
-      occupation: {
-        code: '',
-        englishName: '',
-        chineseName: '',
-        category: '',
+<script setup>
+import { ref, reactive } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+
+// 响应式数据
+const loading = ref(false)
+const error = ref(null)
+
+const occupation = reactive({
+  code: '',
+  englishName: '',
+  chineseName: '',
+  category: '',
+  isPopular: false,
+  anzscoCode: '',
+  skillLevel: '',
+  visaSubclasses: [],
+  assessmentAuthority: '',
+  mltssl: false,
+  stsol: false,
+  rol: false,
+  description: '',
+  tasks: [],
+  requirements: [],
+  relatedOccupations: [],
+  averageSalary: '',
+  unitGroup: ''
+})
+
+const relatedOccupations = ref([])
+
+// 生命周期
+onLoad((options) => {
+  console.log('详情页面接收到的参数:', options)
+  loadOccupationData(options)
+})
+
+// 方法
+/**
+ * 加载职业数据
+ */
+const loadOccupationData = async (options) => {
+  loading.value = true
+  error.value = null
+  
+  try {
+    // 从页面参数中获取职业信息
+    if (options.occupation) {
+      // 完整JSON参数
+      Object.assign(occupation, JSON.parse(decodeURIComponent(options.occupation)))
+      console.log('✅ 使用完整参数加载职业信息:', occupation)
+    } else if (options.code && options.name) {
+      // 简化参数 - 先设置基本信息
+      Object.assign(occupation, {
+        code: options.code,
+        anzscoCode: options.code,
+        englishName: decodeURIComponent(options.name),
+        chineseName: options.chineseName ? decodeURIComponent(options.chineseName) : '',
+        category: 'Unknown',
         isPopular: false,
-        anzscoCode: '',
-        skillLevel: '',
-        visaSubclasses: [],
-        assessmentAuthority: '',
+        skillLevel: 1,
+        visaSubclasses: ['189', '190', '491'],
+        assessmentAuthority: 'VETASSESS',
         mltssl: false,
         stsol: false,
         rol: false,
-        description: '',
+        description: '正在加载职业详细信息...',
         tasks: [],
         requirements: [],
-        relatedOccupations: [],
-        averageSalary: '',
         unitGroup: ''
-      },
-      relatedOccupations: []
-    };
-  },
-
-  onLoad(options) {
-    console.log('详情页面接收到的参数:', options);
-    this.loadOccupationData(options);
-  },
-
-  methods: {
-    /**
-     * 加载职业数据
-     */
-    async loadOccupationData(options) {
-      this.loading = true;
-      this.error = null;
+      })
       
-      try {
-        // 从页面参数中获取职业信息
-        if (options.occupation) {
-          // 完整JSON参数
-          this.occupation = JSON.parse(decodeURIComponent(options.occupation));
-          console.log('✅ 使用完整参数加载职业信息:', this.occupation);
-        } else if (options.code && options.name) {
-          // 简化参数 - 先设置基本信息
-          this.occupation = {
-            code: options.code,
-            anzscoCode: options.code,
-            englishName: decodeURIComponent(options.name),
-            chineseName: options.chineseName ? decodeURIComponent(options.chineseName) : '',
-            category: 'Unknown',
-            isPopular: false,
-            skillLevel: 1,
-            visaSubclasses: ['189', '190', '491'],
-            assessmentAuthority: 'VETASSESS',
-            mltssl: false,
-            stsol: false,
-            rol: false,
-            description: '正在加载职业详细信息...',
-            tasks: [],
-            requirements: [],
-            unitGroup: ''
-          };
-          
-          // 尝试从本地数据加载完整信息
-          await this.loadCompleteOccupationData(options.code);
-        } else {
-          throw new Error('缺少职业信息参数');
-        }
-        
-        // 加载相关职业
-        await this.loadRelatedOccupations();
-        
-      } catch (error) {
-        console.error('❌ 加载职业信息失败:', error);
-        this.error = '加载职业详情失败，请重试';
-        
-        if (!this.occupation.code) {
-          // 如果没有基本信息，返回上一页
-          setTimeout(() => {
-            this.goBack();
-          }, 2000);
-        }
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    /**
-     * 从本地数据中加载完整的职业信息
-     */
-    async loadCompleteOccupationData(code) {
-      try {
-        // 导入本地职业数据
-        const { occupationsData } = await import('../../data/occupations.js');
-        
-        const completeOccupation = occupationsData.find(item => 
-          item.code === code || item.anzscoCode === code
-        );
-        
-        if (completeOccupation) {
-          this.occupation = {
-            ...completeOccupation,
-            unitGroup: this.getUnitGroup(completeOccupation)
-          };
-          console.log('✅ 成功加载完整职业信息:', this.occupation);
-        } else {
-          console.log('⚠️ 未找到职业代码对应的完整信息:', code);
-        }
-        
-      } catch (error) {
-        console.error('❌ 加载完整职业信息失败:', error);
-      }
-    },
-
-    /**
-     * 加载相关职业信息
-     */
-    async loadRelatedOccupations() {
-      try {
-        if (!this.occupation.relatedOccupations || this.occupation.relatedOccupations.length === 0) {
-          // 如果没有相关职业，根据类别生成一些相关职业
-          await this.generateRelatedOccupations();
-          return;
-        }
-        
-        const { occupationsData } = await import('../../data/occupations.js');
-        
-        this.relatedOccupations = occupationsData.filter(item => 
-          this.occupation.relatedOccupations.includes(item.code)
-        ).slice(0, 3); // 最多显示3个相关职业
-        
-        console.log('✅ 成功加载相关职业:', this.relatedOccupations);
-        
-      } catch (error) {
-        console.error('❌ 加载相关职业失败:', error);
-      }
-    },
-
-    /**
-     * 根据类别生成相关职业
-     */
-    async generateRelatedOccupations() {
-      try {
-        const { occupationsData } = await import('../../data/occupations.js');
-        
-        // 找到同类别的其他职业
-        this.relatedOccupations = occupationsData.filter(item => 
-          item.category === this.occupation.category && item.code !== this.occupation.code
-        ).slice(0, 3);
-        
-      } catch (error) {
-        console.error('❌ 生成相关职业失败:', error);
-      }
-    },
-
-    /**
-     * 获取职业组别信息
-     */
-    getUnitGroup(occupation) {
-      const unitGroupMap = {
-        'ICT': 'Unit Group 2631: Computer Network Professionals',
-        'Engineering': 'Unit Group 2332: Civil Engineering Professionals',
-        'Healthcare': 'Unit Group 2544: Registered Nurses',
-        'Management': 'Unit Group 1332: Engineering Managers',
-        'Finance': 'Unit Group 2211: Accountants',
-        'Education': 'Unit Group 2414: Secondary School Teachers',
-        'Social Work': 'Unit Group 2725: Social Workers',
-        'Agriculture': 'Unit Group 2341: Agricultural and Forestry Scientists'
-      };
-      
-      return unitGroupMap[occupation.category] || 'Unit Group Information Not Available';
-    },
-
-    /**
-     * 获取邀请分数（模拟数据）
-     */
-    getInvitationScore() {
-      const scores = [65, 70, 75, 80, 85, 90, 95];
-      return scores[Math.floor(Math.random() * scores.length)];
-    },
-
-    /**
-     * 返回上一页
-     */
-    goBack() {
-      uni.navigateBack();
-    },
-
-    /**
-     * 导航到相关职业
-     */
-    navigateToOccupation(occupation) {
-      uni.navigateTo({
-        url: `/pages/occupation-detail/detail?code=${occupation.code}&name=${encodeURIComponent(occupation.englishName)}&chineseName=${encodeURIComponent(occupation.chineseName)}`
-      });
-    },
-
-    /**
-     * 查看EOI详情
-     */
-    viewEOIDetails() {
-      uni.showToast({
-        title: '请先订阅服务',
-        icon: 'none'
-      });
-    },
-
-    /**
-     * 获取职业列表
-     */
-    getOccupationList(occupation) {
-      const lists = [];
-      if (occupation.mltssl) lists.push('MLTSSL');
-      if (occupation.stsol) lists.push('STSOL');
-      if (occupation.rol) lists.push('ROL');
-      return lists.length > 0 ? lists.join(', ') : '待确认';
-    },
-
-    /**
-     * 获取评估机构
-     */
-    getAssessmentAuthority(occupation) {
-      if (occupation.assessmentAuthority) {
-        return occupation.assessmentAuthority;
-      }
-      
-      // 根据职业类别提供默认评估机构
-      const categoryMap = {
-        'ICT': 'ACS',
-        'Engineering': 'Engineers Australia',
-        'Healthcare': 'ANMAC',
-        'Management': 'VETASSESS',
-        'Finance': 'CPA Australia',
-        'Education': 'AITSL',
-        'Social Work': 'AASW',
-        'Agriculture': 'VETASSESS'
-      };
-      
-      return categoryMap[occupation.category] || 'VETASSESS';
-    },
-
-    /**
-     * 获取技能等级
-     */
-    getSkillLevel(occupation) {
-      if (occupation.skillLevel) {
-        return occupation.skillLevel.toString();
-      }
-      
-      // 根据职业类别提供默认技能等级
-      const categoryLevelMap = {
-        'ICT': 1,
-        'Engineering': 1,
-        'Healthcare': 1,
-        'Management': 1,
-        'Finance': 1,
-        'Education': 1,
-        'Social Work': 1,
-        'Agriculture': 1
-      };
-      
-      const defaultLevel = categoryLevelMap[occupation.category] || 1;
-      return defaultLevel.toString();
-    },
-
-    /**
-     * 获取支持签证
-     */
-    getSupportedVisas(occupation) {
-      if (occupation.visaSubclasses && occupation.visaSubclasses.length > 0) {
-        return occupation.visaSubclasses.join('/');
-      }
-      
-      // 提供默认的常见签证类型
-      return '189/190/491';
+      // 尝试从本地数据加载完整信息
+      await loadCompleteOccupationData(options.code)
+    } else {
+      throw new Error('缺少职业信息参数')
     }
+    
+    // 加载相关职业
+    await loadRelatedOccupations()
+    
+  } catch (err) {
+    console.error('❌ 加载职业信息失败:', err)
+    error.value = '加载职业详情失败，请重试'
+    
+    if (!occupation.code) {
+      // 如果没有基本信息，返回上一页
+      setTimeout(() => {
+        goBack()
+      }, 2000)
+    }
+  } finally {
+    loading.value = false
   }
-};
+}
+
+/**
+ * 从本地数据中加载完整的职业信息
+ */
+const loadCompleteOccupationData = async (code) => {
+  try {
+    // 导入本地职业数据
+    const { occupationsData } = await import('../../data/occupations.js')
+    
+    const completeOccupation = occupationsData.find(item => 
+      item.code === code || item.anzscoCode === code
+    )
+    
+    if (completeOccupation) {
+      Object.assign(occupation, {
+        ...completeOccupation,
+        unitGroup: getUnitGroup(completeOccupation)
+      })
+      console.log('✅ 成功加载完整职业信息:', occupation)
+    } else {
+      console.log('⚠️ 未找到职业代码对应的完整信息:', code)
+    }
+    
+  } catch (err) {
+    console.error('❌ 加载完整职业信息失败:', err)
+  }
+}
+
+/**
+ * 加载相关职业信息
+ */
+const loadRelatedOccupations = async () => {
+  try {
+    if (!occupation.relatedOccupations || occupation.relatedOccupations.length === 0) {
+      // 如果没有相关职业，根据类别生成一些相关职业
+      await generateRelatedOccupations()
+      return
+    }
+    
+    const { occupationsData } = await import('../../data/occupations.js')
+    
+    relatedOccupations.value = occupationsData.filter(item => 
+      occupation.relatedOccupations.includes(item.code)
+    ).slice(0, 3) // 最多显示3个相关职业
+    
+    console.log('✅ 成功加载相关职业:', relatedOccupations.value)
+    
+  } catch (err) {
+    console.error('❌ 加载相关职业失败:', err)
+  }
+}
+
+/**
+ * 根据类别生成相关职业
+ */
+const generateRelatedOccupations = async () => {
+  try {
+    const { occupationsData } = await import('../../data/occupations.js')
+    
+    // 找到同类别的其他职业
+    relatedOccupations.value = occupationsData.filter(item => 
+      item.category === occupation.category && item.code !== occupation.code
+    ).slice(0, 3)
+    
+  } catch (err) {
+    console.error('❌ 生成相关职业失败:', err)
+  }
+}
+
+/**
+ * 获取职业组别信息
+ */
+const getUnitGroup = (occupationData) => {
+  const unitGroupMap = {
+    'ICT': 'Unit Group 2631: Computer Network Professionals',
+    'Engineering': 'Unit Group 2332: Civil Engineering Professionals',
+    'Healthcare': 'Unit Group 2544: Registered Nurses',
+    'Management': 'Unit Group 1332: Engineering Managers',
+    'Finance': 'Unit Group 2211: Accountants',
+    'Education': 'Unit Group 2414: Secondary School Teachers',
+    'Social Work': 'Unit Group 2725: Social Workers',
+    'Agriculture': 'Unit Group 2341: Agricultural and Forestry Scientists'
+  }
+  
+  return unitGroupMap[occupationData.category] || 'Unit Group Information Not Available'
+}
+
+/**
+ * 获取邀请分数（模拟数据）
+ */
+const getInvitationScore = () => {
+  const scores = [65, 70, 75, 80, 85, 90, 95]
+  return scores[Math.floor(Math.random() * scores.length)]
+}
+
+/**
+ * 返回上一页
+ */
+const goBack = () => {
+  uni.navigateBack()
+}
+
+/**
+ * 导航到相关职业
+ */
+const navigateToOccupation = (occupationItem) => {
+  uni.navigateTo({
+    url: `/pages/occupation-detail/detail?code=${occupationItem.code}&name=${encodeURIComponent(occupationItem.englishName)}&chineseName=${encodeURIComponent(occupationItem.chineseName)}`
+  })
+}
+
+/**
+ * 查看EOI详情
+ */
+const viewEOIDetails = () => {
+  uni.showToast({
+    title: '请先订阅服务',
+    icon: 'none'
+  })
+}
+
+/**
+ * 获取职业列表
+ */
+const getOccupationList = (occupationData) => {
+  const lists = []
+  if (occupationData.mltssl) lists.push('MLTSSL')
+  if (occupationData.stsol) lists.push('STSOL')
+  if (occupationData.rol) lists.push('ROL')
+  return lists.length > 0 ? lists.join(', ') : '待确认'
+}
+
+/**
+ * 获取评估机构
+ */
+const getAssessmentAuthority = (occupationData) => {
+  if (occupationData.assessmentAuthority) {
+    return occupationData.assessmentAuthority
+  }
+  
+  // 根据职业类别提供默认评估机构
+  const categoryMap = {
+    'ICT': 'ACS',
+    'Engineering': 'Engineers Australia',
+    'Healthcare': 'ANMAC',
+    'Management': 'VETASSESS',
+    'Finance': 'CPA Australia',
+    'Education': 'AITSL',
+    'Social Work': 'AASW',
+    'Agriculture': 'VETASSESS'
+  }
+  
+  return categoryMap[occupationData.category] || 'VETASSESS'
+}
+
+/**
+ * 获取技能等级
+ */
+const getSkillLevel = (occupationData) => {
+  if (occupationData.skillLevel) {
+    return occupationData.skillLevel.toString()
+  }
+  
+  // 根据职业类别提供默认技能等级
+  const categoryLevelMap = {
+    'ICT': 1,
+    'Engineering': 1,
+    'Healthcare': 1,
+    'Management': 1,
+    'Finance': 1,
+    'Education': 1,
+    'Social Work': 1,
+    'Agriculture': 1
+  }
+  
+  const defaultLevel = categoryLevelMap[occupationData.category] || 1
+  return defaultLevel.toString()
+}
+
+/**
+ * 获取支持签证
+ */
+const getSupportedVisas = (occupationData) => {
+  if (occupationData.visaSubclasses && occupationData.visaSubclasses.length > 0) {
+    return occupationData.visaSubclasses.join('/')
+  }
+  
+  // 提供默认的常见签证类型
+  return '189/190/491'
+}
 </script>
 
 <style scoped>

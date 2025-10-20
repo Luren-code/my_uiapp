@@ -148,30 +148,32 @@
   </view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      entered: false,
-      jobExamples: [
-        { code: '261111', name: '分析程序员（初级）系统' },
-        { code: '254499', name: '注册护士（通用）内科' },
-        { code: '272511', name: '社会工作者' }
-      ]
-    }
-  },
-  
-  methods: {
-    goBack() {
-      uni.navigateBack();
-    },
-  },
-  onReady() {
-    // 触发从右侧滑入的进入动画（H5/小程序通用CSS动画实现）
-    this.$nextTick(() => {
-      setTimeout(() => { this.entered = true }, 20)
-    })
-  }
+<script setup>
+import { ref, nextTick } from 'vue'
+import { onReady } from '@dcloudio/uni-app'
+
+// 响应式数据
+const entered = ref(false)
+
+const jobExamples = ref([
+  { code: '261111', name: '分析程序员（初级）系统' },
+  { code: '254499', name: '注册护士（通用）内科' },
+  { code: '272511', name: '社会工作者' }
+])
+
+// 生命周期
+onReady(() => {
+  // 触发从右侧滑入的进入动画（H5/小程序通用CSS动画实现）
+  nextTick(() => {
+    setTimeout(() => { 
+      entered.value = true 
+    }, 20)
+  })
+})
+
+// 方法
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

@@ -92,43 +92,39 @@
   </view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      accelerationCode: ''
-    }
-  },
-  
-  methods: {
-    verifyCode() {
-      if (!this.accelerationCode.trim()) {
-        uni.showToast({
-          title: '请输入加速码',
-          icon: 'none'
-        });
-        return;
-      }
-      
-      // 这里可以添加验证逻辑
-      uni.showToast({
-        title: '验证成功',
-        icon: 'success'
-      });
-    },
-    
-    goToIndex() {
-      uni.reLaunch({ url: '/pages/index/index' });
-    },
-    
-    goRanking() {
-      uni.reLaunch({ url: '/pages/EOI-ranking/ranking' });
-    },
-    
-    goResources() {
-      uni.reLaunch({ url: '/pages/EOI-resources/resources' });
-    }
+<script setup>
+import { ref } from 'vue'
+
+// 响应式数据
+const accelerationCode = ref('')
+
+// 方法
+const verifyCode = () => {
+  if (!accelerationCode.value.trim()) {
+    uni.showToast({
+      title: '请输入加速码',
+      icon: 'none'
+    })
+    return
   }
+  
+  // 这里可以添加验证逻辑
+  uni.showToast({
+    title: '验证成功',
+    icon: 'success'
+  })
+}
+
+const goToIndex = () => {
+  uni.reLaunch({ url: '/pages/index/index' })
+}
+
+const goRanking = () => {
+  uni.reLaunch({ url: '/pages/EOI-ranking/ranking' })
+}
+
+const goResources = () => {
+  uni.reLaunch({ url: '/pages/EOI-resources/resources' })
 }
 </script>
 

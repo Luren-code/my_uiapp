@@ -64,210 +64,188 @@
   </view>
 </template>
 
-<script>
-import SearchBoxEnhanced from '../../components/SearchBox-Enhanced.vue';
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import SearchBoxEnhanced from '../../components/SearchBox-Enhanced.vue'
 
-export default {
-  components: {
-    SearchBoxEnhanced
-  },
+// 响应式数据
+const displayTitle = ref('')
+const showCursor = ref(false)
+const fullTitle = '澳洲技术移民职业查询'
+let typeTimer = null
+const showSearchBox = ref(false)
+const showQuickAccess = ref(false)
+const hasPlayedAnimation = ref(false)
+
+// 生命周期
+onMounted(() => {
+  checkAndPlayAnimation()
+})
+
+onUnmounted(() => {
+  if (typeTimer) {
+    clearInterval(typeTimer)
+  }
+})
+
+// 方法
+const checkAndPlayAnimation = () => {
+  // 检查本地存储中是否已记录播放过动画
+  const hasPlayed = uni.getStorageSync('hasPlayedIndexAnimation')
   
-  data() {
-    return {
-      displayTitle: '',
-      showCursor: false,
-      fullTitle: '澳洲技术移民职业查询',
-      typeTimer: null,
-      showSearchBox: false,    // 控制搜索框显示
-      showQuickAccess: false,   // 控制快速入口显示
-      hasPlayedAnimation: false // 记录是否已播放过动画
+  if (!hasPlayed) {
+    // 首次进入，播放动画
+    startTyping()
+    // 记录已播放过动画
+    uni.setStorageSync('hasPlayedIndexAnimation', true)
+    hasPlayedAnimation.value = true
+  } else {
+    // 非首次进入，直接显示完整内容
+    displayTitle.value = fullTitle
+    showSearchBox.value = true
+    showQuickAccess.value = true
+    showCursor.value = false
+  }
+}
+
+const startTyping = () => {
+  let currentIndex = 0
+  
+  // 显示光标
+  showCursor.value = true
+  
+  typeTimer = setInterval(() => {
+    if (currentIndex <= fullTitle.length) {
+      displayTitle.value = fullTitle.substring(0, currentIndex)
+      currentIndex++
+    } else {
+      // 打字完成后的处理
+      clearInterval(typeTimer)
+      
+      // 延时显示搜索框
+      setTimeout(() => {
+        showSearchBox.value = true
+      }, 300)
+      
+      // 延时显示快速入口
+      setTimeout(() => {
+        showQuickAccess.value = true
+      }, 600)
+      
+      // 延时隐藏光标
+      setTimeout(() => {
+        showCursor.value = false
+      }, 2000)
     }
-  },
-  
-  onLoad() {
-    // 检查并播放首次进入动画
-    this.checkAndPlayAnimation();
-  },
+  }, 90)
+}
 
-  onShow() {
-    // 页面显示时的处理
-  },
-  
-  onUnload() {
-    if (this.typeTimer) {
-      clearInterval(this.typeTimer);
+// 快速入口跳转
+const navigateToEOICalculator = () => {
+  console.log('跳转到EOI计算器')
+  uni.navigateTo({
+    url: '/pages/index/EOI-calculator/calculator',
+    success: () => {
+      console.log('跳转成功')
+    },
+    fail: (err) => {
+      console.error('跳转失败:', err)
+      uni.showToast({
+        title: '页面跳转失败',
+        icon: 'none'
+      })
     }
-  },
+  })
+}
+
+const navigateToGuide = () => {
+  console.log('跳转到新手入门')
+  uni.navigateTo({
+    url: '/pages/index/EOI-guide/guide',
+    success: () => {
+      console.log('跳转成功')
+    },
+    fail: (err) => {
+      console.error('跳转失败:', err)
+      uni.showToast({
+        title: '页面跳转失败',
+        icon: 'none'
+      })
+    }
+  })
+}
+
+const navigateToTrends = () => {
+  console.log('跳转到递交趋势')
+  uni.navigateTo({
+    url: '/pages/index/EOI-trends/trends',
+    success: () => {
+      console.log('跳转成功')
+    },
+    fail: (err) => {
+      console.error('跳转失败:', err)
+      uni.showToast({
+        title: '页面跳转失败',
+        icon: 'none'
+      })
+    }
+  })
+}
+
+// 重置动画状态（用于测试或清除缓存）
+const resetAnimation = () => {
+  uni.removeStorageSync('hasPlayedIndexAnimation')
+  hasPlayedAnimation.value = false
+  checkAndPlayAnimation()
+}
+
+const goRanking = () => {
+  uni.reLaunch({ url: '/pages/EOI-ranking/ranking' })
+}
+
+const goResources = () => {
+  uni.reLaunch({ url: '/pages/EOI-resources/resources' })
+}
+
+const goLandingCenter = () => {
+  uni.reLaunch({ url: '/pages/landing-center/landing-center' })
+}
+
+// 职业选择处理
+const onOccupationSelect = (occupation) => {
+  console.log('选择了职业:', occupation)
   
-  methods: {
-    checkAndPlayAnimation() {
-      // 检查本地存储中是否已记录播放过动画
-      const hasPlayed = uni.getStorageSync('hasPlayedIndexAnimation');
-      
-      if (!hasPlayed) {
-        // 首次进入，播放动画
-        this.startTyping();
-        // 记录已播放过动画
-        uni.setStorageSync('hasPlayedIndexAnimation', true);
-        this.hasPlayedAnimation = true;
-      } else {
-        // 非首次进入，直接显示完整内容
-        this.displayTitle = this.fullTitle;
-        this.showSearchBox = true;
-        this.showQuickAccess = true;
-        this.showCursor = false;
-      }
-    },
+  try {
+    // 构建跳转参数
+    const params = {
+      code: occupation.code || occupation.anzscoCode,
+      name: occupation.englishName,
+      chineseName: occupation.chineseName || ''
+    }
     
-    startTyping() {
-      const fullTitle = this.fullTitle;
-      let currentIndex = 0;
-      
-      // 显示光标
-      this.showCursor = true;
-      
-      this.typeTimer = setInterval(() => {
-        if (currentIndex <= fullTitle.length) {
-          this.displayTitle = fullTitle.substring(0, currentIndex);
-          currentIndex++;
-        } else {
-          // 打字完成后的处理
-          clearInterval(this.typeTimer);
-          
-          // 延时显示搜索框
-          setTimeout(() => {
-            this.showSearchBox = true;
-          }, 300);
-          
-          // 延时显示快速入口
-          setTimeout(() => {
-            this.showQuickAccess = true;
-          }, 600);
-          
-          // 延时隐藏光标
-          setTimeout(() => {
-            this.showCursor = false;
-          }, 2000);
-        }
-      }, 90);
-    },
+    console.log('准备跳转，参数:', params)
     
-    // 快速入口跳转
-    navigateToEOICalculator() {
-      console.log('跳转到EOI计算器');
-      uni.navigateTo({
-        url: '/pages/index/EOI-calculator/calculator',
-        success: () => {
-          console.log('跳转成功');
-        },
-        fail: (err) => {
-          console.error('跳转失败:', err);
-          uni.showToast({
-            title: '页面跳转失败',
-            icon: 'none'
-          });
-        }
-      });
-    },
-    
-    navigateToGuide() {
-      console.log('跳转到新手入门');
-      uni.navigateTo({
-        url: '/pages/index/EOI-guide/guide',
-        success: () => {
-          console.log('跳转成功');
-        },
-        fail: (err) => {
-          console.error('跳转失败:', err);
-          uni.showToast({
-            title: '页面跳转失败',
-            icon: 'none'
-          });
-        }
-      });
-    },
-    
-    navigateToTrends() {
-      console.log('跳转到递交趋势');
-      uni.navigateTo({
-        url: '/pages/index/EOI-trends/trends',
-        success: () => {
-          console.log('跳转成功');
-        },
-        fail: (err) => {
-          console.error('跳转失败:', err);
-          uni.showToast({
-            title: '页面跳转失败',
-            icon: 'none'
-          });
-        }
-      });
-    },
-    
-    // 重置动画状态（用于测试或清除缓存）
-    resetAnimation() {
-      uni.removeStorageSync('hasPlayedIndexAnimation');
-      this.hasPlayedAnimation = false;
-      // 重新检查并播放动画
-      this.checkAndPlayAnimation();
-    },
-    
-    goRanking() {
-      uni.reLaunch({ url: '/pages/EOI-ranking/ranking' });
-    },
-    goResources() {
-      uni.reLaunch({ url: '/pages/EOI-resources/resources' });
-    },
-    goLandingCenter() {
-      uni.reLaunch({ url: '/pages/landing-center/landing-center' });
-    },
-    
-
-
-
-    /**
-     * 职业选择处理
-     */
-    onOccupationSelect(occupation) {
-      console.log('选择了职业:', occupation);
-      
-      try {
-        // 先简化参数，只传递必要信息
-        const params = {
-          code: occupation.code || occupation.anzscoCode,
-          name: occupation.englishName,
-          chineseName: occupation.chineseName
-        };
-        
-        console.log('准备跳转，参数:', params);
-        
-        // 跳转到职业详情页面
-        uni.navigateTo({
-          url: `/pages/occupation-detail/detail?code=${params.code}&name=${encodeURIComponent(params.name)}&chineseName=${encodeURIComponent(params.chineseName || '')}`,
-          success: () => {
-            console.log('✅ 跳转到职业详情页面成功');
-          },
-          fail: (err) => {
-            console.error('❌ 跳转失败:', err);
-            
-            // 显示详细错误信息
-            uni.showModal({
-              title: '跳转失败',
-              content: `错误信息: ${JSON.stringify(err)}`,
-              showCancel: false
-            });
-          }
-        });
-        
-      } catch (error) {
-        console.error('❌ 跳转过程中发生错误:', error);
-        uni.showToast({
+    // 跳转到职业详情页面
+    uni.navigateTo({
+      url: `/pages/occupation-detail/detail?code=${params.code}&name=${encodeURIComponent(params.name)}&chineseName=${encodeURIComponent(params.chineseName)}`,
+      success: () => {
+        console.log('✅ 跳转到职业详情页面成功')
+      },
+      fail: (err) => {
+        console.error('❌ 跳转失败:', err)
+        uni.showModal({
           title: '跳转失败',
-          icon: 'none'
-        });
+          content: `错误信息: ${JSON.stringify(err)}`,
+          showCancel: false
+        })
       }
-    }
-
+    })
+  } catch (error) {
+    console.error('❌ 跳转过程中发生错误:', error)
+    uni.showToast({
+      title: '跳转失败',
+      icon: 'none'
+    })
   }
 }
 </script>
@@ -469,5 +447,4 @@ export default {
 .nav-item.active .nav-icon { color: #4A90E2; }
 .nav-item.active .nav-icon-custom { background: #4A90E2; }
 .nav-item.active .grid-item { background: #4A90E2; }
-
 </style>

@@ -62,53 +62,50 @@
   </view>
 </template>
 
-<script>
-export default {
+<script setup>
+import { ref, nextTick } from 'vue'
+import { onReady } from '@dcloudio/uni-app'
 
-  
-  onReady() {
-    // 触发从右侧滑入的进入动画（H5/小程序通用CSS动画实现）
-    this.$nextTick(() => {
-      setTimeout(() => { this.entered = true }, 20)
-    })
-  },
-  
-  data() {
-    return {
-      entered: false,
-      monthlyTrends: [
-        { month: '1月', value: '2.3万', height: 120 },
-        { month: '2月', value: '2.1万', height: 110 },
-        { month: '3月', value: '2.8万', height: 140 },
-        { month: '4月', value: '2.5万', height: 125 },
-        { month: '5月', value: '3.2万', height: 160 },
-        { month: '6月', value: '3.0万', height: 150 }
-      ],
-      topJobs: [
-        { name: '软件工程师', code: '261313', count: '1.2万' },
-        { name: '会计师', code: '221111', count: '8.5千' },
-        { name: '注册护士', code: '254418', count: '7.8千' },
-        { name: '土木工程师', code: '233211', count: '6.2千' },
-        { name: '机械工程师', code: '233512', count: '5.9千' }
-      ],
-      regionData: [
-        { name: '中国', percentage: 35 },
-        { name: '印度', percentage: 28 },
-        { name: '英国', percentage: 15 },
-        { name: '其他', percentage: 22 }
-      ],
+// 响应式数据
+const entered = ref(false)
 
-    }
-  },
-  
-  methods: {
-    goBack() {
-      uni.navigateBack();
-    },
-    
-    
+const monthlyTrends = ref([
+  { month: '1月', value: '2.3万', height: 120 },
+  { month: '2月', value: '2.1万', height: 110 },
+  { month: '3月', value: '2.8万', height: 140 },
+  { month: '4月', value: '2.5万', height: 125 },
+  { month: '5月', value: '3.2万', height: 160 },
+  { month: '6月', value: '3.0万', height: 150 }
+])
 
-  }
+const topJobs = ref([
+  { name: '软件工程师', code: '261313', count: '1.2万' },
+  { name: '会计师', code: '221111', count: '8.5千' },
+  { name: '注册护士', code: '254418', count: '7.8千' },
+  { name: '土木工程师', code: '233211', count: '6.2千' },
+  { name: '机械工程师', code: '233512', count: '5.9千' }
+])
+
+const regionData = ref([
+  { name: '中国', percentage: 35 },
+  { name: '印度', percentage: 28 },
+  { name: '英国', percentage: 15 },
+  { name: '其他', percentage: 22 }
+])
+
+// 生命周期
+onReady(() => {
+  // 触发从右侧滑入的进入动画（H5/小程序通用CSS动画实现）
+  nextTick(() => {
+    setTimeout(() => { 
+      entered.value = true 
+    }, 20)
+  })
+})
+
+// 方法
+const goBack = () => {
+  uni.navigateBack()
 }
 </script>
 

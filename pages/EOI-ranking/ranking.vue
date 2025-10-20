@@ -66,52 +66,57 @@
   </view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      fiscalYear: '',
-      daysLeft: 0
-    }
-  },
-  onLoad() {
-    this.updateCountdown();
-  },
-  methods: {
-    updateCountdown() {
-      const now = new Date();
-      // 计算当前财政年度（7月1日开始，次年6月30日结束）
-      const year = now.getMonth() + 1 >= 7 ? now.getFullYear() : now.getFullYear() - 1;
-      const endDate = new Date(year + 1, 5, 30, 23, 59, 59); // 次年6月30日
-      const startTwoDigits = String(year).slice(2);
-      const endTwoDigits = String(year + 1).slice(2);
-      this.fiscalYear = `${startTwoDigits}-${endTwoDigits}`;
-      const diff = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-      this.daysLeft = diff;
-    },
-    goIndex() {
-      uni.reLaunch({ url: '/pages/index/index' });
-    },
-    goTrends() {
-      uni.navigateTo({ url: '/pages/index/EOI-trends/trends' });
-    },
-    goResources() {
-      uni.reLaunch({ url: '/pages/EOI-resources/resources' });
-    },
-    goLandingCenter() {
-      uni.reLaunch({ url: '/pages/landing-center/landing-center' });
-    },
-    comingSoon(name) {
-      uni.showToast({ title: `${name} 敬请期待`, icon: 'none' });
-    },
-    showExplain() {
-      uni.showModal({
-        title: '数据说明',
-        content: '页面展示的均为演示数据，用于说明交互与布局。',
-        showCancel: false
-      })
-    }
-  }
+<script setup>
+import { ref, onMounted } from 'vue'
+
+// 响应式数据
+const fiscalYear = ref('')
+const daysLeft = ref(0)
+
+// 生命周期
+onMounted(() => {
+  updateCountdown()
+})
+
+// 方法
+const updateCountdown = () => {
+  const now = new Date()
+  // 计算当前财政年度（7月1日开始，次年6月30日结束）
+  const year = now.getMonth() + 1 >= 7 ? now.getFullYear() : now.getFullYear() - 1
+  const endDate = new Date(year + 1, 5, 30, 23, 59, 59) // 次年6月30日
+  const startTwoDigits = String(year).slice(2)
+  const endTwoDigits = String(year + 1).slice(2)
+  fiscalYear.value = `${startTwoDigits}-${endTwoDigits}`
+  const diff = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
+  daysLeft.value = diff
+}
+
+const goIndex = () => {
+  uni.reLaunch({ url: '/pages/index/index' })
+}
+
+const goTrends = () => {
+  uni.navigateTo({ url: '/pages/index/EOI-trends/trends' })
+}
+
+const goResources = () => {
+  uni.reLaunch({ url: '/pages/EOI-resources/resources' })
+}
+
+const goLandingCenter = () => {
+  uni.reLaunch({ url: '/pages/landing-center/landing-center' })
+}
+
+const comingSoon = (name) => {
+  uni.showToast({ title: `${name} 敬请期待`, icon: 'none' })
+}
+
+const showExplain = () => {
+  uni.showModal({
+    title: '数据说明',
+    content: '页面展示的均为演示数据，用于说明交互与布局。',
+    showCancel: false
+  })
 }
 </script>
 
@@ -154,4 +159,3 @@ export default {
 .nav-text.active { color: #4A90E2; }
 .nav-item.active .nav-icon-custom { background: #4A90E2; }
 </style>
-
