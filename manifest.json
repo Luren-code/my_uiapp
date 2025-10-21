@@ -1,6 +1,6 @@
 {
     "name" : "my-eoi-app",
-    "appid" : "wx2beddb4ba7cd06d0",
+    "appid" : "wxcb02d4a7c2a489cf",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -50,7 +50,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx2beddb4ba7cd06d0",
+        "appid" : "wxcb02d4a7c2a489cf",
         "setting" : {
             "urlCheck" : false
         },
