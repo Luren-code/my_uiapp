@@ -37,30 +37,6 @@
       </view>
     </view>
 
-    <!-- 底部导航 -->
-    <view class="bottom-nav">
-      <view class="nav-item active">
-        <text class="nav-icon">🔍</text>
-        <text class="nav-text active">EOI职业</text>
-      </view>
-      <view class="nav-item" @click="goRanking">
-        <view class="nav-icon-custom">EOI</view>
-        <text class="nav-text">EOI排名</text>
-      </view>
-      <view class="nav-item" @click="goResources">
-        <view class="nav-icon-grid">
-          <view class="grid-item"> </view>
-          <view class="grid-item"></view>
-          <view class="grid-item"></view>
-          <view class="grid-item"></view>
-        </view>
-        <text class="nav-text">EOI资源</text>
-      </view>
-      <view class="nav-item" @click="goLandingCenter">
-        <view class="nav-icon-user"></view>
-        <text class="nav-text">上岸中心</text>
-      </view>
-    </view>
   </view>
 </template>
 
@@ -70,7 +46,7 @@ import { searchOccupations, occupationsData } from '../../data/occupations.js';
 
 export default {
   components: {
-    SimpleSearchBox
+    SimpleSearchBox // 注册子组件
   },
   
   data() {
@@ -212,19 +188,6 @@ export default {
       // 重新检查并播放动画
       this.checkAndPlayAnimation();
     },
-    
-    goRanking() {
-      uni.reLaunch({ url: '/pages/EOI-ranking/ranking' });
-    },
-    goResources() {
-      uni.reLaunch({ url: '/pages/EOI-resources/resources' });
-    },
-    goLandingCenter() {
-      uni.reLaunch({ url: '/pages/landing-center/landing-center' });
-    },
-    
-
-
 
     /**
      * 职业选择处理
@@ -303,7 +266,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 200rpx 32rpx 180rpx 32rpx;
+  padding: 200rpx 32rpx 120rpx 32rpx;
   background-color: #F8F8F8;
   min-height: calc(100vh - 300rpx);
 }
@@ -444,63 +407,5 @@ export default {
   margin: 0 16rpx;
 }
 
-/* 底部导航优化 */
-.bottom-nav { 
-  display: flex; 
-  background: #fff; 
-  border-top: 1rpx solid #eee; 
-  padding: 16rpx 0; 
-  position: fixed; 
-  bottom: 0; 
-  left: 0; 
-  right: 0; 
-  z-index: 1000; 
-  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.08); 
-  padding-bottom: calc(16rpx + env(safe-area-inset-bottom)); 
-}
-
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8rpx 0;
-  transition: all 0.3s ease;
-}
-
-.nav-icon { font-size: 36rpx; margin-bottom: 6rpx; color: #999; }
-
-.nav-icon-custom { width: 44rpx; height: 44rpx; background: #999; color: #fff; border-radius: 6rpx; display: flex; align-items: center; justify-content: center; font-size: 18rpx; font-weight: bold; margin-bottom: 6rpx; }
-
-.nav-icon-grid { width: 44rpx; height: 44rpx; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 3rpx; margin-bottom: 6rpx; }
-
-.grid-item { width: 18rpx; height: 18rpx; background: #999; border-radius: 2rpx; }
-
-.nav-icon-user {
-  width: 44rpx;
-  height: 44rpx;
-  border-radius: 50%;
-  background: #999;
-  margin-bottom: 6rpx;
-  position: relative;
-}
-
-.nav-icon-user::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 22rpx;
-  height: 22rpx;
-  background: white;
-  border-radius: 50%;
-}
-
-.nav-text { font-size: 22rpx; color: #999; }
-.nav-text.active { color: #4A90E2; }
-.nav-item.active .nav-icon { color: #4A90E2; }
-.nav-item.active .nav-icon-custom { background: #4A90E2; }
-.nav-item.active .grid-item { background: #4A90E2; }
 
 </style>
