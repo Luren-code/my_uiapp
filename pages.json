@@ -22,6 +22,13 @@
       }
     },
     {
+      "path": "pages/landing-center/landing-center",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "上岸中心"
+      }
+    },
+    {
       "path": "pages/index/EOI-calculator/calculator",
       "style": {
         "navigationStyle": "custom",
@@ -43,13 +50,6 @@
       }
     },
     {
-      "path": "pages/landing-center/landing-center",
-      "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": "上岸中心"
-      }
-    },
-    {
       "path": "pages/occupation-detail/detail",
       "style": {
         "navigationStyle": "custom",
@@ -60,5 +60,37 @@
   "globalStyle": {
     "navigationStyle": "default",
     "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4A90E2",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "EOI职业",
+        "iconPath": "static/tab1.png",
+        "selectedIconPath": "static/tab1-active.png"
+      },
+      {
+        "pagePath": "pages/EOI-ranking/ranking",
+        "text": "EOI排名",
+        "iconPath": "static/tab2.png",
+        "selectedIconPath": "static/tab2-active.png"
+      },
+      {
+        "pagePath": "pages/EOI-resources/resources",
+        "text": "EOI资源",
+        "iconPath": "static/tab3.png",
+        "selectedIconPath": "static/tab3-active.png"
+      },
+      {
+        "pagePath": "pages/landing-center/landing-center",
+        "text": "上岸中心",
+        "iconPath": "static/tab4.png",
+        "selectedIconPath": "static/tab4-active.png"
+      }
+    ]
   }
 }

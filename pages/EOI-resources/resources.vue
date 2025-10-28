@@ -33,30 +33,6 @@
       </view>
     </view>
 
-    <!-- 底部导航，第三项高亮 -->
-    <view class="bottom-nav">
-      <view class="nav-item" @click="goIndex">
-        <text class="nav-icon">🔍</text>
-        <text class="nav-text">EOI职业</text>
-      </view>
-      <view class="nav-item" @click="goRanking">
-        <view class="nav-icon-custom">EOI</view>
-        <text class="nav-text">EOI排名</text>
-      </view>
-      <view class="nav-item active">
-        <view class="nav-icon-grid">
-          <view class="grid-dot"></view>
-          <view class="grid-dot"></view>
-          <view class="grid-dot"></view>
-          <view class="grid-dot"></view>
-        </view>
-        <text class="nav-text active">EOI资源</text>
-      </view>
-      <view class="nav-item" @click="goLandingCenter">
-        <view class="nav-icon-user"></view>
-        <text class="nav-text">上岸中心</text>
-      </view>
-    </view>
   </view>
 </template>
 
@@ -113,6 +89,7 @@ const goLandingCenter = () => {
   font-weight: 600;
 }
 
+<<<<<<< HEAD
 .grid {
   padding: 80rpx 40rpx 160rpx 40rpx;
   display: grid;

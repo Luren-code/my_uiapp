@@ -37,30 +37,6 @@
       </view>
     </view>
 
-    <!-- 底部导航 -->
-    <view class="bottom-nav">
-      <view class="nav-item active">
-        <text class="nav-icon">🔍</text>
-        <text class="nav-text active">EOI职业</text>
-      </view>
-      <view class="nav-item" @click="goRanking">
-        <view class="nav-icon-custom">EOI</view>
-        <text class="nav-text">EOI排名</text>
-      </view>
-      <view class="nav-item" @click="goResources">
-        <view class="nav-icon-grid">
-          <view class="grid-item"> </view>
-          <view class="grid-item"></view>
-          <view class="grid-item"></view>
-          <view class="grid-item"></view>
-        </view>
-        <text class="nav-text">EOI资源</text>
-      </view>
-      <view class="nav-item" @click="goLandingCenter">
-        <view class="nav-icon-user"></view>
-        <text class="nav-text">上岸中心</text>
-      </view>
-    </view>
   </view>
 </template>
 
@@ -253,24 +229,30 @@ const onOccupationSelect = (occupation) => {
 <style scoped>
 .container {
   height: 100vh;
-  background: linear-gradient(to bottom, #4A90E2, #F8F8F8);
+  background: #0D5B8F;
   display: flex;
   flex-direction: column;
 }
 
 .header {
-  background: #4A90E2;
-  padding: 100rpx 0 24rpx 0;
-  text-align: center;
+  /* 仅占导航栏高度，整体在系统胶囊下方开始 */
+  background: #0D5B8F; /* 深蓝，匹配目标截图 */
+  top: var(--status-bar-height); /* 顶部预留一个状态栏高度 */
+  /* height: 200rpx; 导航可视高度 */
+  padding-top: 80rpx;
+  padding-bottom: 20rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: sticky;
-  top: 0;
   z-index: 1001;
 }
 
 .header-title {
-  color: white;
-  font-size: 32rpx;
-  font-weight: 600;
+  color: #FFFFFF;
+  font-size: 34rpx; /* 稍大，匹配目标视觉 */
+  font-weight: 700;
 }
 
 .content {
@@ -279,7 +261,7 @@ const onOccupationSelect = (occupation) => {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 200rpx 32rpx 180rpx 32rpx;
+  padding: 320rpx 32rpx 120rpx 32rpx; /* 顶部留白同步跟随 header 新高度 */
   background-color: #F8F8F8;
   min-height: calc(100vh - 300rpx);
 }
@@ -290,7 +272,7 @@ const onOccupationSelect = (occupation) => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 600rpx;
+  max-width: 700rpx; /* 放宽主容器以增大搜索框宽度 */
 }
 
 .main-title {
@@ -303,9 +285,9 @@ const onOccupationSelect = (occupation) => {
 }
 
 .title-text {
-  font-size: 40rpx;
+  font-size: 50rpx;
   font-weight: bold;
-  color: #333;
+  color: #000000;
   text-align: center;
   line-height: 1.3;
 }
@@ -327,10 +309,13 @@ const onOccupationSelect = (occupation) => {
   margin-bottom: 40rpx;
   flex-shrink: 0;
   width: 100%;
+  max-width: 700rpx; /* 限制下拉同宽 */
   /* 初始状态：隐藏在上方 */
   opacity: 0;
   transform: translateY(-20rpx);
   transition: all 0.6s ease-out;
+  position: relative; /* 作为下拉面板定位的参照，并建立新的层叠上下文 */
+  z-index: 1002; /* 确保搜索下拉高于下方元素 */
 }
 
 .search-container.slide-in {
@@ -349,6 +334,8 @@ const onOccupationSelect = (occupation) => {
   transform: translateY(20rpx);
   transition: all 0.6s ease-out;
   margin-top: 0;
+  position: relative;
+  z-index: 1; /* 低于搜索容器，避免被下拉面板遮挡关系错误 */
 }
 
 .quick-access.slide-in {
@@ -389,6 +376,7 @@ const onOccupationSelect = (occupation) => {
   margin: 0 16rpx;
 }
 
+<<<<<<< HEAD
 /* 底部导航优化 */
 .bottom-nav { 
   display: flex; 
