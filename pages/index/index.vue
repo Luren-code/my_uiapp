@@ -55,78 +55,78 @@ export default {
       showCursor: false,
       fullTitle: '澳洲技术移民职业查询',
       typeTimer: null,
+      timeouts: [],              // 记录所有 setTimeout，便于清理
       showSearchBox: false,    // 控制搜索框显示
       showQuickAccess: false,   // 控制快速入口显示
-      hasPlayedAnimation: false // 记录是否已播放过动画
     }
   },
   
   onLoad() {
-    // 检查并播放首次进入动画
-    this.checkAndPlayAnimation();
+    // 页面加载时, 启动打字动画
+    this.startTyping();
   },
 
-  onShow() {
-    // 页面显示时的处理
-  },
-  
   onUnload() {
-    if (this.typeTimer) {
-      clearInterval(this.typeTimer);
-    }
+    // 页面销毁时, 必须清理所有定时器, 它们不会随页面一起销毁
+    this.stopAllTimers();
   },
   
   methods: {
-    checkAndPlayAnimation() {
-      // 检查本地存储中是否已记录播放过动画
-      const hasPlayed = uni.getStorageSync('hasPlayedIndexAnimation');
-      
-      if (!hasPlayed) {
-        // 首次进入，播放动画
-        this.startTyping();
-        // 记录已播放过动画
-        uni.setStorageSync('hasPlayedIndexAnimation', true);
-        this.hasPlayedAnimation = true;
-      } else {
-        // 非首次进入，直接显示完整内容
-        this.displayTitle = this.fullTitle;
-        this.showSearchBox = true;
-        this.showQuickAccess = true;
-        this.showCursor = false;
-      }
-    },
-    
+    // 打字机动画
     startTyping() {
+      console.log('🎯 startTyping 开始执行');
+      
+      // 防重入：如果已有定时器在运行，先清理
+      if (this.typeTimer) {
+        clearInterval(this.typeTimer);
+        this.typeTimer = null;
+      }
+      
       const fullTitle = this.fullTitle;
       let currentIndex = 0;
       
       // 显示光标
       this.showCursor = true;
+      console.log('💡 光标显示，开始打字动画');
       
       this.typeTimer = setInterval(() => {
-        if (currentIndex <= fullTitle.length) {
-          this.displayTitle = fullTitle.substring(0, currentIndex);
+        if (currentIndex < fullTitle.length) {
+          this.displayTitle = fullTitle.substring(0, currentIndex + 1);
           currentIndex++;
         } else {
           // 打字完成后的处理
           clearInterval(this.typeTimer);
+          this.typeTimer = null;
+          console.log('✅ 打字动画完成');
           
-          // 延时显示搜索框
-          setTimeout(() => {
+          // 打字完成后光标立即消失
+          this.showCursor = false;
+          
+          // 略微加快过渡的展示节奏
+          const t1 = setTimeout(() => {
             this.showSearchBox = true;
-          }, 300);
+            console.log('📦 搜索框显示');
+          }, 200);
+          this.timeouts.push(t1);
           
-          // 延时显示快速入口
-          setTimeout(() => {
+          const t2 = setTimeout(() => {
             this.showQuickAccess = true;
-          }, 600);
-          
-          // 延时隐藏光标
-          setTimeout(() => {
-            this.showCursor = false;
-          }, 2000);
+            console.log('🚪 快速入口显示');
+          }, 450);
+          this.timeouts.push(t2);
         }
-      }, 90);
+      }, 100);
+    },
+    
+    // 清理所有定时器
+    stopAllTimers() {
+      if (this.typeTimer) {
+        clearInterval(this.typeTimer);
+        this.typeTimer = null;
+      }
+      // 清理所有 setTimeout
+      this.timeouts.forEach(id => clearTimeout(id));
+      this.timeouts = [];
     },
     
     // 快速入口跳转
@@ -181,14 +181,6 @@ export default {
       });
     },
     
-    // 重置动画状态（用于测试或清除缓存）
-    resetAnimation() {
-      uni.removeStorageSync('hasPlayedIndexAnimation');
-      this.hasPlayedAnimation = false;
-      // 重新检查并播放动画
-      this.checkAndPlayAnimation();
-    },
-
     /**
      * 职业选择处理
      */
@@ -240,24 +232,30 @@ export default {
 <style scoped>
 .container {
   height: 100vh;
-  background: linear-gradient(to bottom, #4A90E2, #F8F8F8);
+  background: #0D5B8F;
   display: flex;
   flex-direction: column;
 }
 
 .header {
-  background: #4A90E2;
-  padding: 100rpx 0 24rpx 0;
-  text-align: center;
+  /* 仅占导航栏高度，整体在系统胶囊下方开始 */
+  background: #0D5B8F; /* 深蓝，匹配目标截图 */
+  top: var(--status-bar-height); /* 顶部预留一个状态栏高度 */
+  /* height: 200rpx; 导航可视高度 */
+  padding-top: 80rpx;
+  padding-bottom: 20rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: sticky;
-  top: 0;
   z-index: 1001;
 }
 
 .header-title {
-  color: white;
-  font-size: 32rpx;
-  font-weight: 600;
+  color: #FFFFFF;
+  font-size: 34rpx; /* 稍大，匹配目标视觉 */
+  font-weight: 700;
 }
 
 .content {
@@ -266,7 +264,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 200rpx 32rpx 120rpx 32rpx;
+  padding: 320rpx 32rpx 120rpx 32rpx; /* 顶部留白同步跟随 header 新高度 */
   background-color: #F8F8F8;
   min-height: calc(100vh - 300rpx);
 }
@@ -277,7 +275,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 600rpx;
+  max-width: 700rpx; /* 放宽主容器以增大搜索框宽度 */
 }
 
 .main-title {
@@ -290,9 +288,9 @@ export default {
 }
 
 .title-text {
-  font-size: 40rpx;
+  font-size: 50rpx;
   font-weight: bold;
-  color: #333;
+  color: #000000;
   text-align: center;
   line-height: 1.3;
 }
@@ -314,10 +312,13 @@ export default {
   margin-bottom: 50rpx;
   flex-shrink: 0;
   width: 100%;
+  max-width: 700rpx; /* 限制下拉同宽 */
   /* 初始状态：隐藏在上方 */
   opacity: 0;
   transform: translateY(-20rpx);
   transition: all 0.6s ease-out;
+  position: relative; /* 作为下拉面板定位的参照，并建立新的层叠上下文 */
+  z-index: 1002; /* 确保搜索下拉高于下方元素 */
 }
 
 .search-container.slide-in {
@@ -367,6 +368,8 @@ export default {
   transform: translateY(20rpx);
   transition: all 0.6s ease-out;
   margin-top: 0;
+  position: relative;
+  z-index: 1; /* 低于搜索容器，避免被下拉面板遮挡关系错误 */
 }
 
 .quick-access.slide-in {
