@@ -89,7 +89,6 @@ const goLandingCenter = () => {
   font-weight: 600;
 }
 
-<<<<<<< HEAD
 .grid {
   padding: 80rpx 40rpx 160rpx 40rpx;
   display: grid;
