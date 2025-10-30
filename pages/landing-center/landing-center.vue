@@ -7,61 +7,63 @@
 
     <!-- 主要内容区域 -->
     <view class="content">
-      <!-- 用户信息卡片 -->
-      <view class="info-card">
-        <view class="info-row">
-          <text class="info-label">我的船票：</text>
-          <text class="info-value">1025573522</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">登船日期：</text>
-          <text class="info-value">2025年8月15日</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">加速截止：</text>
-          <text class="info-value">2025年8月15日</text>
-        </view>
-      </view>
-
-      <!-- 订阅方式1 -->
-      <view class="subscription-section">
-        <text class="subscription-title">订阅方式1：【微信支付】</text>
-        <text class="subscription-note">*如需订单问题请加微信号：xilifaa*</text>
-        
-        <view class="subscription-options">
-          <view class="option-card">
-            <text class="option-duration">3天试用</text>
-            <text class="option-price">15元</text>
+      <view class="main-content">
+        <!-- 用户信息卡片 -->
+        <view class="info-card">
+          <view class="info-row">
+            <text class="info-label">我的船票：</text>
+            <text class="info-value">1025573522</text>
           </view>
-          <view class="option-card">
-            <text class="option-duration">30天订阅</text>
-            <text class="option-price">20元</text>
+          <view class="info-row">
+            <text class="info-label">登船日期：</text>
+            <text class="info-value">2025年8月15日</text>
           </view>
-          <view class="option-card">
-            <text class="option-duration">90天订阅</text>
-            <text class="option-price">50元</text>
+          <view class="info-row">
+            <text class="info-label">加速截止：</text>
+            <text class="info-value">2025年8月15日</text>
           </view>
         </view>
-      </view>
 
-      <!-- 订阅方式2 -->
-      <view class="subscription-section">
-        <text class="subscription-title">订阅方式2：【加速码】</text>
-        <text class="subscription-note">*小红书搜索baaadmonkey，在店铺内可购买*</text>
-        
-        <view class="code-section">
-          <input 
-            class="code-input" 
-            placeholder="请输入加速码"
-            v-model="accelerationCode"
-          />
-          <button class="verify-btn" @click="verifyCode">验证</button>
+        <!-- 订阅方式1 -->
+        <view class="subscription-section">
+          <text class="subscription-title">订阅方式1：【微信支付】</text>
+          <text class="subscription-note">*如需订单问题请加微信号：xilifaa*</text>
+          
+          <view class="subscription-options">
+            <view class="option-card">
+              <text class="option-duration">3天试用</text>
+              <text class="option-price">15元</text>
+            </view>
+            <view class="option-card">
+              <text class="option-duration">30天订阅</text>
+              <text class="option-price">20元</text>
+            </view>
+            <view class="option-card">
+              <text class="option-duration">90天订阅</text>
+              <text class="option-price">50元</text>
+            </view>
+          </view>
         </view>
-      </view>
 
-      <!-- 祝福语 -->
-      <view class="blessing-section">
-        <text class="blessing-text">--一道阻且长,行则将至,祝你我早日上岸--</text>
+        <!-- 订阅方式2 -->
+        <view class="subscription-section">
+          <text class="subscription-title">订阅方式2：【加速码】</text>
+          <text class="subscription-note">*小红书搜索baaadmonkey，在店铺内可购买*</text>
+          
+          <view class="code-section">
+            <input 
+              class="code-input" 
+              placeholder="请输入加速码"
+              v-model="accelerationCode"
+            />
+            <button class="verify-btn" @click="verifyCode">验证</button>
+          </view>
+        </view>
+
+        <!-- 祝福语 -->
+        <view class="blessing-section">
+          <text class="blessing-text">--一道阻且长,行则将至,祝你我早日上岸--</text>
+        </view>
       </view>
     </view>
 
@@ -98,34 +100,10 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  height: 100vh;
-  background: linear-gradient(to bottom, #4A90E2, #F8F8F8);
-  display: flex;
-  flex-direction: column;
-}
 
-.header {
-  background: #4A90E2;
-  padding: 100rpx 0 24rpx 0;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 1001;
-}
-
-.header-title {
-  color: white;
-  font-size: 36rpx;
-  font-weight: 500;
-}
-
-.content {
-  flex: 1;
-  padding: 40rpx;
-  padding-bottom: 200rpx;
-  overflow-y: auto;
-  background-color: #F8F8F8;
+.main-content {
+  width: 100%;
+  max-width: 700rpx;
 }
 
 .info-card {

@@ -53,7 +53,8 @@ export default {
     return {
       displayTitle: '',
       showCursor: false,
-      fullTitle: '澳洲技术移民职业查询',
+      // fullTitle: '澳洲技术移民职业查询',
+      fullTitle: '查询',
       typeTimer: null,
       timeouts: [],              // 记录所有 setTimeout，便于清理
       showSearchBox: false,    // 控制搜索框显示
@@ -230,52 +231,15 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  height: 100vh;
-  background: #0D5B8F;
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  /* 仅占导航栏高度，整体在系统胶囊下方开始 */
-  background: #0D5B8F; /* 深蓝，匹配目标截图 */
-  top: var(--status-bar-height); /* 顶部预留一个状态栏高度 */
-  /* height: 200rpx; 导航可视高度 */
-  padding-top: 80rpx;
-  padding-bottom: 20rpx;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: sticky;
-  z-index: 1001;
-}
-
-.header-title {
-  color: #FFFFFF;
-  font-size: 34rpx; /* 稍大，匹配目标视觉 */
-  font-weight: 700;
-}
-
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 320rpx 32rpx 120rpx 32rpx; /* 顶部留白同步跟随 header 新高度 */
-  background-color: #F8F8F8;
-  min-height: calc(100vh - 300rpx);
-}
 
 .main-content {
+  padding: 320rpx 32rpx 0rpx 32rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 700rpx; /* 放宽主容器以增大搜索框宽度 */
+  max-width: 700rpx;
 }
 
 .main-title {
@@ -355,8 +319,6 @@ export default {
   padding: 0 10rpx;
   line-height: 1;
 }
-
-
 
 /* 快速入口动画样式 */
 .quick-access {
