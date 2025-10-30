@@ -243,7 +243,8 @@ const goBack = () => {
 }
 
 /* 保证内容不会溢出 */
-.content-wrapper > *,
+.content-wrapper view,
+.content-wrapper text,
 .section { 
   max-width: 100%;
   box-sizing: border-box;
