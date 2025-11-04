@@ -376,7 +376,6 @@ const onOccupationSelect = (occupation) => {
   margin: 0 16rpx;
 }
 
-<<<<<<< HEAD
 /* 底部导航优化 */
 .bottom-nav { 
   display: flex; 
