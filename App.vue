@@ -76,9 +76,6 @@ onHide(() => {
 })
 </script>
 
-<style>
-/*每个页面公共css */
-page {
-  background-color: #F8F8F8;
-}
+<style lang="scss">
+@import '@/uni.scss';
 </style>

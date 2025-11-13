@@ -227,52 +227,15 @@ const onOccupationSelect = (occupation) => {
 </script>
 
 <style scoped>
-.container {
-  height: 100vh;
-  background: #0D5B8F;
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  /* 仅占导航栏高度，整体在系统胶囊下方开始 */
-  background: #0D5B8F; /* 深蓝，匹配目标截图 */
-  top: var(--status-bar-height); /* 顶部预留一个状态栏高度 */
-  /* height: 200rpx; 导航可视高度 */
-  padding-top: 80rpx;
-  padding-bottom: 20rpx;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: sticky;
-  z-index: 1001;
-}
-
-.header-title {
-  color: #FFFFFF;
-  font-size: 34rpx; /* 稍大，匹配目标视觉 */
-  font-weight: 700;
-}
-
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 320rpx 32rpx 120rpx 32rpx; /* 顶部留白同步跟随 header 新高度 */
-  background-color: #F8F8F8;
-  min-height: calc(100vh - 300rpx);
-}
 
 .main-content {
+  padding: 320rpx 32rpx 0rpx 32rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 700rpx; /* 放宽主容器以增大搜索框宽度 */
+  max-width: 700rpx;
 }
 
 .main-title {
@@ -322,6 +285,35 @@ const onOccupationSelect = (occupation) => {
   /* 动画结束状态：显示 */
   opacity: 1;
   transform: translateY(0);
+}
+
+.search-box {
+  background: white;
+  border-radius: 50rpx;
+  padding: 24rpx 30rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.1);
+  border: 2rpx solid #4A90E2;
+}
+
+.search-icon {
+  margin-right: 20rpx;
+  font-size: 32rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.clear-btn {
+  color: #ccc;
+  font-size: 36rpx;
+  margin-left: 20rpx;
+  padding: 0 10rpx;
+  line-height: 1;
 }
 
 /* 快速入口动画样式 */
