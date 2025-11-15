@@ -51,9 +51,10 @@
         <!-- 申请流程 -->
         <view class="section">
           <text class="section-title">关于这个小程序</text>
-          <text class="section-content">我是这个小程序的开发者 xin，（以广告专员225111）职业获得维州190签证邀请，整个过程历时2年，全程DIY完成。从职业评估、英语考试、材料准备到E01递交，我将全部经验、使用的工具和移民局官方数据信息，
-            整合进了这个小程序，它存在的最大意义就是<strong style="color: cornflowerblue;">打破信息差</strong>。</text>
-          
+          <view class="section-content section-content--paragraph">
+            <text>我是这个小程序的开发者 xin，（以广告专员225111）职业获得维州190签证邀请，整个过程历时2年，全程DIY完成。从职业评估、英语考试、材料准备到E01递交，我将全部经验、使用的工具和移民局官方数据信息，整合进了这个小程序，它存在的最大意义就是</text>
+            <text class="section-highlight">打破信息差。</text>
+          </view>
         </view>
 
         <!-- 申请条件 -->
@@ -286,6 +287,19 @@ const goBack = () => {
   margin-bottom: 30rpx;
   padding-top: 35rpx;
   display: block;
+}
+
+.section-content--paragraph {
+  display: block;
+}
+
+.section-content--paragraph text {
+  display: inline;
+}
+
+.section-highlight {
+  color: #2c6fbe;
+  font-weight: bolder;
 }
 
 .job-cards { display: flex; flex-direction: column; gap: 20rpx; }

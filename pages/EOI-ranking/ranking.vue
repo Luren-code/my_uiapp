@@ -18,19 +18,19 @@
         <!-- 功能网格 -->
         <view class="grid">
           <view class="grid-card" @click="comingSoon('全澳EOI排名')">
-            <view class="icon aus"></view>
+            <text class="card-emoji">🇦🇺</text>
             <text class="card-text">全澳EOI排名</text>
           </view>
           <view class="grid-card" @click="comingSoon('各州EOI排名')">
-            <view class="icon states"></view>
+            <text class="card-emoji">🗺️</text>
             <text class="card-text">各州EOI排名</text>
           </view>
           <view class="grid-card" @click="goTrends">
-            <view class="icon trend"></view>
+            <text class="card-emoji">📈</text>
             <text class="card-text">EOI递交趋势</text>
           </view>
           <view class="grid-card" @click="comingSoon('州担保配额')">
-            <view class="icon quota"></view>
+            <text class="card-emoji">🧾</text>
             <text class="card-text">州担保配额</text>
           </view>
         </view>
@@ -151,53 +151,11 @@ const showExplain = () => {
   box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08);
 }
 
-.icon {
-  width: 88rpx;
-  height: 88rpx;
+.card-emoji {
+  display: block;
+  font-size: 88rpx;
   margin-bottom: 18rpx;
-  border-radius: 18rpx;
-  background: #e7effb;
-  position: relative;
-}
-
-.icon.aus::after {
-  content: '🇦🇺';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 44rpx;
-}
-
-.icon.states::after {
-  content: '🗺️';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 44rpx;
-}
-
-.icon.trend::after {
-  content: '📈';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 44rpx;
-}
-
-.icon.quota::after {
-  content: '🧾';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 44rpx;
+  line-height: 1;
 }
 
 .card-text {
