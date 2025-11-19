@@ -1,116 +1,118 @@
 <template>
   <view class="container">
-    <!-- 顶部导航栏 -->
+    <!-- 顶部标题栏 -->
     <view class="header">
       <view class="header-left" @click="goBack">
         <text class="back-icon">﹤</text>
       </view>
       <text class="header-title">职业详情</text>
-      <view class="header-right">
-        <text class="more-icon">⋯</text>
-      </view>
     </view>
 
-    <!-- 主要内容区域 -->
+    <!-- 内容区域 -->
     <view class="content">
-      <!-- 职业名称区域 -->
-      <view class="occupation-name-section">
-        <text class="section-title">职业名称</text>
-        <view class="name-card">
-          <text class="english-name">{{ occupation.englishName }}</text>
-          <text class="chinese-name">{{ occupation.chineseName }}</text>
+      <view class="main-content">
+        
+        <!-- 职业名称区域 -->
+        <view class="occupation-name-section">
+          <text class="section-title">职业名称</text>
+          <view class="name-card">
+            <text class="english-name">{{ occupation.englishName }}</text>
+            <text class="chinese-name">{{ occupation.chineseName }}</text>
+          </view>
         </view>
-      </view>
 
-      <!-- 基本信息区域 -->
-      <view class="basic-info-section">
-        <text class="section-title">基本信息</text>
-        <view class="info-card">
-          <view class="info-row">
-            <text class="info-label">ANZSCO代码:</text>
-            <text class="info-value">{{ occupation.anzscoCode || occupation.code }}</text>
-          </view>
-          <view class="info-row">
-            <text class="info-label">支持签证:</text>
-            <text class="info-value">{{ getSupportedVisas(occupation) }}</text>
-          </view>
-          <view class="info-row">
-            <text class="info-label">职业评估机构:</text>
-            <text class="info-value">{{ getAssessmentAuthority(occupation) }}</text>
-          </view>
-          <view class="info-row">
-            <text class="info-label">所属列表:</text>
-            <text class="info-value">{{ getOccupationList(occupation) }}</text>
-          </view>
-          <view class="info-row">
-            <text class="info-label">技能等级:</text>
-            <text class="info-value">{{ getSkillLevel(occupation) }}</text>
+        <!-- 基本信息区域 -->
+        <view class="basic-info-section">
+          <text class="section-title">基本信息</text>
+          <view class="info-card">
+            <view class="info-row">
+              <text class="info-label">ANZSCO代码:</text>
+              <text class="info-value">{{ occupation.anzscoCode || occupation.code }}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">支持签证:</text>
+              <text class="info-value">{{ getSupportedVisas(occupation) }}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">职业评估机构:</text>
+              <text class="info-value">{{ getAssessmentAuthority(occupation) }}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">所属列表:</text>
+              <text class="info-value">{{ getOccupationList(occupation) }}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">技能等级:</text>
+              <text class="info-value">{{ getSkillLevel(occupation) }}</text>
+            </view>
           </view>
         </view>
-      </view>
 
-      <!-- 职业描述区域 -->
-      <view class="description-section" v-if="occupation.description">
-        <text class="section-title">职业描述</text>
-        <view class="description-card">
-          <text class="description-text">{{ occupation.description }}</text>
-        </view>
-      </view>
-
-      <!-- 工作职责区域 -->
-      <view class="tasks-section" v-if="occupation.tasks && occupation.tasks.length > 0">
-        <text class="section-title">工作职责</text>
-        <view class="tasks-card">
-          <view class="task-item" v-for="(task, index) in occupation.tasks" :key="index">
-            <text class="task-bullet">•</text>
-            <text class="task-text">{{ task }}</text>
+        <!-- 职业描述区域 -->
+        <view class="description-section" v-if="occupation.description">
+          <text class="section-title">职业描述</text>
+          <view class="description-card">
+            <text class="description-text">{{ occupation.description }}</text>
           </view>
         </view>
-      </view>
 
-      <!-- 职业所属组别区域 -->
-      <view class="unit-group-section" v-if="occupation.unitGroup">
-        <text class="section-title">职业所属组别</text>
-        <view class="unit-group-card">
-          <text class="unit-group-text">{{ occupation.unitGroup }}</text>
-        </view>
-      </view>
-
-      <!-- 此组别下所有职业区域 -->
-      <view class="related-occupations-section" v-if="relatedOccupations.length > 0">
-        <text class="section-title">此组别下所有职业</text>
-        <view class="related-card">
-          <view class="related-item" v-for="related in relatedOccupations" :key="related.code" @click="navigateToOccupation(related)">
-            <text class="related-code">{{ related.code }}:</text>
-            <text class="related-name">{{ related.englishName }}</text>
+        <!-- 工作职责区域 -->
+        <view class="tasks-section" v-if="occupation.tasks && occupation.tasks.length > 0">
+          <text class="section-title">工作职责</text>
+          <view class="tasks-card">
+            <view class="task-item" v-for="(task, index) in occupation.tasks" :key="index">
+              <text class="task-bullet">•</text>
+              <text class="task-text">{{ task }}</text>
+            </view>
           </view>
         </view>
-      </view>
 
-      <!-- 竞争形势区域 -->
-      <view class="competition-section">
-        <text class="section-title">竞争形势</text>
-        <view class="competition-card">
-          <text class="competition-text">{{ occupation.code }}全澳EOI获邀分数：约{{ getInvitationScore() }}分</text>
-          <text class="competition-note">*基于最新邀请数据，仅供参考</text>
-          <text class="competition-note">*实际分数可能因州担保政策而有所不同</text>
-        </view>
-      </view>
-
-      <!-- EOI备名详情区域 -->
-      <view class="eoi-details-section">
-        <text class="section-title">EOI备名详情</text>
-        <view class="eoi-card">
-          <text class="eoi-current">请在【EOI备名】板块查看</text>
-          <view class="eoi-info">
-            <text class="eoi-occupation">各州邀请记录：{{ occupation.code }}（{{ occupation.chineseName }}）</text>
+        <!-- 职业所属组别区域 -->
+        <view class="unit-group-section" v-if="occupation.unitGroup">
+          <text class="section-title">职业所属组别</text>
+          <view class="unit-group-card">
+            <text class="unit-group-text">{{ occupation.unitGroup }}</text>
           </view>
-          <button class="view-details-btn" @click="viewEOIDetails">
-            <text class="btn-text">订阅用户可查看</text>
-          </button>
         </view>
+
+        <!-- 此组别下所有职业区域 -->
+        <view class="related-occupations-section" v-if="relatedOccupations.length > 0">
+          <text class="section-title">此组别下所有职业</text>
+          <view class="related-card">
+            <view class="related-item" v-for="related in relatedOccupations" :key="related.code" @click="navigateToOccupation(related)">
+              <text class="related-code">{{ related.code }}:</text>
+              <text class="related-name">{{ related.englishName }}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 竞争形势区域 -->
+        <view class="competition-section">
+          <text class="section-title">竞争形势</text>
+          <view class="competition-card">
+            <text class="competition-text">{{ occupation.code }}全澳EOI获邀分数：约{{ getInvitationScore() }}分</text>
+            <text class="competition-note">*基于最新邀请数据，仅供参考</text>
+            <text class="competition-note">*实际分数可能因州担保政策而有所不同</text>
+          </view>
+        </view>
+
+        <!-- EOI备名详情区域 -->
+        <view class="eoi-details-section">
+          <text class="section-title">EOI备名详情</text>
+          <view class="eoi-card">
+            <text class="eoi-current">请在【EOI备名】板块查看</text>
+            <view class="eoi-info">
+              <text class="eoi-occupation">各州邀请记录：{{ occupation.code }}（{{ occupation.chineseName }}）</text>
+            </view>
+            <button class="view-details-btn" @click="viewEOIDetails">
+              <text class="btn-text">订阅用户可查看</text>
+            </button>
+          </view>
+        </view>
+      
       </view>
     </view>
+  
   </view>
 </template>
 
@@ -402,24 +404,8 @@ const getSupportedVisas = (occupationData) => {
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background: #f5f5f5;
-}
 
-/* 顶部导航栏 */
-.header {
-  background: #4A90E2;
-  padding: 100rpx 40rpx 24rpx 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 1001;
-}
-
-.header-left, .header-right {
+.header-left {
   width: 60rpx;
   height: 60rpx;
   display: flex;
@@ -427,21 +413,10 @@ const getSupportedVisas = (occupationData) => {
   justify-content: center;
 }
 
-.back-icon, .more-icon {
+.back-icon {
   color: white;
   font-size: 32rpx;
   font-weight: bold;
-}
-
-.header-title {
-  color: white;
-  font-size: 36rpx;
-  font-weight: 500;
-}
-
-/* 主要内容区域 */
-.content {
-  padding: 0;
 }
 
 /* 通用区域样式 */

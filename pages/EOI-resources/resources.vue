@@ -1,12 +1,14 @@
 <template>
   <view class="container">
-    <!-- 顶部导航 -->
+    <!-- 顶部标题栏 -->
     <view class="header">
       <text class="header-title">EOI资源</text>
     </view>
 
+    <!-- 内容区域 -->
     <view class="content">
       <view class="main-content">
+        
         <!-- 内容 -->
         <view class="grid">
           <view class="card light" @click="goCalculator">
@@ -34,6 +36,7 @@
             <text class="title">DIY资料大全</text>
           </view>
         </view>
+      
       </view>
     </view>
 

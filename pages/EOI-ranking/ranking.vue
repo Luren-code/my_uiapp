@@ -1,12 +1,14 @@
 <template>
   <view class="container">
-    <!-- 顶部导航 -->
+    <!-- 顶部标题栏 -->
     <view class="header">
       <text class="header-title">EOI排名</text>
     </view>
 
+    <!-- 内容区域 -->
     <view class="content">
       <view class="main-content">
+        
         <!-- 倒计时提示 -->
         <view class="countdown">
           <view class="pill">
@@ -40,6 +42,7 @@
           <view class="explain-icon">📘</view>
           <text class="explain-text">数据说明</text>
         </view>
+      
       </view>
     </view>
 

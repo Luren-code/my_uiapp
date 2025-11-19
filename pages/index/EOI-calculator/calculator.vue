@@ -1,6 +1,6 @@
 <template>
   <view class="container" :class="{ entered }">
-    <!-- 顶部导航栏 -->
+    <!-- 顶部标题栏 -->
     <view class="header">
       <view class="header-left" @click="goBack">
         <text class="back-icon">﹤</text>
@@ -8,171 +8,176 @@
       <text class="header-title">EOI打分表</text>
     </view>
 
-    <!-- 主要内容区域 -->
-    <view class="main-content">
-      <!-- 统一的表单容器 -->
-      <view class="form-container">
-        <!-- 技术移民职业 -->
-        <view class="form-section">
-          <text class="section-title">技术移民职业</text>
-          <text class="section-desc">请选择最符合您当前工作性质的技术移民职业。</text>
-          <view class="input-field">
-            <input 
-              class="search-input" 
-              placeholder="请输入职业代码或关键词"
-              v-model="searchKeyword"
-            />
-            <text class="clear-btn" v-if="searchKeyword" @click="clearSearch">×</text>
+    <!-- 内容区域 -->
+    <view class="content">
+      <view class="main-content">
+        
+        <!-- 统一的表单容器 -->
+        <view class="form-container">
+          <!-- 技术移民职业 -->
+          <view class="form-section">
+            <text class="section-title">技术移民职业</text>
+            <text class="section-desc">请选择最符合您当前工作性质的技术移民职业。</text>
+            <view class="input-field">
+              <input 
+                class="search-input" 
+                placeholder="请输入职业代码或关键词"
+                v-model="searchKeyword"
+              />
+              <text class="clear-btn" v-if="searchKeyword" @click="clearSearch">×</text>
+            </view>
+          </view>
+
+          <!-- 年龄 -->
+          <view class="form-section">
+            <text class="section-title">年龄</text>
+            <text class="section-desc">请选择您的年龄范围。</text>
+            <view class="input-field">
+              <picker 
+                mode="selector" 
+                :value="ageIndex" 
+                :range="ageOptions"
+                @change="onAgeChange"
+              >
+                <view class="picker-field">
+                  <text class="picker-text">{{ ageOptions[ageIndex] || '请选择' }}</text>
+                  <text class="picker-arrow">›</text>
+                </view>
+              </picker>
+              <text class="score-display">分值：{{ scores.age }} 分</text>
+            </view>
+          </view>
+
+          <!-- 语言成绩 -->
+          <view class="form-section">
+            <text class="section-title">语言成绩</text>
+            <text class="section-desc">您的英语水平如何？</text>
+            <view class="input-field">
+              <picker 
+                mode="selector" 
+                :value="englishIndex" 
+                :range="englishOptions"
+                @change="onEnglishChange"
+              >
+                <view class="picker-field">
+                  <text class="picker-text">{{ englishOptions[englishIndex] || '请选择' }}</text>
+                  <text class="picker-arrow">›</text>
+                </view>
+              </picker>
+              <text class="score-display">分值：{{ scores.english }} 分</text>
+            </view>
+          </view>
+
+          <!-- 海外工作经验 -->
+          <view class="form-section">
+            <text class="section-title">海外工作经验</text>
+            <text class="section-desc">过去10年，您在指定的技术移民职业上有几年的工作经验？(包括国内和非澳洲的其他国家)</text>
+            <view class="input-field">
+              <picker 
+                mode="selector" 
+                :value="overseasWorkIndex" 
+                :range="workOptions"
+                @change="onOverseasWorkChange"
+              >
+                <view class="picker-field">
+                  <text class="picker-text">{{ workOptions[overseasWorkIndex] || '请选择' }}</text>
+                  <text class="picker-arrow">›</text>
+                </view>
+              </picker>
+              <text class="score-display">分值：{{ scores.overseasWork }} 分</text>
+            </view>
+          </view>
+
+          <!-- 澳洲工作经验 -->
+          <view class="form-section">
+            <text class="section-title">澳洲工作经验</text>
+            <text class="section-desc">过去10年，您在指定的技术移民职业上有几年的工作经验？(仅限澳洲，与海外工作经验加分可叠加)</text>
+            <view class="input-field">
+              <picker 
+                mode="selector" 
+                :value="australiaWorkIndex" 
+                :range="workOptions"
+                @change="onAustraliaWorkChange"
+              >
+                <view class="picker-field">
+                  <text class="picker-text">{{ workOptions[australiaWorkIndex] || '请选择' }}</text>
+                  <text class="picker-arrow">›</text>
+                </view>
+              </picker>
+              <text class="score-display">分值：{{ scores.australiaWork }} 分</text>
+            </view>
+          </view>
+
+          <!-- 最高学历 -->
+          <view class="form-section">
+            <text class="section-title">最高学历</text>
+            <text class="section-desc">您的最高学历是什么？</text>
+            <view class="input-field">
+              <picker 
+                mode="selector" 
+                :value="educationIndex" 
+                :range="educationOptions"
+                @change="onEducationChange"
+              >
+                <view class="picker-field">
+                  <text class="picker-text">{{ educationOptions[educationIndex] || '请选择' }}</text>
+                  <text class="picker-arrow">›</text>
+                </view>
+              </picker>
+              <text class="score-display">分值：{{ scores.education }} 分</text>
+            </view>
+          </view>
+
+          <!-- 澳洲学习经历 -->
+          <view class="form-section">
+            <text class="section-title">澳洲学习经历</text>
+            <text class="section-desc">您是否在澳洲完成至少2年以上的全日制学习？</text>
+            <view class="input-field">
+              <picker 
+                mode="selector" 
+                :value="australiaStudyIndex" 
+                :range="yesNoOptions"
+                @change="onAustraliaStudyChange"
+              >
+                <view class="picker-field">
+                  <text class="picker-text">{{ yesNoOptions[australiaStudyIndex] || '请选择' }}</text>
+                  <text class="picker-arrow">›</text>
+                </view>
+              </picker>
+              <text class="score-display">分值：{{ scores.australiaStudy }} 分</text>
+            </view>
+          </view>
+
+          <!-- 澳洲STEM学历 -->
+          <view class="form-section">
+            <text class="section-title">澳洲STEM学历</text>
+            <text class="section-desc">您是否完成至少2年STEM相关专业的研究型硕士或博士课程（仅限澳洲学历）？</text>
+            <view class="input-field">
+              <picker 
+                mode="selector" 
+                :value="stemIndex" 
+                :range="yesNoOptions"
+                @change="onStemChange"
+              >
+                <view class="picker-field">
+                  <text class="picker-text">{{ yesNoOptions[stemIndex] || '请选择' }}</text>
+                  <text class="picker-arrow">›</text>
+                </view>
+              </picker>
+              <text class="score-display">分值：{{ scores.stem }} 分</text>
+            </view>
+          </view>
+
+          <!-- 计算按钮 -->
+          <view class="calculate-section">
+            <button class="calculate-btn" @click="calculateEOI">计算EOI总分</button>
+            <text class="total-score" v-if="totalScore > 0">总分：{{ totalScore }} 分</text>
           </view>
         </view>
-
-        <!-- 年龄 -->
-        <view class="form-section">
-          <text class="section-title">年龄</text>
-          <text class="section-desc">请选择您的年龄范围。</text>
-          <view class="input-field">
-            <picker 
-              mode="selector" 
-              :value="ageIndex" 
-              :range="ageOptions"
-              @change="onAgeChange"
-            >
-              <view class="picker-field">
-                <text class="picker-text">{{ ageOptions[ageIndex] || '请选择' }}</text>
-                <text class="picker-arrow">›</text>
-              </view>
-            </picker>
-            <text class="score-display">分值：{{ scores.age }} 分</text>
-          </view>
-        </view>
-
-        <!-- 语言成绩 -->
-        <view class="form-section">
-          <text class="section-title">语言成绩</text>
-          <text class="section-desc">您的英语水平如何？</text>
-          <view class="input-field">
-            <picker 
-              mode="selector" 
-              :value="englishIndex" 
-              :range="englishOptions"
-              @change="onEnglishChange"
-            >
-              <view class="picker-field">
-                <text class="picker-text">{{ englishOptions[englishIndex] || '请选择' }}</text>
-                <text class="picker-arrow">›</text>
-              </view>
-            </picker>
-            <text class="score-display">分值：{{ scores.english }} 分</text>
-          </view>
-        </view>
-
-        <!-- 海外工作经验 -->
-        <view class="form-section">
-          <text class="section-title">海外工作经验</text>
-          <text class="section-desc">过去10年，您在指定的技术移民职业上有几年的工作经验？(包括国内和非澳洲的其他国家)</text>
-          <view class="input-field">
-            <picker 
-              mode="selector" 
-              :value="overseasWorkIndex" 
-              :range="workOptions"
-              @change="onOverseasWorkChange"
-            >
-              <view class="picker-field">
-                <text class="picker-text">{{ workOptions[overseasWorkIndex] || '请选择' }}</text>
-                <text class="picker-arrow">›</text>
-              </view>
-            </picker>
-            <text class="score-display">分值：{{ scores.overseasWork }} 分</text>
-          </view>
-        </view>
-
-        <!-- 澳洲工作经验 -->
-        <view class="form-section">
-          <text class="section-title">澳洲工作经验</text>
-          <text class="section-desc">过去10年，您在指定的技术移民职业上有几年的工作经验？(仅限澳洲，与海外工作经验加分可叠加)</text>
-          <view class="input-field">
-            <picker 
-              mode="selector" 
-              :value="australiaWorkIndex" 
-              :range="workOptions"
-              @change="onAustraliaWorkChange"
-            >
-              <view class="picker-field">
-                <text class="picker-text">{{ workOptions[australiaWorkIndex] || '请选择' }}</text>
-                <text class="picker-arrow">›</text>
-              </view>
-            </picker>
-            <text class="score-display">分值：{{ scores.australiaWork }} 分</text>
-          </view>
-        </view>
-
-        <!-- 最高学历 -->
-        <view class="form-section">
-          <text class="section-title">最高学历</text>
-          <text class="section-desc">您的最高学历是什么？</text>
-          <view class="input-field">
-            <picker 
-              mode="selector" 
-              :value="educationIndex" 
-              :range="educationOptions"
-              @change="onEducationChange"
-            >
-              <view class="picker-field">
-                <text class="picker-text">{{ educationOptions[educationIndex] || '请选择' }}</text>
-                <text class="picker-arrow">›</text>
-              </view>
-            </picker>
-            <text class="score-display">分值：{{ scores.education }} 分</text>
-          </view>
-        </view>
-
-        <!-- 澳洲学习经历 -->
-        <view class="form-section">
-          <text class="section-title">澳洲学习经历</text>
-          <text class="section-desc">您是否在澳洲完成至少2年以上的全日制学习？</text>
-          <view class="input-field">
-            <picker 
-              mode="selector" 
-              :value="australiaStudyIndex" 
-              :range="yesNoOptions"
-              @change="onAustraliaStudyChange"
-            >
-              <view class="picker-field">
-                <text class="picker-text">{{ yesNoOptions[australiaStudyIndex] || '请选择' }}</text>
-                <text class="picker-arrow">›</text>
-              </view>
-            </picker>
-            <text class="score-display">分值：{{ scores.australiaStudy }} 分</text>
-          </view>
-        </view>
-
-        <!-- 澳洲STEM学历 -->
-        <view class="form-section">
-          <text class="section-title">澳洲STEM学历</text>
-          <text class="section-desc">您是否完成至少2年STEM相关专业的研究型硕士或博士课程（仅限澳洲学历）？</text>
-          <view class="input-field">
-            <picker 
-              mode="selector" 
-              :value="stemIndex" 
-              :range="yesNoOptions"
-              @change="onStemChange"
-            >
-              <view class="picker-field">
-                <text class="picker-text">{{ yesNoOptions[stemIndex] || '请选择' }}</text>
-                <text class="picker-arrow">›</text>
-              </view>
-            </picker>
-            <text class="score-display">分值：{{ scores.stem }} 分</text>
-          </view>
-        </view>
-
-        <!-- 计算按钮 -->
-        <view class="calculate-section">
-          <button class="calculate-btn" @click="calculateEOI">计算EOI总分</button>
-          <text class="total-score" v-if="totalScore > 0">总分：{{ totalScore }} 分</text>
-        </view>
+      
       </view>
     </view>
+  
   </view>
 </template>
 

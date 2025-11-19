@@ -8,6 +8,7 @@
     <!-- 内容区域 -->
     <view class="content">
       <view class="main-content">
+        
         <!-- 主标题 -->
         <view class="main-title">
           <text class="title-text">{{ displayTitle }}</text>
@@ -34,6 +35,7 @@
             <text class="quick-btn" @click="navigateToTrends">递交趋势</text>
           </view>
         </view>
+      
       </view>
     </view>
 
