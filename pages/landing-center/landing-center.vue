@@ -5,9 +5,10 @@
       <text class="header-title">上岸中心</text>
     </view>
 
-    <!-- 主要内容区域 -->
+    <!-- 内容区域 -->
     <view class="content">
       <view class="main-content">
+        
         <!-- 用户信息卡片 -->
         <view class="info-card">
           <view class="info-row">
@@ -64,6 +65,7 @@
         <view class="blessing-section">
           <text class="blessing-text">--一道阻且长,行则将至,祝你我早日上岸--</text>
         </view>
+      
       </view>
     </view>
 

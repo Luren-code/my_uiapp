@@ -221,7 +221,7 @@ export default {
     
     addDefaultSearchHistory() {
       // 添加一些示例搜索历史
-      const defaultHistory = ['计算机', '2', '新手入门'];
+      const defaultHistory = ['261313', '261312', '261311'];
       defaultHistory.forEach(item => {
         searchHistoryUtil.saveSearchHistory(item);
       });

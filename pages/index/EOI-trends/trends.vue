@@ -1,6 +1,6 @@
 <template>
   <view class="container" :class="{ entered }">
-    <!-- 顶部导航 -->
+    <!-- 顶部标题栏 -->
     <view class="header">
       <view class="header-left" @click="goBack">
         <text class="back-icon">﹤</text>
@@ -8,57 +8,62 @@
       <text class="header-title">递交趋势</text>
     </view>
 
-    <!-- 内容区域：取消滚动条，统一留白 -->
+    <!-- 内容区域 -->
     <view class="content">
-      <!-- 内容包装器（不额外留白） -->
-      <view class="content-wrapper">
-        <!-- 趋势概览 -->
-        <view class="section">
-          <text class="section-title">EOI递交趋势</text>
-          <text class="section-content">
-            了解澳洲技术移民EOI的递交趋势，帮助您把握最佳申请时机。
-          </text>
-        </view>
-
-        <!-- 月度趋势 -->
-        <view class="section">
-          <text class="section-title">月度递交数量</text>
-          <view class="trend-chart">
-            <view class="chart-item" v-for="(item, index) in monthlyTrends" :key="index">
-              <view class="chart-bar" :style="{ height: item.height + 'rpx' }"></view>
-              <text class="chart-label">{{ item.month }}</text>
-              <text class="chart-value">{{ item.value }}</text>
-            </view>
+      <view class="main-content">
+        
+        <!-- 内容包装器（不额外留白） -->
+        <view class="content-wrapper">
+          <!-- 趋势概览 -->
+          <view class="section">
+            <text class="section-title">EOI递交趋势</text>
+            <text class="section-content">
+              了解澳洲技术移民EOI的递交趋势，帮助您把握最佳申请时机。
+            </text>
           </view>
-        </view>
 
-        <!-- 热门职业 -->
-        <view class="section">
-          <text class="section-title">热门职业排行</text>
-          <view class="job-ranking">
-            <view class="ranking-item" v-for="(job, index) in topJobs" :key="index">
-              <view class="ranking-number">{{ index + 1 }}</view>
-              <view class="job-info">
-                <text class="job-name">{{ job.name }}</text>
-                <text class="job-code">{{ job.code }}</text>
+          <!-- 月度趋势 -->
+          <view class="section">
+            <text class="section-title">月度递交数量</text>
+            <view class="trend-chart">
+              <view class="chart-item" v-for="(item, index) in monthlyTrends" :key="index">
+                <view class="chart-bar" :style="{ height: item.height + 'rpx' }"></view>
+                <text class="chart-label">{{ item.month }}</text>
+                <text class="chart-value">{{ item.value }}</text>
               </view>
-              <text class="job-count">{{ job.count }}人</text>
             </view>
           </view>
-        </view>
 
-        <!-- 地区分布 -->
-        <view class="section">
-          <text class="section-title">申请人地区分布</text>
-          <view class="region-stats">
-            <view class="region-item" v-for="(region, index) in regionData" :key="index">
-              <text class="region-name">{{ region.name }}</text>
-              <text class="region-percentage">{{ region.percentage }}%</text>
+          <!-- 热门职业 -->
+          <view class="section">
+            <text class="section-title">热门职业排行</text>
+            <view class="job-ranking">
+              <view class="ranking-item" v-for="(job, index) in topJobs" :key="index">
+                <view class="ranking-number">{{ index + 1 }}</view>
+                <view class="job-info">
+                  <text class="job-name">{{ job.name }}</text>
+                  <text class="job-code">{{ job.code }}</text>
+                </view>
+                <text class="job-count">{{ job.count }}人</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 地区分布 -->
+          <view class="section">
+            <text class="section-title">申请人地区分布</text>
+            <view class="region-stats">
+              <view class="region-item" v-for="(region, index) in regionData" :key="index">
+                <text class="region-name">{{ region.name }}</text>
+                <text class="region-percentage">{{ region.percentage }}%</text>
+              </view>
             </view>
           </view>
         </view>
+      
       </view>
     </view>
+  
   </view>
 </template>
 
