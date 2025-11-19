@@ -132,9 +132,10 @@ export default {
     },
     
     onSearchBlur() {
-      // 延迟隐藏，允许点击搜索结果
+      // 延迟处理，允许点击搜索结果
       setTimeout(() => {
-        this.showResults = false;
+        const keyword = this.searchKeyword && this.searchKeyword.trim();
+        this.showResults = !!keyword;
       }, 200);
     },
     
@@ -195,6 +196,7 @@ export default {
       this.searchResults = [];
       this.hasSearched = false;
       this.loadSearchHistory();
+      this.showResults = false;
     },
     
     loadSearchHistory() {
