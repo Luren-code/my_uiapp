@@ -172,13 +172,6 @@ export default {
       // 隐藏搜索结果
       this.showResults = false;
       
-      // 显示选择提示
-      uni.showToast({
-        title: `已选择: ${occupation.code}`,
-        icon: 'success',
-        duration: 1000
-      });
-      
       // 延迟触发选择事件，确保toast显示
       setTimeout(() => {
         console.log('🚀 触发父组件选择事件');

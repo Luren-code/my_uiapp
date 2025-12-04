@@ -44,7 +44,6 @@
 
 <script>
 import SimpleSearchBox from '../../components/SimpleSearchBox.vue';
-import { searchOccupations, occupationsData } from '../../data/occupations.js';
 
 export default {
   components: {
