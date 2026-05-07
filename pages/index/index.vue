@@ -8,6 +8,7 @@
     <!-- 内容区域 -->
     <view class="content">
       <view class="main-content">
+        
         <!-- 主标题 -->
         <view class="main-title">
           <text class="title-text">{{ displayTitle }}</text>
@@ -34,33 +35,10 @@
             <text class="quick-btn" @click="navigateToTrends">递交趋势</text>
           </view>
         </view>
+      
       </view>
     </view>
 
-    <!-- 底部导航 -->
-    <view class="bottom-nav">
-      <view class="nav-item active">
-        <text class="nav-icon">🔍</text>
-        <text class="nav-text active">EOI职业</text>
-      </view>
-      <view class="nav-item" @click="goRanking">
-        <view class="nav-icon-custom">EOI</view>
-        <text class="nav-text">EOI排名</text>
-      </view>
-      <view class="nav-item" @click="goResources">
-        <view class="nav-icon-grid">
-          <view class="grid-item"> </view>
-          <view class="grid-item"></view>
-          <view class="grid-item"></view>
-          <view class="grid-item"></view>
-        </view>
-        <text class="nav-text">EOI资源</text>
-      </view>
-      <view class="nav-item" @click="goLandingCenter">
-        <view class="nav-icon-user"></view>
-        <text class="nav-text">上岸中心</text>
-      </view>
-    </view>
   </view>
 </template>
 
@@ -251,46 +229,15 @@ const onOccupationSelect = (occupation) => {
 </script>
 
 <style scoped>
-.container {
-  height: 100vh;
-  background: linear-gradient(to bottom, #4A90E2, #F8F8F8);
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  background: #4A90E2;
-  padding: 100rpx 0 24rpx 0;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 1001;
-}
-
-.header-title {
-  color: white;
-  font-size: 32rpx;
-  font-weight: 600;
-}
-
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 200rpx 32rpx 180rpx 32rpx;
-  background-color: #F8F8F8;
-  min-height: calc(100vh - 300rpx);
-}
 
 .main-content {
+  padding: 320rpx 32rpx 0rpx 32rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 600rpx;
+  max-width: 700rpx;
 }
 
 .main-title {
@@ -303,9 +250,9 @@ const onOccupationSelect = (occupation) => {
 }
 
 .title-text {
-  font-size: 40rpx;
+  font-size: 50rpx;
   font-weight: bold;
-  color: #333;
+  color: #000000;
   text-align: center;
   line-height: 1.3;
 }
@@ -327,16 +274,48 @@ const onOccupationSelect = (occupation) => {
   margin-bottom: 40rpx;
   flex-shrink: 0;
   width: 100%;
+  max-width: 700rpx; /* 限制下拉同宽 */
   /* 初始状态：隐藏在上方 */
   opacity: 0;
   transform: translateY(-20rpx);
   transition: all 0.6s ease-out;
+  position: relative; /* 作为下拉面板定位的参照，并建立新的层叠上下文 */
+  z-index: 1002; /* 确保搜索下拉高于下方元素 */
 }
 
 .search-container.slide-in {
   /* 动画结束状态：显示 */
   opacity: 1;
   transform: translateY(0);
+}
+
+.search-box {
+  background: white;
+  border-radius: 50rpx;
+  padding: 24rpx 30rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.1);
+  border: 2rpx solid #4A90E2;
+}
+
+.search-icon {
+  margin-right: 20rpx;
+  font-size: 32rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.clear-btn {
+  color: #ccc;
+  font-size: 36rpx;
+  margin-left: 20rpx;
+  padding: 0 10rpx;
+  line-height: 1;
 }
 
 /* 快速入口动画样式 */
@@ -349,6 +328,8 @@ const onOccupationSelect = (occupation) => {
   transform: translateY(20rpx);
   transition: all 0.6s ease-out;
   margin-top: 0;
+  position: relative;
+  z-index: 1; /* 低于搜索容器，避免被下拉面板遮挡关系错误 */
 }
 
 .quick-access.slide-in {

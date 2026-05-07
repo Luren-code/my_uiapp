@@ -1,3 +1,4 @@
+// 项目入口文件
 import App from './App'
 
 // Vue3 配置
