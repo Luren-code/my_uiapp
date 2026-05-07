@@ -4,4 +4,4 @@ unpackage/
 .DS_Store
 *.log
 .vscode/
-.idea/
+.idea/.DS_Store
