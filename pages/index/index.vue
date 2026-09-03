@@ -53,7 +53,6 @@ const fullTitle = '澳洲技术移民职业查询'
 let typeTimer = null
 const showSearchBox = ref(false)
 const showQuickAccess = ref(false)
-const hasPlayedAnimation = ref(false)
 
 // 生命周期
 onMounted(() => {
@@ -68,22 +67,8 @@ onUnmounted(() => {
 
 // 方法
 const checkAndPlayAnimation = () => {
-  // 检查本地存储中是否已记录播放过动画
-  const hasPlayed = uni.getStorageSync('hasPlayedIndexAnimation')
-  
-  if (!hasPlayed) {
-    // 首次进入，播放动画
-    startTyping()
-    // 记录已播放过动画
-    uni.setStorageSync('hasPlayedIndexAnimation', true)
-    hasPlayedAnimation.value = true
-  } else {
-    // 非首次进入，直接显示完整内容
-    displayTitle.value = fullTitle
-    showSearchBox.value = true
-    showQuickAccess.value = true
-    showCursor.value = false
-  }
+  // 每次进入都播放动画
+  startTyping()
 }
 
 const startTyping = () => {
@@ -98,7 +83,10 @@ const startTyping = () => {
       currentIndex++
     } else {
       // 打字完成后的处理
-      clearInterval(typeTimer)
+      if (typeTimer) {
+        clearInterval(typeTimer)
+        typeTimer = null
+      }
       
       // 延时显示搜索框
       setTimeout(() => {
@@ -170,25 +158,6 @@ const navigateToTrends = () => {
   })
 }
 
-// 重置动画状态（用于测试或清除缓存）
-const resetAnimation = () => {
-  uni.removeStorageSync('hasPlayedIndexAnimation')
-  hasPlayedAnimation.value = false
-  checkAndPlayAnimation()
-}
-
-const goRanking = () => {
-  uni.reLaunch({ url: '/pages/EOI-ranking/ranking' })
-}
-
-const goResources = () => {
-  uni.reLaunch({ url: '/pages/EOI-resources/resources' })
-}
-
-const goLandingCenter = () => {
-  uni.reLaunch({ url: '/pages/landing-center/landing-center' })
-}
-
 // 职业选择处理
 const onOccupationSelect = (occupation) => {
   console.log('选择了职业:', occupation)
@@ -229,6 +198,40 @@ const onOccupationSelect = (occupation) => {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.header {
+  background: #4A90E2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0 24rpx 0;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+}
+
+.header-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding-top: 124rpx;
+  box-sizing: border-box;
+}
 
 .main-content {
   padding: 320rpx 32rpx 0rpx 32rpx;

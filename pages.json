@@ -1,4 +1,10 @@
 {
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uv-(.*)": "@/uni_modules/uv-ui/components/uv-$1/uv-$1.vue"
+    }
+  },
   "pages": [
     {
       "path": "pages/index/index",

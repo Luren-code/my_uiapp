@@ -3,7 +3,7 @@
     <!-- 使用 uv-ui 的搜索组件 -->
     <uv-search
       v-model="searchKeyword"
-      placeholder="输入职业名称或代码搜索"
+      :placeholder="placeholder"
       :show-action="false"
       shape="round"
       bg-color="#FFFFFF"
@@ -16,32 +16,24 @@
     ></uv-search>
 
     <!-- 下拉面板 -->
-    <view class="dropdown-panel" v-if="showDropdown">
+    <view class="dropdown-panel" v-show="showDropdown">
       <view class="dropdown-content">
         <!-- 搜索历史 -->
         <view class="history-section" v-if="showHistory">
           <view class="section-header">
             <text class="section-title">最近搜索</text>
-            <uv-button
-              text="清除"
-              type="info"
-              plain
-              size="mini"
-              @click="clearHistory"
-            ></uv-button>
+            <text class="clear-history-btn" @click="clearHistory">清除</text>
           </view>
           
           <view class="history-tags">
-            <uv-tag
+            <view
               v-for="(item, index) in searchHistory"
               :key="index"
-              :text="item"
-              plain
-              size="mini"
-              type="info"
+              class="history-tag"
               @click="selectHistory(item)"
-              customStyle="margin: 8rpx"
-            ></uv-tag>
+            >
+              {{ item }}
+            </view>
           </view>
         </view>
 
@@ -49,35 +41,30 @@
         <view class="results-section" v-if="showResults">
           <view class="section-title">搜索结果</view>
           
-          <uv-list>
-            <uv-list-item
+          <view class="results-list">
+            <view
               v-for="occupation in searchResults"
               :key="occupation.code"
+              class="result-item"
               @click="selectOccupation(occupation)"
             >
-              <template #content>
-                <view class="result-content">
-                  <uv-badge
-                    :text="occupation.code"
-                    type="primary"
-                    :inverted="false"
-                  ></uv-badge>
-                  <view class="occupation-info">
-                    <text class="occupation-name-en">{{ occupation.englishName }}</text>
-                    <text class="occupation-name-zh">{{ occupation.chineseName }}</text>
-                  </view>
+              <view class="result-content">
+                <view class="occupation-code">{{ occupation.code }}</view>
+                <view class="occupation-info">
+                  <text class="occupation-name-en">{{ occupation.englishName }}</text>
+                  <text class="occupation-name-zh">{{ occupation.chineseName }}</text>
                 </view>
-              </template>
-            </uv-list-item>
-          </uv-list>
+              </view>
+            </view>
+          </view>
         </view>
 
         <!-- 无结果 -->
-        <uv-empty
-          v-if="hasSearched && searchResults.length === 0"
-          mode="search"
-          text="未找到匹配的职业"
-        ></uv-empty>
+        <view class="empty-state" v-if="hasSearched && searchResults.length === 0">
+          <text class="empty-icon">🔍</text>
+          <text class="empty-text">未找到匹配的职业</text>
+          <text class="empty-hint">试试其他关键词或职业代码</text>
+        </view>
       </view>
     </view>
   </view>
@@ -85,7 +72,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { searchOccupations } from '../data/occupations.js'
+import { searchOccupations } from '@/data/occupations.js'
 
 // Props
 const props = defineProps({
@@ -105,6 +92,7 @@ const searchHistory = ref([])
 const showDropdown = ref(false)
 const hasSearched = ref(false)
 let searchTimeout = null
+let blurTimeout = null
 
 // 计算属性
 const showHistory = computed(() => {
@@ -133,15 +121,24 @@ const onSearchInput = (value) => {
 }
 
 const onSearchFocus = () => {
-  showDropdown.value = true
+  // 1. 清除可能存在的隐藏操作（互斥锁）
+  if (blurTimeout) {
+    clearTimeout(blurTimeout)
+    blurTimeout = null
+  }
+
+  // 2. 稍微延迟显示下拉，先让键盘稳稳地弹出来
+  // 解决"单击失效，双击有效"的关键
+  setTimeout(() => {
+    showDropdown.value = true
+  }, 200)
 }
 
 const onSearchBlur = () => {
-  // 延迟隐藏，允许点击结果
-  setTimeout(() => {
-    if (!searchKeyword.value && !showResults.value) {
-      showDropdown.value = false
-    }
+  // 延迟隐藏，给用户操作留出时间，也防止键盘收起时的误触
+  blurTimeout = setTimeout(() => {
+    // 只有当真正需要隐藏时才隐藏
+    showDropdown.value = false
   }, 200)
 }
 
@@ -264,7 +261,7 @@ const saveSearchHistory = (keyword) => {
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
   max-height: 600rpx;
   overflow: hidden;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .dropdown-content {
@@ -291,10 +288,32 @@ const saveSearchHistory = (keyword) => {
   font-weight: 600;
 }
 
+.clear-history-btn {
+  font-size: 24rpx;
+  color: #4A90E2;
+  padding: 4rpx 16rpx;
+}
+
 .history-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 12rpx;
+}
+
+.history-tag {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  background: #F0F4F8;
+  border: 1rpx solid #D0DCE8;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  color: #4A90E2;
+  transition: all 0.3s;
+}
+
+.history-tag:active {
+  background: #E0EAF4;
+  transform: scale(0.95);
 }
 
 /* 搜索结果 */
@@ -302,10 +321,39 @@ const saveSearchHistory = (keyword) => {
   margin-top: 20rpx;
 }
 
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.result-item {
+  background: #F8FAFB;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  transition: all 0.3s;
+  border: 1rpx solid #E8ECF0;
+}
+
+.result-item:active {
+  background: #EEF2F6;
+  transform: scale(0.98);
+}
+
 .result-content {
   display: flex;
   align-items: center;
-  padding: 16rpx 0;
+}
+
+.occupation-code {
+  background: #4A90E2;
+  color: white;
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  min-width: 120rpx;
+  text-align: center;
 }
 
 .occupation-info {
@@ -325,5 +373,32 @@ const saveSearchHistory = (keyword) => {
 .occupation-name-zh {
   font-size: 24rpx;
   color: #666;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.empty-hint {
+  font-size: 24rpx;
+  color: #999;
 }
 </style>
